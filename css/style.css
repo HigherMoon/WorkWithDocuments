@@ -1,0 +1,118 @@
+@import url("style-fonts.css");
+@import url("style-sidebar.css");
+@import url("style-tables.css");
+
+
+body {
+    background-color: #fcfcfc;
+    color: #000000;
+    font-family: 'Roboto-Light';
+    font-size: 20px;
+    margin: 0;
+    -webkit-user-select: none;
+}
+
+.header {
+    margin: 0px;
+    font-size: 28px;
+}
+.header-name {
+    text-align: center;
+}
+
+.sorting-data-groups {
+    display: flex;
+    padding: 5px;
+}
+
+.sorting-data-buttons {
+    background-color: #f1f1f1;
+    border: none;
+    display: block;
+    padding: 10px;
+    margin: 0px 10px;
+    width: 140px;
+    font-size: 14px;
+    color: #383838;
+    cursor: pointer;
+}
+.sorting-data-buttons:hover {
+    background-color: #ff745c;
+    color: rgb(12, 12, 12);
+    transition: 0.2s;
+    box-shadow:  0.2em #0f0f0f;
+}
+.sorting-data-buttons:first-child {
+   border-radius: 10px 10px 0px 0px ; 
+}
+.sorting-data-buttons:last-child {
+    border-radius: 0px 0px 10px 10px; 
+ }
+ 
+
+
+.sidebar {
+    margin: 0;
+    padding: 0;
+    width: 200px;
+    background-color: #f1f1f1;
+    position: fixed;
+    height: 100%;
+    overflow: auto;
+}
+  
+.sidebar a {
+    display: block;
+    color: black;
+    font-size: 16px;
+    padding: 16px;
+    text-decoration: none;
+    transition: 0.3s;
+}
+   
+.sidebar a:hover {
+    background-color: #ff745c;
+    color: white;
+    transition: 0.3s;
+}
+  
+.main-page {
+    margin-left: 200px;
+    padding: 1px 16px;
+}
+  
+@media screen and (max-width: 700px) {
+    .sidebar {
+      width: 100%;
+      height: auto;
+      position: relative;
+    }
+    .sidebar a {float: left;}
+    div.content {margin-left: 0;}
+}
+  
+@media screen and (max-width: 400px) {
+    .sidebar a {
+      text-align: center;
+      float: none;
+    }
+}
+
+.profile-info {
+    display: flex;
+}
+.profile-info-main {
+    width: 80%;
+    margin: 10px;
+}
+.profile-image {
+    height: 150px;
+    width: 150px;
+    border-radius: 50%;
+    transition: 0.3s;
+}
+.profile-image:hover {
+    height: 170px;
+    width: 170px;
+    transition: 0.3s;
+}

@@ -1,23 +1,21 @@
 console.log('Launch: Succesful');
 
-const {app, BrowserWindow} = require('electron') 
-const url = require('url') 
-
-const path = require('path')  
-
- 
-let win  
+const {app, BrowserWindow} = require('electron'); 
+const url = require('url');
+const path = require('path');
+let win;  
 
 // Создание окна на рабочем столе
 // Окно загружает ссылку на index.html файл 
 function createWindow() { 
-   win = new BrowserWindow({width: 800, height: 600}) 
+   win = new BrowserWindow({width: 1000, height: 700 }) 
    win.loadURL(url.format ({ 
       pathname: path.join(__dirname, '../html/index.html'), 
       protocol: 'file:', 
       slashes: true 
-   })) 
-
+   })
+   ) 
+   win.maximize();
    // При закрытии окна изменяется его значение на null 
    win.on('closed', () => {
         win = null;
@@ -32,11 +30,3 @@ app.on('window-all-closed', () => {
         app.quit()
 })
 
-/*
-// Для mac OS 
-app.on('activate', () => {
-    if (win == null) {
-        createWindow()
-    }
-})
-*/

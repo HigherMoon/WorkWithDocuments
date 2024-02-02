@@ -1,32 +1,58 @@
-console.log('Launch: Succesful');
+const xlsx = require('../node_modules/xlsx');
+const { app, BrowserWindow, ipcMain } = require('electron/main');
+const path = require('node:path'); 
 
-const {app, BrowserWindow} = require('electron'); 
-const url = require('url');
-const path = require('path');
-let win;  
-
-// Создание окна на рабочем столе
-// Окно загружает ссылку на index.html файл 
 function createWindow() { 
-   win = new BrowserWindow({width: 1000, height: 700 }) 
-   win.loadURL(url.format ({ 
-      pathname: path.join(__dirname, '../html/index.html'), 
-      protocol: 'file:', 
-      slashes: true 
-   })
-   ) 
-   win.maximize();
-   // При закрытии окна изменяется его значение на null 
-   win.on('closed', () => {
-        win = null;
-   })
+   const win = new BrowserWindow({
+      width: 800,
+      height: 600,
+      webPreferences: {
+         nodeIntegration: true,
+         contextIsolation: true,
+         preload: path.join(__dirname, '../preload.js')
+      }
+    })
+   win.loadFile('html/index.html');
+   win.maximize(); 
+   win.webContents.openDevTools();
 }  
 
-// Создание окна при инициализации приложения
-app.on('ready', createWindow) 
+app.whenReady().then(() => {
+    createWindow()
+ })
 
-// Если все окна закрыты, то полностью заканчивает работу приложения
 app.on('window-all-closed', () => {
-        app.quit()
+    app.quit()
 })
 
+/*
+* ipcMain - канал из main.js | handle() - принимает запрос и возвращает ответ
+* 'get-path' - функция для вызова в main.js и принятии в preload.js
+* (event, pathToFile) - аргумент
+*/
+ipcMain.handle('get-path', (event, pathToFile) => {
+   return parseXSLFile(pathToFile);
+ })
+
+/*
+* xlsx.readFile(...) - считывание xlsx таблицы по пути
+* file.SheetNames - названия таблиц в файле exsel
+* temp - преобразует таблицу из листа exsel в JSON формат
+* data.push(res) - запихивает все данные в data
+* data - преобразованная таблица Exsel в JSON
+*/
+function parseXSLFile(pathToFile) {
+   const file = xlsx.readFile(pathToFile);
+   let data = []
+   const sheets = file.SheetNames;
+   for (let i = 0; i < sheets.length; i++) {
+      const temp = xlsx.utils.sheet_to_json(
+         file.Sheets[file.SheetNames[i]]
+      )
+      console.log(temp);
+      temp.forEach((res) => {
+         data.push(res);
+      })
+   }
+   return data;
+}

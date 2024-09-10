@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <title> Учебный план </title>
+    
+    <link rel="stylesheet" href="../css/style.css">
+  
+  </head>
+
+  <body>
+    <div id="tm"> 
+      <div id="tm-header">
+        <a id="tm-header-button" href="index.html"> Распределение нагрузки </a>
+        <a id="tm-header-button" href="UP.html"> Учебный план </a>
+        <a id="tm-header-button" href="Flows.html"> Потоки и группы </a>
+        <a id="tm-header-button" href="Kafedra.html"> Кафедра </a>
+      </div>
+    </div>
+
+    <div id="main">
+    
+      <div id="add-card" class="add-card">
+        <div id="add-card-header" class="add-card-header">
+          <h3> Добавить предмет в учебный план </h3>
+          <button id="add-card-close"> x </button>
+        </div>
+        <div id="add-card-content" class="add-card-content">
+            <form id="new-up-form">
+              <p> ID потока </p>
+              <input id="flows-input" list="flows-input-helper"> 
+              <datalist id="flows-input-helper"></datalist>
+              <p> Дисциплина </p>
+              <input id="Наименование-f">
+              <p> Семестр </p>
+              <select id="Семестр-f"> 
+                <option> 1 </option>
+                <option> 2 </option>
+              </select>
+              <p> Тип </p>
+              <input id="Тип-f">
+              <p> Количество подгрупп </p>
+              <input id="Количество_подгрупп-f">
+              <p> Часы по учебному плану </p>
+              <input id="Часы_УП-f">
+              <p> Всего часов </p>
+              <input id="Часы-f">
+            </form>
+        </div>
+        <div id="buttons-field">
+          <button id="save-add-card"> Сохранить </button>
+          <button id="close-add-card" > Отмена </button>
+        </div>
+    </div>
+
+
+    <div id="delete-card" class="delete-card">
+      <div class="add-card-header">
+        <h3 id="text-delete-card"> Вы точно хотите УДАЛИТЬ?  </h3>
+        <button id="delete-card-close"> x </button>
+      </div>
+      <div>
+        <button id="confirm-delete-card"> Удалить </button>
+        <button id="delete-card-close-2"> Отмена </button>
+      </div>
+    </div>
+
+
+        <div class="add-card-header">
+          <h2> Учебный план </h2>
+          <button id="open-add-card"> + </button>
+        </div>
+        <div id="container-table-up">
+        </div>
+        <button id="save-current-table-up"> Сохранить таблицу </button>
+        <button id="open-delete-card"> Удалить выбранную строку </button>
+        
+    </div>
+  </body>
+  <script type="text/javascript" src="../js/renderUP.js"></script>
+</html>

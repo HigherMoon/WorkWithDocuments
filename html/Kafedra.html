@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <title> Кафедра </title>
+    
+    <link rel="stylesheet" href="../css/style.css">
+  
+  </head>
+
+  <body>
+    <div id="tm"> 
+      <div id="tm-header">
+        <a id="tm-header-button" href="index.html"> Распределение нагрузки </a>
+        <a id="tm-header-button" href="UP.html"> Учебный план </a>
+        <a id="tm-header-button" href="Flows.html"> Потоки и группы </a>
+        <a id="tm-header-button" href="Kafedra.html"> Кафедра </a>
+      </div>
+    </div>
+
+    <div id="main">
+     
+      <div id="add-card" class="add-card">
+        <div id="add-card-header" class="add-card-header">
+          <h3> Добавить преподавателя </h3>
+          <button id="add-card-close"> x </button>
+        </div>
+        <div id="add-card-content" class="add-card-content">
+            <form id="new-teacher-form">
+              <p> ФИО </p>
+              <input id="ФИО-f">
+              <p> Нагрузка </p>
+              <input id="Нагрузка-f">
+              <p> Должность </p>
+              <input id="Должность-f">
+              <p> Звание  </p>
+              <input id="Звание-f">
+              <p> Учёная степень </p>
+              <input id="Учёная_степень-f">
+              <p> Телефон </p>
+              <input id="Телефон-f">
+              <p> Почта </p>
+              <input id="Почта-f">
+              <p> ГПД </p>
+              <input id="ГПД-f">
+              <p> Ставка </p>
+              <input id="Ставка-f">
+            </form>
+        </div>
+        <div id="buttons-field">
+          <button id="save-add-card"> Сохранить </button>
+          <button id="close-add-card" > Отмена </button>
+        </div>
+    </div>
+    
+
+
+    <div id="delete-card" class="delete-card">
+      <div class="add-card-header">
+        <h3 id="text-delete-card"> Вы точно хотите УДАЛИТЬ?  </h3>
+        <button id="delete-card-close"> x </button>
+      </div>
+      <div>
+        <button id="confirm-delete-card"> Удалить </button>
+        <button id="delete-card-close-2"> Отмена </button>
+      </div>
+    </div>
+
+
+
+        <div class="add-card-header">
+          <h2> Кафедра </h2>
+          <button id="open-add-card"> + </button>
+        </div>
+        <div id="container-table-kaf"></div>
+
+        <button id="button-update-table-kaf"> Сохранить таблицу </button>
+        <button id="open-delete-card"> Удалить выбранную строку </button>
+        <!--<progress value='110' max='1120'></progress>-->
+    </div>
+  </body>
+  <script type="text/javascript" src="../js/renderKAF.js"></script>
+</html>

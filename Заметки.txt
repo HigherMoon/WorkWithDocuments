@@ -1,0 +1,9 @@
+
+[ Вывод текущего года, которую достали из текущей даты ]
+console.log(new Date().getFullYear());
+
+
+[ Подсказка ]
+<div class="tooltip">Hover over me
+  <span class="tooltiptext">Tooltip text</span>
+</div>

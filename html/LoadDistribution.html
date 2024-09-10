@@ -3,24 +3,23 @@
   <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-    <title> Главная </title>
-    
+    <title> Распределение нагрузки </title>
+    <!--
     <link rel="stylesheet" href="../css/style.css">
-    
+    -->
   </head>
 
   <body>
     <div id="tm"> 
       <div id="tm-header">
         <a id="tm-header-button" href="index.html"> Распределение нагрузки </a>
-        <a id="tm-header-button" href="UP.html"> Учебный план </a>
-        <a id="tm-header-button" href="Flows.html"> Потоки и группы </a>
-        <a id="tm-header-button" href="Kafedra.html"> Кафедра </a>
+        <button id="tm-header-button"> Учебный план </button>
       </div>
     </div>
 
     <div id="main">
-        <h2> Распределение нагрузки </h2>
+        <div id="container-personal-table">
+        </div>
         
         <div id="container-current-person">
             <div>
@@ -35,18 +34,14 @@
               <button id="button-a">  Аспирантура</button>
             </div>
             <div id="container-buttons-semester">
-              <button id="button-1-sem"> 1 Семестр </button>
-              <button id="button-2-sem"> 2 Семестр </button>
+              <button id="button-1-sem">  1 Семестр </button>
+              <button id="button-2-sem">  2 Семестр </button>
             </div>
-            <p id="current-ФИО"><strong> ФИО </strong></p>
-            <p id="current-год"> Год: 2023/2024</p>
-            <p id="current-семестр"> 1 Семестр, Очное </p>
-            <button id="current-data"> Вывести учебный план </button>
+            <p id="current-ФИО"> ФИО </p>
+            <p id="current-год"> Год: </p>
+            <p id="current-семестр"> 1 Семестр, очное </p>
         </div>
 
-        <div id="container-personal-table">
-        </div>
-        <!--
         <div id="container-selector-plan">
           <select id="selector-plan">
             <option value="Практики"> Практики </option>
@@ -73,39 +68,26 @@
           </select>
           <button id="add-selector-plan"> Добавить активность </button>
         </div>
-        -->
-        
-        <div id="add-card" class="add-card">
-          <div id="add-card-header" class="add-card-header">
-            <h3 id="add-card-text"> Добавить предмет для </h3>
-            <button id="add-card-close"> x </button>
-          </div>
-          <div id="add-card-content" class="add-card-content">
-              <form id="new-pp-form">
-                <p> Предмет (ID) </p>
-                <input id="group-input" list="group-input-helper"> 
-                <datalist id="group-input-helper"></datalist>
-                <p> Количество часов </p>
-                <input id="inputHours"> 
-              </form>
-          </div>
-          <div id="buttons-field">
-            <button id="save-add-card"> Сохранить </button>
-            <button id="close-add-card" > Отмена </button>
-          </div>
-      </div>
 
-      
-        <div class="add-card-header">
-          <h3> Персональный план </h3>
-          <button id="open-add-card"> + </button>
+
+
+        <div id="кат-Лекции">
+          <p id="заголовок-кат"><b> Лекции </b></p>
+          <select id="selector-кат-Лекции">
+          </select>
+          <div id="кат-table-Лекции">
+          </div>
         </div>
-        <div id="container-data-table">
-        </div>
-        <button id="button-update-table-kaf"> Сохранить таблицу </button>
-        <button id="open-delete-card"> Удалить выбранную строку </button>
+
+        <p><input list="group-input-helper"> 
+          <datalist id="group-input-helper">
+            <option value="МТ-301"></option>
+            <option value="МК-402"></option>
+            <option value="ИТ-402"></option>
+          </datalist>
+          </p>
 
     </div>
   </body>
-  <script type="text/javascript" src="../js/render.js"></script>
+  <script type="text/javascript" src="../js/renderLD.js"></script>
 </html>

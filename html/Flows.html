@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <title> Потоки </title>
+    
+    <link rel="stylesheet" href="../css/style.css">
+    
+  </head>
+
+  <body>
+    <div id="tm"> 
+      <div id="tm-header">
+        <a id="tm-header-button" href="index.html"> Распределение нагрузки </a>
+        <a id="tm-header-button" href="UP.html"> Учебный план </a>
+        <a id="tm-header-button" href="Flows.html"> Потоки и группы </a>
+        <a id="tm-header-button" href="Kafedra.html"> Кафедра </a>
+      </div>
+    </div>
+
+    <div id="main">
+
+      <div id="add-card-flows" class="add-card">
+        <div id="add-card-header" class="add-card-header">
+          <h3> Добавить Поток </h3>
+          <button id="add-card-close-flows"> x </button>
+        </div>
+        <div id="add-card-content-flows" class="add-card-content">
+            <form id="new-flow-form">
+              <p> Наименование </p>
+              <input id="Наименование-f">
+              <p> Факультет </p>
+              <input id="Факультет-f">
+              <p> Год </p>
+              <input id="Год-f">
+              <p> Форма обучения  </p>
+              <select id="Форма_обучения-f"> 
+                <option> Очное </option>
+                <option> Заочное </option>
+                <option> Очно-заочное </option>
+                <option> Аспирантура </option>
+              </select>
+            </form>
+        </div>
+        <div id="buttons-field">
+          <button id="save-add-card-flows"> Сохранить </button>
+          <button id="close-add-card-flows" > Отмена </button>
+        </div>
+    </div>
+
+    <div id="add-card-groups" class="add-card">
+      <div id="add-card-header" class="add-card-header">
+        <h3> Добавить Группу </h3>
+        <button id="add-card-close-groups"> x </button>
+      </div>
+      <div id="add-card-content-groups" class="add-card-content">
+          <form id="new-group-form">
+            <p> Наименование </p>
+            <input id="Наименование-g">
+            <p> ID потока </p>
+            <input id="Flow_ID-g">
+            <p> Студенты_Б </p>
+            <input id="Студенты_Б-g">
+            <p> Студенты_ВБ  </p>
+            <input id="Студенты_ВБ-g">
+          </form>
+      </div>
+      <div id="buttons-field">
+        <button id="save-add-card-groups"> Сохранить </button>
+        <button id="close-add-card-groups" > Отмена </button>
+      </div>
+    </div>
+
+
+
+
+
+  <div id="delete-card-flows" class="delete-card">
+    <div class="add-card-header">
+      <h3 id="text-delete-card-flows"> Вы точно хотите УДАЛИТЬ?  </h3>
+      <button id="delete-card-close-flows"> x </button>
+    </div>
+    <div>
+      <button id="confirm-delete-card-flows"> Удалить </button>
+      <button id="delete-card-close-2-flows"> Отмена </button>
+    </div>
+  </div>
+
+  <div id="delete-card-groups" class="delete-card">
+    <div class="add-card-header">
+      <h3 id="text-delete-card-groups"> Вы точно хотите УДАЛИТЬ?  </h3>
+      <button id="delete-card-close-groups"> x </button>
+    </div>
+    <div>
+      <button id="confirm-delete-card-groups"> Удалить </button>
+      <button id="delete-card-close-2-groups"> Отмена </button>
+    </div>
+  </div>
+
+
+
+
+
+        <div class="add-card-header">
+          <h2> Потоки </h2>
+          <button id="open-add-card-flows"> + </button>
+        </div>
+        <div id="container-table-flows">
+        </div>
+        <button id="save-current-table-flows"> Сохранить таблицу </button>
+        <button id="open-delete-card-flows"> Удалить выбранный поток </button>
+
+        <div class="add-card-header">
+          <h2> Группы </h2>
+          <button id="open-add-card-groups"> + </button>
+        </div>
+        <div id="container-table-groups">
+        </div>
+        <button id="save-current-table-groups"> Сохранить таблицу </button>
+        <button id="open-delete-card-groups"> Удалить выбранную группу </button>
+
+    </div>
+  </body>
+  <script type="text/javascript" src="../js/renderFlows.js"></script>
+</html>

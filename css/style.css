@@ -11,7 +11,7 @@ body {
 }
 
 #tm {
-    background-color: #ffaa2a;
+    background-color: hwb(202 16% 0%);
     width: 100%;
 }
 
@@ -54,7 +54,7 @@ body {
 }
 
 #tm-header-button {
-    background-color: #ffaa2a; /* Green */
+    background-color: hwb(202 16% 0%); /* Green */
     border: none;
     color: white;
     padding: 15px 32px;
@@ -65,7 +65,7 @@ body {
 }
 
 #tm-header-button:hover {
-    background-color: #d18a1f;
+    background-color: hwb(202 8% 29%);
     color: #f8f8f8;
 }
 

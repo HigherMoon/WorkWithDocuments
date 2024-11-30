@@ -316,7 +316,7 @@ function createPersonalTableFromDatabase(database) {
     }
     let table = document.createElement("table");
     let headTable = document.createElement("thead");
-    table.id = "personal-table";
+    table.id = "scroll-table-body";
     headTable.id = "head-table";
 
     for (let paramOfCurPartData in listHeadValuesPersonalTable) {

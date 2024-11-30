@@ -6,21 +6,20 @@ const { app, BrowserWindow, ipcMain } = require('electron/main');
 const { table } = require('node:console');
 const { type } = require('node:os');
 const path = require('node:path'); 
-// Путь к БД после создания проекта (создать папку saves и закинуть файл *.db)
 // const dbPath = path.resolve(__dirname, '../../saves/personal.db')
 // const dbPath = path.join(app.getAppPath(), "../saves/main.db");
 //const dbPath = path.resolve(__dirname, "../../main.db");
-const dbPath = path.resolve(__dirname, "../saves/main.db");
+const dbPath = path.resolve(__dirname, "../../main.db");
 
-let db = new sqlite.Database(dbPath, sqlite.OPEN_READWRITE | sqlite.OPEN_CREATE, (err) => {
-   if (err) {
-      errDB = err;
-      return console.error(err.message);
+let database = new sqlite.Database(dbPath, sqlite.OPEN_READWRITE | sqlite.OPEN_CREATE, (error) => {
+   if (error) {
+      errorDatabase = error;
+      return console.error(error.message);
    }
    else {
       console.log("<Database> База данных подключена");
 }});   
-let errDB;
+let errorDatabase;
 
 function createWindow() { 
    const win = new BrowserWindow({
@@ -35,14 +34,15 @@ function createWindow() {
    //win.webContents.openDevTools();
 }  
 
+// Начальный скрипт, запускающийся автоматически при запуске main.js
 app.whenReady().then(() => {
     createWindow();
     checkDatabaseTables();
-    db.run('PRAGMA foreign_keys = 1');
+    database.run('PRAGMA foreign_keys = 1');
 })
 
 app.on('window-all-closed', () => {
-   db.close(); 
+   database.close(); 
    app.quit();
 })
 
@@ -51,7 +51,7 @@ app.on('window-all-closed', () => {
 //////////////////////////////////////////////////
  ipcMain.handle('get-database-status', (event) => {
    let answer = {
-      "err": errDB,
+      "err": errorDatabase,
       "db_path": dbPath
    }
    return answer;
@@ -230,7 +230,7 @@ function sqlInsertIntoKAF(data) {
       let sql = `INSERT INTO Кафедра (${sqlColumns.join()}) 
          Values (${sqlData.join()})`;   
    
-      db.run(sql, (err) => {
+      database.run(sql, (err) => {
          if (err) {
             console.error(err.message);
             resolve(err.message);
@@ -259,7 +259,7 @@ function sqlInsertIntoFlows(data) {
       let sql = `INSERT INTO Потоки (${sqlColumns.join()}) 
          Values (${sqlData.join()})`;   
    
-      db.run(sql, (err) => {
+      database.run(sql, (err) => {
          if (err) {
             console.error(err.message);
             resolve(err.message);
@@ -289,7 +289,7 @@ function sqlInsertIntoGroups(data) {
          Values (${sqlData.join()})`;   
    
       console.log(sql)
-      db.run(sql, (err) => {
+      database.run(sql, (err) => {
          if (err) {
             console.error(err.message);
             resolve(err.message);
@@ -319,7 +319,7 @@ function sqlInsertIntoUP(data) {
          Values (${sqlData.join()})`;   
    
       console.log(sql)
-      db.run(sql, (err) => {
+      database.run(sql, (err) => {
          if (err) {
             console.error(err.message);
             resolve(err.message);
@@ -349,7 +349,7 @@ function sqlInsertIntoPP(data) {
          Values (${sqlData.join()})`;   
    
       console.log(sql)
-      db.run(sql, (err) => {
+      database.run(sql, (err) => {
          if (err) {
             console.error(err.message);
             resolve(err.message);
@@ -380,7 +380,7 @@ function sqlInsertIntoPLAN(data) {
       let sql = `INSERT INTO План (${sqlColumns.join()}) 
          Values (${sqlData.join()})`;   
    
-      db.run(sql, (err) => {
+      database.run(sql, (err) => {
          if (err) {
             console.error(err.message);
             resolve(err.message);
@@ -410,7 +410,7 @@ function sqlInsertIntoPersonalPLAN(data) {
       let sql = `INSERT INTO Персональный_план (${sqlColumns.join()}) 
          Values (${sqlData.join()})`;   
    
-      db.run(sql, (err) => {
+      database.run(sql, (err) => {
          if (err) {
             console.error(err.message);
             resolve(err.message);
@@ -442,7 +442,7 @@ function updatePersonal(data) {
       }
    }
    return new Promise((resolve, reject) => {
-      db.run(` Update Кафедра
+      database.run(` Update Кафедра
                Set ${updateStroka.join(',')}
                Where Personal_ID = ${data.Personal_ID}`, 
                (err, rows) => { 
@@ -471,7 +471,7 @@ function updateFlows(data) {
       }
    }
    return new Promise((resolve, reject) => {
-      db.run(` Update Потоки
+      database.run(` Update Потоки
                Set ${updateStroka.join(',')}
                Where Flow_ID = ${data.Flow_ID}`, 
                (err, rows) => { 
@@ -500,7 +500,7 @@ function updateGroups(data) {
       }
    }
    return new Promise((resolve, reject) => {
-      db.run(` Update Группы
+      database.run(` Update Группы
                Set ${updateStroka.join(',')}
                Where Group_ID = ${data.Group_ID}`, 
                (err, rows) => { 
@@ -528,7 +528,7 @@ function updateUP(data) {
       }
    }
    return new Promise((resolve, reject) => {
-      db.run(` Update Учебный_план
+      database.run(` Update Учебный_план
                Set ${updateStroka.join(',')}
                Where UP_ID = ${data.UP_ID}`, 
                (err, rows) => { 
@@ -556,7 +556,7 @@ function updatePersonalPlan(data) {
       }
    }
    return new Promise((resolve, reject) => {
-      db.run(` Update Персональный_план
+      database.run(` Update Персональный_план
                Set Часы = ${data.Часы_преподавателя}
                Where UP_ID = ${data.UP_ID} and Personal_ID=${data.Personal_ID}`, 
                (err, rows) => { 
@@ -575,7 +575,7 @@ function updatePersonalPlan(data) {
 
 function deleteFromKaf(data) {
    return new Promise((resolve, reject) => {
-      db.run(` DELETE FROM Кафедра
+      database.run(` DELETE FROM Кафедра
                Where Personal_ID = ${data.Personal_ID}`, 
                (err, rows) => { 
                   if (err) { 
@@ -590,7 +590,7 @@ function deleteFromKaf(data) {
 }
 function deleteFromFlows(data) {
    return new Promise((resolve, reject) => {
-      db.run(` DELETE FROM Потоки
+      database.run(` DELETE FROM Потоки
                Where Flow_ID = ${data.Flow_ID}`, 
                (err, rows) => { 
                   if (err) { 
@@ -605,7 +605,7 @@ function deleteFromFlows(data) {
 }
 function deleteFromGroups(data) {
    return new Promise((resolve, reject) => {
-      db.run(` DELETE FROM Группы
+      database.run(` DELETE FROM Группы
                Where Group_ID = ${data.Group_ID}`, 
                (err, rows) => { 
                   if (err) { 
@@ -620,7 +620,7 @@ function deleteFromGroups(data) {
 }
 function deleteFromUP(data) {
    return new Promise((resolve, reject) => {
-      db.run(` DELETE FROM Учебный_план
+      database.run(` DELETE FROM Учебный_план
                Where UP_ID = ${data.UP_ID}`, 
                (err, rows) => { 
                   if (err) { 
@@ -635,7 +635,7 @@ function deleteFromUP(data) {
 }
 function deleteFromPP(data) {
    return new Promise((resolve, reject) => {
-      db.run(` DELETE FROM Персональный_план
+      database.run(` DELETE FROM Персональный_план
                Where UP_ID = ${data.UP_ID} and Personal_ID=${data.Personal_ID}`, 
                (err, rows) => { 
                   if (err) { 
@@ -651,8 +651,8 @@ function deleteFromPP(data) {
 ////////////////////////////////////////
 /////// Пересоздание таблиц SQL ////////
 ////////////////////////////////////////
-function checkDatabaseTables() {
-   db.serialize(function() {
+function checkDatabaseTables() { 
+   database.serialize(function() {
       //console.log(dbpath);
       
       //sqlDropTable('Кафедра');
@@ -672,33 +672,33 @@ function checkDatabaseTables() {
 /////////////////////////////////////////////////////
 function fillDatabases() {
    return new Promise((resolve, reject) => {
-      db.run(`Insert into Кафедра (ФИО, Часы, Телефон, Почта, Должность, Ставка)
+      database.run(`Insert into Кафедра (ФИО, Часы, Телефон, Почта, Должность, Ставка)
                            Values ('Иванов И.И', 1200, '7-999-999-1234', 'NNN@mail.ru', 'Препод', 2.5),
                                  ('Афанасьев А.А', 900, '7-222-222-1234', 'AAA@mail.ru', 'Препод', 2),
                                  ('Ибрагимовиевич В.В.', 1200, '7-333-333-1234', 'NBB@mail.ru', 'Заведующий', 1.5)
       `, (err, rows) => { if (err) { return console.error(err.message) }} );
 
-      db.run(`Insert into Потоки (Flow_ID, Факультет, Год, Форма_обучения, Наименование)
+      database.run(`Insert into Потоки (Flow_ID, Факультет, Год, Форма_обучения, Наименование)
                               Values (1, 'МТ', '2023/2024', 'Очное', 'МТ301-302_2023/2024'),
                                      (2, 'ФТ', '2023/2024', 'Очное', 'ФТ-101_2023/2024'),
                                      (3, 'ИТ', '2023/2024', 'Заочное', 'ИТ-101_2023/2024')
       `, (err, rows) => { if (err) { return console.error(err.message) }} );
 
-      db.run(`Insert into Группы (Flow_ID, Наименование, Студенты_Б, Студенты_ВБ)
+      database.run(`Insert into Группы (Flow_ID, Наименование, Студенты_Б, Студенты_ВБ)
                         Values   (1, 'МТ-301', 15, 30),
                                  (1, 'МТ-302', 30, 3),
                                  (2, 'ФТ-101', 8, 35),
                                  (3, 'ИТ-401', 10, 15)
       `, (err, rows) => { if (err) { return console.error(err.message) }} );
 
-      db.run(`Insert into Учебный_план (Flow_ID, Наименование, Семестр, Тип, Количество_подгрупп, Часы_УП, Часы)
+      database.run(`Insert into Учебный_план (Flow_ID, Наименование, Семестр, Тип, Количество_подгрупп, Часы_УП, Часы)
                               Values (1, 'База данных', 1, 'Лекции', 1, 30, 30),
                                      (1, 'База данных', 1, 'Практики', 3, 30, 90),
                                      (2, 'База данных', 1, 'Практики', 4, 45, 180),
                                      (3, 'История', 1, 'Лекции', 1, 45, 45)
       `, (err, rows) => { if (err) { return console.error(err.message) }} );
 
-      db.run(`Insert into Персональный_план (UP_ID, Personal_ID, Часы)
+      database.run(`Insert into Персональный_план (UP_ID, Personal_ID, Часы)
                               Values (1, 1, 20),
                                      (1, 2, 20)
       `, (err, rows) => { if (err) { return console.error(err.message) }} );
@@ -713,7 +713,7 @@ function fillDatabases() {
 function sqlSelectAllFromTable(tableName) {
    return new Promise((resolve, reject) => {
       sql = `Select * From ${tableName}`;
-      db.all(sql, [], (err, rows) => {
+      database.all(sql, [], (err, rows) => {
          if (err) {
             console.error(err.message);
          }
@@ -727,7 +727,7 @@ function sqlSelectAllFromTable(tableName) {
 ///////////////////////////////////////////////
 function sqlDropTable(tableName) {
    return new Promise((resolve, reject) => {
-      db.run(`DROP TABLE ${tableName}`, (err, rows) => {
+      database.run(`DROP TABLE ${tableName}`, (err, rows) => {
          if (err) {
             return console.error(err.message);
          }
@@ -738,7 +738,7 @@ function sqlDropTable(tableName) {
 };  
 function createDatabases() {
    return new Promise((resolve, reject) => {
-      db.run(`Create table if not exists Кафедра (
+      database.run(`Create table if not exists Кафедра (
          Personal_ID     INTEGER, 
          ФИО             TEXT NOT NULL,
          Часы            REAL NOT NULL,
@@ -753,7 +753,7 @@ function createDatabases() {
             UNIQUE (ФИО, Телефон, Почта) 
          )`);
 
-      db.run(`Create table if not exists Потоки (
+      database.run(`Create table if not exists Потоки (
          Flow_ID           INTEGER NOT NULL,
          Наименование      TEXT NOT NULL,
          Факультет         TEXT NOT NULL,
@@ -763,7 +763,7 @@ function createDatabases() {
             Primary key (Flow_ID)
          )`);
 
-      db.run(`Create table if not exists Группы (
+      database.run(`Create table if not exists Группы (
          Group_ID            INTEGER,
          Flow_ID             INTEGER NOT NULL,
          Наименование        TEXT NOT NULL,
@@ -781,7 +781,7 @@ function createDatabases() {
             UNIQUE (Наименование) 
          )`);
       */
-      db.run(`Create table if not exists Учебный_план (
+      database.run(`Create table if not exists Учебный_план (
          UP_ID                INTEGER,
          Flow_ID              INTEGER NOT NULL,
          Наименование         TEXT NOT NULL,
@@ -795,7 +795,7 @@ function createDatabases() {
             FOREIGN KEY (Flow_ID) REFERENCES Потоки (Flow_ID) ON DELETE CASCADE
          )`);
 
-      db.run(`Create table if not exists Персональный_план (
+      database.run(`Create table if not exists Персональный_план (
          Personal_ID     INTEGER,
          UP_ID           INTEGER,
          Часы            INTEGER NOT NULL,
@@ -813,7 +813,7 @@ function getCurFlows(data) {
    return new Promise((resolve, reject) => {
       sql = `Select Flow_ID, Наименование, Год, Форма_обучения
             From Потоки`;
-            db.all(sql, [], (err, rows) => {
+            database.all(sql, [], (err, rows) => {
             if (err) {
                console.error(err.message);
             };
@@ -827,7 +827,7 @@ function getCurPPDB() {
                     Кафедра.Часы as 'Нагрузка', 0+sum(Персональный_план.Часы) as 'Часы'
             From Кафедра LEFT JOIN Персональный_план on Кафедра.Personal_ID=Персональный_план.Personal_ID
             Group by Кафедра.Personal_ID, ФИО, Должность, Кафедра.Часы`;
-            db.all(sql, [], (err, rows) => {
+            database.all(sql, [], (err, rows) => {
             if (err) {
                console.error(err.message);
             };
@@ -841,7 +841,7 @@ function getActualDataPPUP(data) {
       sql = `Select UP_ID, Потоки.Наименование as 'Поток', Учебный_план.Наименование, Тип, Часы_УП, Часы
              From Учебный_план join Потоки on Учебный_план.Flow_ID=Потоки.Flow_ID
              Where Год='${data.Год}' and Семестр=${data.Семестр} and Форма_обучения='${data.Форма_обучения}'`;
-            db.all(sql, [], (err, rows) => {
+            database.all(sql, [], (err, rows) => {
             if (err) {
                console.error(err.message);
             };
@@ -858,7 +858,7 @@ function getCurUpDB(data) {
                      Год, Семестр, Форма_обучения, Тип, Количество_подгрупп, Часы_УП, Часы 
             From Учебный_план JOIN Потоки on Потоки.Flow_ID=Учебный_план.Flow_ID
             Where Год='${data.Год}' and Семестр='${data.Семестр}' and Форма_обучения='${data.Форма_обучения}'`;
-            db.all(sql, [], (err, rows) => {
+            database.all(sql, [], (err, rows) => {
             if (err) {
                console.error(err.message);
             };
@@ -867,7 +867,7 @@ function getCurUpDB(data) {
       });
    });
 }
-
+Ы
 function getCurPersonalPlan(data) {
    console.log(data)
    return new Promise((resolve, reject) => {
@@ -881,7 +881,7 @@ function getCurPersonalPlan(data) {
                    Год = '${data.Год}' and
                    Форма_обучения = '${data.Форма_обучения}'
                    `;
-            db.all(sql, [], (err, rows) => {
+            database.all(sql, [], (err, rows) => {
             if (err) {
                console.error(err.message);
             };
@@ -896,7 +896,7 @@ function getCurHoursTeachers(data) {
             From Персональный_план
             Where Personal_ID=${data.Personal_ID}
             Group by Personal_ID`;
-      db.all(sql, [], (err, rows) => {
+      database.all(sql, [], (err, rows) => {
       if (err) {
          console.error(err.message);
       };
@@ -918,7 +918,7 @@ function getCurStatsTeachers(data) {
                    Форма_обучения = '${data.Форма_обучения}'
              Group by Personal_ID, ФИО
                    `;
-            db.all(sql, [], (err, rows) => {
+            database.all(sql, [], (err, rows) => {
             if (err) {
                console.error(err.message);
             };

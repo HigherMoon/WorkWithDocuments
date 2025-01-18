@@ -5,9 +5,7 @@ const deleteCardText = document.getElementById('text-delete-card');
 const containerTable = document.getElementById("container-table-kaf");
 let selectedID = null;
 
-window.electronAPI.getDatabaseTable('Кафедра').then((data) => {
-    createTableFromDatabase(data);
-  });
+updateCurTable();
 
 function createTableFromDatabase(database) {
     if (Object.keys(database).length == 0) {
@@ -27,30 +25,40 @@ function createTableFromDatabase(database) {
       headRow.id = paramOfCurPartData;
       headTable.appendChild(headRow);
     };
+    headTable.appendChild(document.createElement("th"));
     table.appendChild(headTable);
-    // ---------------------------------
+
     // ----- Создание тела таблицы -----
     for (let indexOfData in Object.keys(database)) {
       let row = document.createElement("tr");
       let curPartData = database[indexOfData];
-  
       for (let paramOfCurPartData in curPartData) {
         let col = document.createElement("td");
-        if (paramOfCurPartData != "Personal_ID") col.contentEditable = true;
+        if (paramOfCurPartData != "id") col.contentEditable = true;
         col.innerHTML = curPartData[paramOfCurPartData];
         col.id = paramOfCurPartData;
         row.appendChild(col);
       };
-      row.addEventListener("click", () => {
-        selectedID = row.children["Personal_ID"].innerHTML;
+      let col = document.createElement("td");
+      colbut = document.createElement("button");
+      colbut.innerHTML = 'Удалить';
+      colbut.addEventListener("click", () => {
+        deleteData = { id: curPartData['id'] };
+        window.electronAPI.deleteKafTable(deleteData).then((answer) => {
+          console.log(answer)
+        });
+        //deleteCard.style.display = 'none';
+        updateCurTable();
       });
+      col.appendChild(colbut);
+      row.appendChild(col);
       table.appendChild(row);
     };
-    // ---------------------------------
-    // Добавление таблицы на страницу
     containerTable.appendChild(table);
     console.log("Новая таблица создана.")
   };
+
+/*
 const buttonUpdateKaf = document.getElementById("button-update-table-kaf").addEventListener("click", () => {
   let table = document.getElementById("data-table");
   let headTable = document.getElementById("head-table");
@@ -60,11 +68,9 @@ const buttonUpdateKaf = document.getElementById("button-update-table-kaf").addEv
     if (headTable.children[i].innerHTML != undefined)
       data[headTable.children[i].innerHTML] = "";
   }
-
   console.log("func \"saveCurrentDataFromTable\"")
   
   let countOftr = table.getElementsByTagName("tr").length;
-
   for (let i=0; i < countOftr; i++) {
     let current_tr = table.getElementsByTagName("tr")[i];
     let dataToSend = {};
@@ -74,10 +80,8 @@ const buttonUpdateKaf = document.getElementById("button-update-table-kaf").addEv
     }
     window.electronAPI.updateKafTable(dataToSend).then((answer) => {
       console.log(answer)
-    });
-  } 
-});
-
+    })}});
+*/
 
 const buttonOpenAddCard = document.getElementById("open-add-card").addEventListener("click", () => {
   addCard.style.display = 'block';
@@ -91,26 +95,34 @@ const secondButtonCloseAddCard = document.getElementById("close-add-card").addEv
   addCard.style.display = 'none';
 });
 const buttonSaveAddCard = document.getElementById('save-add-card').addEventListener("click", () => {
-  if (document.getElementById('Нагрузка-f').value=="" && document.getElementById('ФИО-f').value=="") {
-    alert('Укажите ФИО и нагрузку!')
-  }
-  else if (document.getElementById('ФИО-f').value=="") {
-    alert('Введите ФИО!')
-  }
-  else if (document.getElementById('Нагрузка-f').value=="") {
-    alert('Укажите нагрузку!')
-  }
-  else{
+  let errorNumber = 0;
+  let errorText = "";
+  let listOfReqCels = {
+    "Фамилия-f": "Фамилию",
+    "Имя-f": "Имя",
+    "Отчество-f": "Отчество",
+    "Нагрузка-f": "Нагрузку"
+  };
+  for (cell in listOfReqCels) {
+    if (document.getElementById(cell).value=="") {
+      errorNumber += 1;
+      errorText += `Необходимо заполнить ${listOfReqCels[cell]}\n`
+    }
+  };
+  if (errorNumber > 0) { alert(errorText) }
+  else {
     data = {
-      ФИО: document.getElementById('ФИО-f').value,
-      Часы: document.getElementById('Нагрузка-f').value,
-      Должность: document.getElementById('Должность-f').value,
-      Звание: document.getElementById('Звание-f').value,
-      Учёная_степень: document.getElementById('Учёная_степень-f').value,
-      Телефон: document.getElementById('Телефон-f').value,
-      Почта: document.getElementById('Почта-f').value,
-      ГПД: document.getElementById('ГПД-f').value,
-      Ставка: document.getElementById('Ставка-f').value
+      secondname: document.getElementById('Фамилия-f').value,
+      firstname: document.getElementById('Имя-f').value,
+      surname: document.getElementById('Отчество-f').value,
+      hours: document.getElementById('Нагрузка-f').value,
+      position: document.getElementById('Должность-f').value,
+      rank: document.getElementById('Звание-f').value,
+      academic: document.getElementById('Учёная_степень-f').value,
+      phone: document.getElementById('Телефон-f').value,
+      mail: document.getElementById('Почта-f').value,
+      gpd: document.getElementById('ГПД-f').value,
+      salary: document.getElementById('Ставка-f').value
     }
     console.log(data)
     window.electronAPI.insertKafTable(data).then((answer) => {
@@ -120,11 +132,12 @@ const buttonSaveAddCard = document.getElementById('save-add-card').addEventListe
   }
 });
 
-
+/*
 const buttonOpenDeleteCard = document.getElementById("open-delete-card").addEventListener("click", () => {
   deleteCardText.innerHTML = `Вы точно хотите УДАЛИТЬ Преподавателя с ID = ${selectedID}?`;
   deleteCard.style.display = 'block';
 });
+*/
 const buttonCloseDeleteCard = document.getElementById("delete-card-close").addEventListener("click", () => {
   console.log('закрыто')
   deleteCard.style.display = 'none';
@@ -133,23 +146,17 @@ const secondButtonCloseDeleteCard = document.getElementById("delete-card-close-2
   console.log('закрыто')
   deleteCard.style.display = 'none';
 });
-const buttonDeleteAddCard = document.getElementById('confirm-delete-card').addEventListener("click", () => {
-  
-  data = {
-    Personal_ID: selectedID
-  }
-  window.electronAPI.deleteKafTable(data).then((answer) => {
-    console.log(answer)
-  });
-   deleteCard.style.display = 'none';
-   updateCurTable();
-});
 
 function updateCurTable() {
   while(containerTable.firstChild) {
     containerTable.removeChild(containerTable.firstChild); 
   };
-  window.electronAPI.getDatabaseTable('Кафедра').then((data) => {
+  window.electronAPI.getDatabaseTable('kafedra').then((data) => {
     createTableFromDatabase(data);
   });
 }
+
+document.getElementById('menu-toggle').addEventListener('click', function() {
+  var sidebar = document.getElementById('sidebar');
+  sidebar.classList.toggle('open');
+});

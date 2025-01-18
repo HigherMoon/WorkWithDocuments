@@ -1,7 +1,6 @@
 let personalTableIsCreated = false;  // Проверка создана ли уже таблица
 let currentData;                     // Текущие данные
 
-
 let currentSemester = 1;               // Текущий семестр (1, 2)
 let currentYear = "2023/2024";         // Текущий год
 let currentFormOfEducation = "Очное";  // Текущая форма обучения (Очное, Заочное, Очно-заочное, Аспирантура) 
@@ -52,10 +51,6 @@ window.electronAPI.getPersonalDatabase().then((data) => {
 });
 
 
-
-
-
-
 const listOfHeadRowsValues = {
     "Список преподавателей": "ФИО",
     "Должность": "Должность",
@@ -64,7 +59,6 @@ const listOfHeadRowsValues = {
     "Текущая нагрузка": "current_Нагрузка",
     "Загрузка (%)": "Загрузка"
 }
-
 
 
 function createPersonalTableFromDatabase(database) {
@@ -117,3 +111,8 @@ function updateInfoAboutCurrentSemesterAndFormEducation() {
   pSemesterAndFormEducation.innerHTML = `${currentSemester} Семестр, ${currentFormOfEducation}`;
   pYear.innerHTML = currentYear;
 }
+
+document.getElementById('menu-toggle').addEventListener('click', function() {
+  var sidebar = document.getElementById('sidebar');
+  sidebar.classList.toggle('open');
+});

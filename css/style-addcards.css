@@ -1,0 +1,50 @@
+.add-card {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0px 5px 35px 0px rgba(0, 0, 0, 0.5);
+    padding: 10px 25px;
+    height: 80%;
+    width: 60%;
+    border-radius: 15px;
+    background-color: white;
+    position: fixed;
+}
+
+.add-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#add-card-close {
+    font-size: 20px;
+    color: grey;
+    width: 25px;
+    height: 25px;
+}
+
+#add-card-close:hover {
+    color: rgb(44, 44, 44);
+}
+
+.add-card-content {
+    padding: 5px;
+    height: 70%;
+    overflow-y: scroll;
+}
+
+.add-card-index {
+    display: none;
+    box-shadow: 0px 5px 35px 0px rgba(0, 0, 0, 0.5);
+    padding: 10px 25px;
+    height: 40%;
+    width: 35%;
+    top: 28%;
+    right: 30%;
+    border-radius: 15px;
+    background-color: white;
+    position: fixed;
+}

@@ -4,24 +4,49 @@
     <meta charset="UTF-8">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
     <title> Главная </title>
-    
     <link rel="stylesheet" href="../css/style.css">
-    
   </head>
 
   <body>
     <div id="tm"> 
       <div id="tm-header">
-        <a id="tm-header-button" href="index.html"> Распределение нагрузки </a>
-        <a id="tm-header-button" href="UP.html"> Учебный план </a>
-        <a id="tm-header-button" href="Flows.html"> Потоки и группы </a>
-        <a id="tm-header-button" href="Kafedra.html"> Кафедра </a>
+        <button id="menu-toggle">МЕНЮ (test)</button>
+        <a id="tm-header-button" href="index.html">Распределение нагрузки</a>
+        <a id="tm-header-button" href="UP.html">Учебный план</a>
+        <a id="tm-header-button" href="Flows.html">Потоки и группы</a>
+        <a id="tm-header-button" href="Kafedra.html">Кафедра</a>
       </div>
     </div>
 
     <div id="main">
+      <nav id="sidebar">
+        <ul>
+          <li><a id="" href="index.html">Распределение нагрузки</a></li>
+          <li><a id="" href="UP.html">Учебный план</a></li>
+          <li><a id="" href="Flows.html">Потоки и группы</a></li>
+          <li><a id="" href="Kafedra.html">Кафедра</a></li>
+        </ul>
+      </nav>
+
         <h2> Распределение нагрузки </h2>
         
+        <button type="button" id="openDialog" class="red">
+          ТЕСТ dialog add-button
+        </button>
+        <dialog id='testDialog'>
+          <h3> Присваивание предмета и часов для преподавателя </h3>
+          <form method="dialog">
+            <div>
+              <p> Предмет (ID) </p>
+              <input id="group-input" list="group-input-helper"> 
+              <datalist id="group-input-helper"></datalist>
+              <p> Количество часов </p>
+              <input id="inputHours"> 
+            </div>
+            <button type="submit"> Закрыть </button>
+          </form>
+        </dialog>
+
         <div id="container-current-person">
             <div>
               <select id="select-current-год">
@@ -29,18 +54,17 @@
               </select>
             </div>
             <div id="container-buttons-form-education">
-              <button id="button-o">  Очное</button>
-              <button id="button-z">  Заочное </button>
-              <button id="button-oz"> Очно-заочное </button>
-              <button id="button-a">  Аспирантура</button>
+              <button id="button-o">Очное</button>
+              <button id="button-z">Заочное</button>
+              <button id="button-oz">Очно-заочное</button>
+              <button id="button-a">Аспирантура</button>
             </div>
             <div id="container-buttons-semester">
-              <button id="button-1-sem"> 1 Семестр </button>
-              <button id="button-2-sem"> 2 Семестр </button>
+              <button id="button-1-sem">1 Семестр</button>
+              <button id="button-2-sem">2 Семестр</button>
             </div>
-            <p id="current-ФИО"><strong> ФИО </strong></p>
-            <p id="current-год"> Год: 2023/2024</p>
-            <p id="current-семестр"> 1 Семестр, Очное </p>
+            <p id="current-ФИО"><strong>ФИО</strong></p>
+            <p id="current-год">Год: 2025/2026</p>
             <button id="current-data"> Вывести учебный план </button>
         </div>
 
@@ -75,36 +99,33 @@
         </div>
         -->
         
-        <div id="add-card" class="add-card">
-          <div id="add-card-header" class="add-card-header">
-            <h3 id="add-card-text"> Добавить предмет для </h3>
-            <button id="add-card-close"> x </button>
-          </div>
-          <div id="add-card-content" class="add-card-content">
-              <form id="new-pp-form">
-                <p> Предмет (ID) </p>
-                <input id="group-input" list="group-input-helper"> 
-                <datalist id="group-input-helper"></datalist>
-                <p> Количество часов </p>
-                <input id="inputHours"> 
-              </form>
-          </div>
-          <div id="buttons-field">
-            <button id="save-add-card"> Сохранить </button>
-            <button id="close-add-card" > Отмена </button>
-          </div>
+      <div id="add-card" class="add-card">
+        <div id="add-card-header" class="add-card-header">
+          <h3 id="add-card-text"> Добавить предмет для </h3>
+          <button id="add-card-close"> x </button>
+        </div>
+        <div id="add-card-content" class="add-card-content">
+            <form id="new-pp-form">
+              <p> Предмет (ID) </p>
+              <input id="syllabus-input" list="syllabus-input-helper"> 
+              <datalist id="syllabus-input-helper"></datalist>
+              <p> Количество подгрупп </p>
+              <input id="inputSubGroups"> 
+              <p> Количество часов </p>
+              <input id="hours-input"> 
+            </form>
+        </div>
+        <div id="buttons-field">
+          <button id="save-add-card"> Сохранить </button>
+          <button id="close-add-card" > Отмена </button>
+        </div>
       </div>
 
-      
-        <div class="add-card-header">
-          <h3> Персональный план </h3>
-          <button id="open-add-card"> + </button>
-        </div>
-        <div id="container-data-table">
-        </div>
-        <button id="button-update-table-kaf"> Сохранить таблицу </button>
-        <button id="open-delete-card"> Удалить выбранную строку </button>
-
+      <div class="add-card-header">
+        <h3> Персональный план </h3>
+        <button id="open-add-card"> + </button>
+      </div>
+      <div id="container-data-table"></div>
     </div>
   </body>
   <script type="text/javascript" src="../js/render.js"></script>

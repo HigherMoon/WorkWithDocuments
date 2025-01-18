@@ -1,9 +1,49 @@
-::-webkit-scrollbar {
-    background-color: transparent;
-    width: 7px;
+#sidebar {
+  width: 200px;
+  height: 100%;
+  position: fixed;
+  top: 35px;
+  left: -200px;
+  background-color: #f0f0f0;
+  overflow-y: auto;
+  transition: left 0.3s ease;
 }
 
-::-webkit-scrollbar-thumb {
-    background: linear-gradient(#ffab5d, #fd6161);
-    border-radius: 100px;
+#sidebar.open {
+  left: 0;
+}
+
+#sidebar ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+#sidebar ul li {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+#sidebar ul li:hover {
+  background-color: rgb(255, 201, 181);
+  transition: 0.3s;
+}
+
+#sidebar ul li a {
+  text-decoration: none;
+  color: #333;
+}
+
+#menu-toggle {
+  min-width: 200px;
+  max-width: 200px;
+  padding: 10px 10px;
+  font-size: 20px;
+  background-color: #e61414;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+#menu-toggle:hover {
+  background-color: #45a049;
 }

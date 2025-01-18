@@ -7,3 +7,7 @@ console.log(new Date().getFullYear());
 <div class="tooltip">Hover over me
   <span class="tooltiptext">Tooltip text</span>
 </div>
+
+
+
+<progress value='110' max='1120'></progress>

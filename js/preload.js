@@ -1,9 +1,9 @@
 const { contextBridge, ipcRenderer } = require('electron/renderer')
 
 contextBridge.exposeInMainWorld('electronAPI', {
-
   getDatabaseStatus: () => ipcRenderer.invoke('get-database-status'),
   getDatabaseTable: (tableName) => ipcRenderer.invoke('get-table-DB', tableName),
+
   getCurUPTable: (data) => ipcRenderer.invoke('get-cur-UP', data),
   getCurPersonalPlan: (data) => ipcRenderer.invoke('get-cur-PP', data),
   getCurHoursTeachers: (data) => ipcRenderer.invoke('get-cur-hours-person', data),
@@ -11,6 +11,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getCurPPDatabase: () => ipcRenderer.invoke('get-cur-pp-database'),
   getActualDataPPUP: (data) => ipcRenderer.invoke('get-actual-pp-up', data),
   getCurFlows: (data) => ipcRenderer.invoke('get-cur-flows', data),
+  getCurDisciplines: (data) => ipcRenderer.invoke('get-cur-disciplines', data),
 
   updateFlowsTable: (data) => ipcRenderer.invoke('update-table-flows', data),
   updateGroupsTable: (data) => ipcRenderer.invoke('update-table-groups', data),
@@ -29,6 +30,4 @@ contextBridge.exposeInMainWorld('electronAPI', {
   deleteGroupsTable: (data) => ipcRenderer.invoke('delete-table-groups', data),
   deleteUPTable: (data) => ipcRenderer.invoke('delete-table-up', data),
   deletePPTable: (data) => ipcRenderer.invoke('delete-table-pp', data)
-  
-  
 })

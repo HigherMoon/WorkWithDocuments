@@ -12,6 +12,7 @@
   <body>
     <div id="tm"> 
       <div id="tm-header">
+        <button id="menu-toggle">МЕНЮ (test)</button>
         <a id="tm-header-button" href="index.html"> Распределение нагрузки </a>
         <a id="tm-header-button" href="UP.html"> Учебный план </a>
         <a id="tm-header-button" href="Flows.html"> Потоки и группы </a>
@@ -20,6 +21,14 @@
     </div>
 
     <div id="main">
+      <nav id="sidebar">
+        <ul>
+          <li><a id="" href="index.html">Распределение нагрузки</a></li>
+          <li><a id="" href="UP.html">Учебный план</a></li>
+          <li><a id="" href="Flows.html">Потоки и группы</a></li>
+          <li><a id="" href="Kafedra.html">Кафедра</a></li>
+        </ul>
+      </nav>
 
       <div id="add-card-flows" class="add-card">
         <div id="add-card-header" class="add-card-header">
@@ -32,7 +41,7 @@
               <input id="Наименование-f">
               <p> Факультет </p>
               <input id="Факультет-f">
-              <p> Год </p>
+              <p> Год <i>(формат: "2024/2025")</i></p>
               <input id="Год-f">
               <p> Форма обучения  </p>
               <select id="Форма_обучения-f"> 
@@ -108,8 +117,6 @@
         </div>
         <div id="container-table-flows">
         </div>
-        <button id="save-current-table-flows"> Сохранить таблицу </button>
-        <button id="open-delete-card-flows"> Удалить выбранный поток </button>
 
         <div class="add-card-header">
           <h2> Группы </h2>
@@ -117,8 +124,6 @@
         </div>
         <div id="container-table-groups">
         </div>
-        <button id="save-current-table-groups"> Сохранить таблицу </button>
-        <button id="open-delete-card-groups"> Удалить выбранную группу </button>
 
     </div>
   </body>

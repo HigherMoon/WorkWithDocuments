@@ -1,4 +1,5 @@
 const containerTable = document.getElementById("container-table-up")
+/*
 const saveButtonTableUP = document.getElementById("save-current-table-up").addEventListener("click", () => {
   let table = document.getElementById(`data-table`);
   let headTable = table.firstChild;
@@ -23,32 +24,46 @@ const saveButtonTableUP = document.getElementById("save-current-table-up").addEv
     });
   } 
 });
+*/
 const addCard = document.getElementById("add-card");
 const formAddCard = document.getElementById('new-up-form');
 const deleteCard = document.getElementById('delete-card');
 const deleteCardText = document.getElementById('text-delete-card');
 let selectedID = null;
-const datalistGroups = document.getElementById("flows-input-helper");
+const datalistFlows = document.getElementById("flows-input-helper");
+const datalistDisciplines = document.getElementById("disciplines-input-helper");
 const inputGroup = document.getElementById("flows-input")
 
 
-window.electronAPI.getDatabaseTable('Учебный_план').then((data) => {
+window.electronAPI.getDatabaseTable('syllabus').then((data) => {
   createTableFromDatabase(data);
 });
 
 
 const buttonOpenAddCard = document.getElementById("open-add-card").addEventListener("click", () => {
-  while(datalistGroups.firstChild) {
-    datalistGroups.removeChild(datalistGroups.firstChild); 
+  while(datalistFlows.firstChild) {
+    datalistFlows.removeChild(datalistFlows.firstChild); 
+  };
+  while(datalistDisciplines.firstChild) {
+    datalistDisciplines.removeChild(datalistDisciplines.firstChild); 
   };
   dataTo={};
   window.electronAPI.getCurFlows(dataTo).then((data) => {
     for (let index in data) {
       let objData = data[index];
       let newOption = document.createElement("option");
-      newOption.value = objData["Flow_ID"];
-      newOption.innerHTML = `${objData['Наименование']} | ${objData['Год']} | ${objData['Форма_обучения']}`;
-      datalistGroups.appendChild(newOption);
+      newOption.value = objData["id"];
+      newOption.innerHTML = `${objData['name']} | ${objData['year']} | ${objData['education_form']}`;
+      datalistFlows.appendChild(newOption);
+    }
+  });
+  window.electronAPI.getCurDisciplines(dataTo).then((data) => {
+    for (let index in data) {
+      let objData = data[index];
+      let newOption = document.createElement("option");
+      newOption.value = objData["id"];
+      newOption.innerHTML = `${objData['name']}`;
+      datalistDisciplines.appendChild(newOption);
     }
   });
   addCard.style.display = 'block';
@@ -77,22 +92,22 @@ const secondButtonCloseAddCard = document.getElementById("close-add-card").addEv
 });
 const buttonSaveAddCard = document.getElementById('save-add-card').addEventListener("click", () => {
   data = {
-    Flow_ID: document.getElementById('flows-input').value,
-    Наименование: document.getElementById('Наименование-f').value,
-    Семестр: document.getElementById('Семестр-f').value,
-    Тип: document.getElementById('Тип-f').value,
-    Количество_подгрупп: document.getElementById('Количество_подгрупп-f').value,
-    Часы_УП: document.getElementById('Часы_УП-f').value,
-    Часы: document.getElementById('Часы-f').value
+    flow_ID: document.getElementById('flows-input').value,
+    discipline_id: document.getElementById('Наименование-f').value,
+    semester: document.getElementById('Семестр-f').value,
+    type: document.getElementById('Тип-f').value,
+    subgroups: document.getElementById('Количество_подгрупп-f').value,
+    sub_hours: document.getElementById('Часы_УП-f').value,
+    hours: document.getElementById('Часы-f').value
   }
-  if (data.Flow_ID=="" || data.Дисциплина=="" ||
-      data.Тип=="" || data.Количество_подгрупп=="" ||
-      data.Часы_УП=="" || data.Часы=="")
+  if (data.flow_ID=="" || data.discipline_id=="" ||
+      data.type=="" || data.subgroups=="" ||
+      data.sub_hours=="" || data.hours=="")
   {
     alert('Заполнить надо всё!')
     console.log('Не всё')
   }
-  else if (data.Часы_УП<=0 || data.Часы<=0) {
+  else if (data.sub_hours<=0 || data.hours<=0) {
     alert('Часы не могут быть меньше или равны 0')
   }
   else {
@@ -100,7 +115,7 @@ const buttonSaveAddCard = document.getElementById('save-add-card').addEventListe
     window.electronAPI.insertUPTable(data).then((answer) => {
       console.log(answer)
     });
-    window.electronAPI.getDatabaseTable('Учебный_план').then((data) => {
+    window.electronAPI.getDatabaseTable('syllabus').then((data) => {
       createTableFromDatabase(data);
     });
     addCard.style.display = 'none';
@@ -113,11 +128,12 @@ const buttonSaveAddCard = document.getElementById('save-add-card').addEventListe
     document.getElementById('Часы-f').value = null;
   }
 });
-
+/*
 const buttonOpenDeleteCard = document.getElementById("open-delete-card").addEventListener("click", () => {
   deleteCardText.innerHTML = `Вы точно хотите УДАЛИТЬ предмет с ID = ${selectedID}?`;
   deleteCard.style.display = 'block';
 });
+*/
 const buttonCloseDeleteCard = document.getElementById("delete-card-close").addEventListener("click", () => {
   console.log('закрыто')
   deleteCard.style.display = 'none';
@@ -142,7 +158,7 @@ function updateCurTable() {
   while(containerTable.firstChild) {
     containerTable.removeChild(containerTable.firstChild); 
   };
-  window.electronAPI.getDatabaseTable('Учебный_план').then((data) => {
+  window.electronAPI.getDatabaseTable('syllabus').then((data) => {
     createTableFromDatabase(data);
   });
 }
@@ -168,6 +184,7 @@ function createTableFromDatabase(database) {
       headRow.id = paramOfCurPartData;
       headTable.appendChild(headRow);
     };
+    headTable.appendChild(document.createElement("th"));
     table.appendChild(headTable);
     // ---------------------------------
     // ----- Создание тела таблицы -----
@@ -182,13 +199,27 @@ function createTableFromDatabase(database) {
         col.id = paramOfCurPartData;
         row.appendChild(col);
       };
-      row.addEventListener("click", () => {
-        selectedID = row.children["UP_ID"].innerHTML;
+      let col = document.createElement("td");
+      colbut = document.createElement("button");
+      colbut.innerHTML = 'Удалить';
+      colbut.addEventListener("click", () => {
+        deleteData = { id: curPartData['id'] };
+        window.electronAPI.deleteUPTable(deleteData).then((answer) => {
+          console.log(answer)
+        });
+        updateCurTable();
       });
+      col.appendChild(colbut);
+      row.appendChild(col);
       table.appendChild(row);
     };
   
-     // Добавление таблицы на страницу
-     containerTable.appendChild(table);
+    // Добавление таблицы на страницу
+    containerTable.appendChild(table);
     console.log("Новая таблица создана.")
   };
+
+document.getElementById('menu-toggle').addEventListener('click', function() {
+  var sidebar = document.getElementById('sidebar');
+  sidebar.classList.toggle('open');
+});

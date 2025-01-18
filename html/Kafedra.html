@@ -12,6 +12,7 @@
   <body>
     <div id="tm"> 
       <div id="tm-header">
+        <button id="menu-toggle">МЕНЮ (test)</button>
         <a id="tm-header-button" href="index.html"> Распределение нагрузки </a>
         <a id="tm-header-button" href="UP.html"> Учебный план </a>
         <a id="tm-header-button" href="Flows.html"> Потоки и группы </a>
@@ -20,7 +21,15 @@
     </div>
 
     <div id="main">
-     
+      <nav id="sidebar">
+        <ul>
+          <li><a id="" href="index.html">Распределение нагрузки</a></li>
+          <li><a id="" href="UP.html">Учебный план</a></li>
+          <li><a id="" href="Flows.html">Потоки и группы</a></li>
+          <li><a id="" href="Kafedra.html">Кафедра</a></li>
+        </ul>
+      </nav>
+
       <div id="add-card" class="add-card">
         <div id="add-card-header" class="add-card-header">
           <h3> Добавить преподавателя </h3>
@@ -28,8 +37,12 @@
         </div>
         <div id="add-card-content" class="add-card-content">
             <form id="new-teacher-form">
-              <p> ФИО </p>
-              <input id="ФИО-f">
+              <p> Имя </p>
+              <input id="Имя-f">
+              <p> Фамилия </p>
+              <input id="Фамилия-f">
+              <p> Отчество </p>
+              <input id="Отчество-f">
               <p> Нагрузка </p>
               <input id="Нагрузка-f">
               <p> Должность </p>
@@ -74,10 +87,6 @@
           <button id="open-add-card"> + </button>
         </div>
         <div id="container-table-kaf"></div>
-
-        <button id="button-update-table-kaf"> Сохранить таблицу </button>
-        <button id="open-delete-card"> Удалить выбранную строку </button>
-        <!--<progress value='110' max='1120'></progress>-->
     </div>
   </body>
   <script type="text/javascript" src="../js/renderKAF.js"></script>

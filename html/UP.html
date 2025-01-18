@@ -12,6 +12,7 @@
   <body>
     <div id="tm"> 
       <div id="tm-header">
+        <button id="menu-toggle">МЕНЮ (test)</button>
         <a id="tm-header-button" href="index.html"> Распределение нагрузки </a>
         <a id="tm-header-button" href="UP.html"> Учебный план </a>
         <a id="tm-header-button" href="Flows.html"> Потоки и группы </a>
@@ -20,6 +21,17 @@
     </div>
 
     <div id="main">
+      <nav id="sidebar">
+        <ul>
+          <li><a id="" href="index.html">Распределение нагрузки</a></li>
+          <li><a id="" href="UP.html">Учебный план</a></li>
+          <li><a id="" href="Flows.html">Потоки и группы</a></li>
+          <li><a id="" href="Kafedra.html">Кафедра</a></li>
+        </ul>
+      </nav>
+
+      <input type="file">
+      <button class="red"> Вывести содержимое </button>
     
       <div id="add-card" class="add-card">
         <div id="add-card-header" class="add-card-header">
@@ -29,23 +41,24 @@
         <div id="add-card-content" class="add-card-content">
             <form id="new-up-form">
               <p> ID потока </p>
-              <input id="flows-input" list="flows-input-helper"> 
-              <datalist id="flows-input-helper"></datalist>
+                <input id="flows-input" list="flows-input-helper"> 
+                <datalist id="flows-input-helper"></datalist>
               <p> Дисциплина </p>
-              <input id="Наименование-f">
+                <input id="Наименование-f" list="disciplines-input-helper">
+                <datalist id="disciplines-input-helper"></datalist>
               <p> Семестр </p>
-              <select id="Семестр-f"> 
-                <option> 1 </option>
-                <option> 2 </option>
-              </select>
+                <select id="Семестр-f"> 
+                  <option> 1 </option>
+                  <option> 2 </option>
+                </select>
               <p> Тип </p>
-              <input id="Тип-f">
+                <input id="Тип-f">
               <p> Количество подгрупп </p>
-              <input id="Количество_подгрупп-f">
+                <input id="Количество_подгрупп-f">
               <p> Часы по учебному плану </p>
-              <input id="Часы_УП-f">
+                <input id="Часы_УП-f">
               <p> Всего часов </p>
-              <input id="Часы-f">
+                <input id="Часы-f">
             </form>
         </div>
         <div id="buttons-field">
@@ -73,8 +86,6 @@
         </div>
         <div id="container-table-up">
         </div>
-        <button id="save-current-table-up"> Сохранить таблицу </button>
-        <button id="open-delete-card"> Удалить выбранную строку </button>
         
     </div>
   </body>

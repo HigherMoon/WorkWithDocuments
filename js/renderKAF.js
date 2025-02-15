@@ -2,61 +2,9 @@ const addCard = document.getElementById('add-card');
 const formAddCard = document.getElementById('new-teacher-form');
 const deleteCard = document.getElementById('delete-card');
 const deleteCardText = document.getElementById('text-delete-card');
-const containerTable = document.getElementById("container-table-kaf");
 let selectedID = null;
 
-updateCurTable();
-
-function createTableFromDatabase(database) {
-    if (Object.keys(database).length == 0) {
-      console.log("<!> Пустая база данных <!>")
-      return false;
-    };
-    let table = document.createElement("table");
-    table.id = "data-table"
-    // -- Создание заголовков таблицы --
-    let headTable = document.createElement("thead");
-    headTable.id = "head-table";
-  
-    let curPartData = database[0]
-    for (let paramOfCurPartData in curPartData) {
-      let headRow = document.createElement("th");
-      headRow.innerHTML = paramOfCurPartData;
-      headRow.id = paramOfCurPartData;
-      headTable.appendChild(headRow);
-    };
-    headTable.appendChild(document.createElement("th"));
-    table.appendChild(headTable);
-
-    // ----- Создание тела таблицы -----
-    for (let indexOfData in Object.keys(database)) {
-      let row = document.createElement("tr");
-      let curPartData = database[indexOfData];
-      for (let paramOfCurPartData in curPartData) {
-        let col = document.createElement("td");
-        if (paramOfCurPartData != "id") col.contentEditable = true;
-        col.innerHTML = curPartData[paramOfCurPartData];
-        col.id = paramOfCurPartData;
-        row.appendChild(col);
-      };
-      let col = document.createElement("td");
-      colbut = document.createElement("button");
-      colbut.innerHTML = 'Удалить';
-      colbut.addEventListener("click", () => {
-        deleteData = { id: curPartData['id'] };
-        window.electronAPI.deleteKafTable(deleteData).then((answer) => {
-          console.log(answer)
-        });
-        //deleteCard.style.display = 'none';
-        updateCurTable();
-      });
-      col.appendChild(colbut);
-      row.appendChild(col);
-      table.appendChild(row);
-    };
-    containerTable.appendChild(table);
-    console.log("Новая таблица создана.")
-  };
+updateCurTables();
 
 /*
 const buttonUpdateKaf = document.getElementById("button-update-table-kaf").addEventListener("click", () => {
@@ -83,17 +31,16 @@ const buttonUpdateKaf = document.getElementById("button-update-table-kaf").addEv
     })}});
 */
 
-const buttonOpenAddCard = document.getElementById("open-add-card").addEventListener("click", () => {
-  addCard.style.display = 'block';
-});
 const buttonCloseAddCard = document.getElementById("add-card-close").addEventListener("click", () => {
   console.log('закрыто')
   addCard.style.display = 'none';
 });
+
 const secondButtonCloseAddCard = document.getElementById("close-add-card").addEventListener("click", ()=>{
   console.log('закрыто')
   addCard.style.display = 'none';
 });
+
 const buttonSaveAddCard = document.getElementById('save-add-card').addEventListener("click", () => {
   let errorNumber = 0;
   let errorText = "";
@@ -128,7 +75,8 @@ const buttonSaveAddCard = document.getElementById('save-add-card').addEventListe
     window.electronAPI.insertKafTable(data).then((answer) => {
       console.log(answer)
     });
-    updateCurTable();
+    updateCurTables();
+    addCard.style.display = 'none';
   }
 });
 
@@ -147,15 +95,95 @@ const secondButtonCloseDeleteCard = document.getElementById("delete-card-close-2
   deleteCard.style.display = 'none';
 });
 
-function updateCurTable() {
-  while(containerTable.firstChild) {
-    containerTable.removeChild(containerTable.firstChild); 
-  };
+
+function updateCurTables() {
   window.electronAPI.getDatabaseTable('kafedra').then((data) => {
-    createTableFromDatabase(data);
+    let rightColumn = document.getElementById("right");
+    while(rightColumn.firstChild) {
+      rightColumn.removeChild(rightColumn.firstChild); 
+    };
+
+    let leftColumn = document.getElementById("left");
+    while(leftColumn.firstChild) {
+      leftColumn.removeChild(leftColumn.firstChild); 
+    };
+
+    for (let i in data) {
+      let innerCell = document.createElement("div")
+      innerCell.innerHTML = `${data[i]["secondname"]} ${data[i]["firstname"][0]}. ${data[i]["surname"][0]}.`;
+      innerCell.addEventListener("click", () => {
+        updateRightColumn(data[i])
+      });
+      innerCell.classList.add("inner-block");
+      leftColumn.appendChild(innerCell);
+    }
+    let innerNewCell = document.createElement("div")
+    innerNewCell.innerHTML = '+';
+    innerNewCell.addEventListener("click", () => {
+      addCard.style.display = 'block';
+    });
+    innerNewCell.classList.add("inner-block");
+    leftColumn.appendChild(innerNewCell)
   });
 }
 
+
+function updateRightColumn(data) {
+  dicts = {
+    "firstname": "Имя",
+    "secondname": "Фамилия",
+    "surname": "Отчество",
+    "academic": "Учёная стипендия",
+    "position": "Должность",
+    "rank": "Звание",
+    "hours": "Нагрузка",
+    "mail": "Почта",
+    "phone": "Телефон",
+    "gpd": "ГПД",
+    "salary": "Ставка",
+  }
+  let rightColumn = document.getElementById("right");
+  
+  while(rightColumn.firstChild) {
+    rightColumn.removeChild(rightColumn.firstChild); 
+  };
+
+  for (key in dicts) {
+    let infoBlock = document.createElement('div');
+    let label = document.createElement('label');
+    label.classList.add("infoLabel");
+    label.textContent = dicts[key];
+
+    let input = document.createElement('input');
+    input.classList.add("inputInfo")
+    input.type = "text";
+    input.value = data[key];
+
+    infoBlock.classList.add("infoBlock");
+    infoBlock.appendChild(label);
+    infoBlock.appendChild(input);
+    rightColumn.appendChild(infoBlock);
+  }
+
+  deleteButton = document.createElement('button');
+  deleteButton.classList.add("deleteButton");
+  deleteButton.innerHTML = 'Удалить';
+  deleteButton.addEventListener("click", () => {
+    deleteData = { id: data['id'] };
+    window.electronAPI.deleteKafTable(deleteData).then((answer) => {
+      console.log(answer)
+    });
+    updateCurTables();
+  });
+  rightColumn.appendChild(deleteButton);
+
+  saveButton = document.createElement('button');
+  saveButton.classList.add("saveButton");
+  saveButton.innerHTML = 'Сохранить';
+  rightColumn.appendChild(saveButton);
+}
+
+// Открытие и закрытие бокового меню
 document.getElementById('menu-toggle').addEventListener('click', function() {
   var sidebar = document.getElementById('sidebar');
   sidebar.classList.toggle('open');

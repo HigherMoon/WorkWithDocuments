@@ -21,8 +21,8 @@ body {
 }
 
 #tm-header {
-    max-height: 35px;
-    min-height: 35px;
+    max-height: 50px;
+    min-height: 50px;
     display: flex;
 }
 
@@ -42,8 +42,14 @@ body {
     color: #f8f8f8;
 }
 
+.page {
+    color: white;
+    font-weight: 500;
+    font-size: 17px;
+}
+
 .active {
-    background-color: aquamarine;
+    background-color: rgb(255, 201, 181);
 }
 
 #buttons-field {

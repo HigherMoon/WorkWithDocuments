@@ -34,3 +34,79 @@ table tr:nth-child(even){
 table tr:hover {
 	background-color: #f5eedd;
 }
+
+
+
+
+
+
+.twoTables {
+	display: flex; /* Используем Flexbox для расположения блоков */
+	width: 100%; /* Контейнер занимает всю ширину экрана */
+  }
+  
+/* Левый блок */
+.left {
+	flex: 1; /* Занимает 1 часть доступного пространства */
+	background-color: rgb(255, 255, 255); /* Цвет фона для наглядности */
+	display: inline-block;
+	align-items: center;
+	justify-content: center;
+	border: 1px solid #b1b1b1;
+	border-radius: 5px 0px 0px 5px;
+}
+
+/* Правый блок */
+.right {
+	flex: 4; /* Занимает 3 части доступного пространства */
+	background-color: rgb(250, 250, 250); /* Цвет фона для наглядности */
+	display: block;
+	align-items: center;
+	justify-content: center;
+	border: 1px solid #b1b1b1;
+	border-radius: 0px 5px 5px 0px;
+	min-height: 80%;
+}
+
+.inner-block {
+  background-color: white; /* Цвет фона внутренних блоков */
+  margin: 5px; /* Отступы между внутренними блоками */
+  padding: 5px; /* Внутренний отступ */
+  text-align: center;
+  border: 1px solid #272727; /* Граница для наглядности */
+  border-radius: 5px;
+}
+
+.inner-block:hover {
+	background-color: rgb(255, 226, 171);
+}
+
+.infoBlock {
+	width: 90%;
+	height: 3vh;
+	display: flex;
+	padding: 5px 0;
+}
+
+.inputInfo {
+	flex: 3;
+	font-weight: bold;
+}
+
+.infoLabel {
+	flex: 1;
+	font-weight: bold;
+	margin: 5px;
+	vertical-align: auto;
+}
+
+.saveButton {
+	margin: 5px;
+	float: right;
+}
+
+.deleteButton {
+	margin: 5px;
+	float: right;
+	background-color: #f7d1d1;
+}

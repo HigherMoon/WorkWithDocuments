@@ -12,11 +12,14 @@
   <body>
     <div id="tm"> 
       <div id="tm-header">
-        <button id="menu-toggle">МЕНЮ (test)</button>
-        <a id="tm-header-button" href="index.html"> Распределение нагрузки </a>
-        <a id="tm-header-button" href="UP.html"> Учебный план </a>
-        <a id="tm-header-button" href="Flows.html"> Потоки и группы </a>
-        <a id="tm-header-button" href="Kafedra.html"> Кафедра </a>
+        <button id="menu-toggle"> <img src="../img/icon-menu-50.svg" width="25px" height="25px"> </button>
+        <!--
+        <a id="tm-header-button" href="index.html">Распределение нагрузки</a>
+        <a id="tm-header-button" href="UP.html">Учебный план</a>
+        <a id="tm-header-button" href="Flows.html">Потоки и группы</a>
+        <a id="tm-header-button" href="Kafedra.html">Кафедра</a>
+        -->
+        <p class="page"> Кафедра </p>
       </div>
     </div>
 
@@ -25,6 +28,7 @@
         <ul>
           <li><a id="" href="index.html">Распределение нагрузки</a></li>
           <li><a id="" href="UP.html">Учебный план</a></li>
+          <li><a id="" href="disciplines.html">Дисциплины</a></li>
           <li><a id="" href="Flows.html">Потоки и группы</a></li>
           <li><a id="" href="Kafedra.html">Кафедра</a></li>
         </ul>
@@ -65,28 +69,28 @@
           <button id="save-add-card"> Сохранить </button>
           <button id="close-add-card" > Отмена </button>
         </div>
-    </div>
+      </div>
     
 
 
-    <div id="delete-card" class="delete-card">
-      <div class="add-card-header">
-        <h3 id="text-delete-card"> Вы точно хотите УДАЛИТЬ?  </h3>
-        <button id="delete-card-close"> x </button>
-      </div>
-      <div>
-        <button id="confirm-delete-card"> Удалить </button>
-        <button id="delete-card-close-2"> Отмена </button>
-      </div>
-    </div>
-
-
-
+      <div id="delete-card" class="delete-card">
         <div class="add-card-header">
-          <h2> Кафедра </h2>
-          <button id="open-add-card"> + </button>
+          <h3 id="text-delete-card"> Вы точно хотите УДАЛИТЬ?  </h3>
+          <button id="delete-card-close"> x </button>
         </div>
-        <div id="container-table-kaf"></div>
+        <div>
+          <button id="confirm-delete-card"> Удалить </button>
+          <button id="delete-card-close-2"> Отмена </button>
+        </div>
+      </div>
+
+      <!-- НОВОЕ -->
+      <div id="twoTables" class="twoTables"> 
+        <div id="left" class="left">
+        </div>
+        <div id="right" class="right"></div>
+      </div>
+
     </div>
   </body>
   <script type="text/javascript" src="../js/renderKAF.js"></script>

@@ -38,9 +38,9 @@ const inputGroup = document.getElementById("group-input");
 const addCard = document.getElementById('add-card');
 const formAddCard = document.getElementById('new-pp-form');
 
-const buttonDialog = document.getElementById("openDialog").addEventListener("click", () => {
-  document.getElementById("testDialog").showModal();
-});
+//const buttonDialog = document.getElementById("openDialog").addEventListener("click", () => {
+//  document.getElementById("testDialog").showModal();
+//});
 
 const buttonChooseO = document.getElementById("button-o").addEventListener("click", () => {
   currentFormOfEducation = "Очное";

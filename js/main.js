@@ -6,11 +6,10 @@ const { app, BrowserWindow, ipcMain } = require('electron/main');
 const { table, error } = require('node:console');
 const { type } = require('node:os');
 const path = require('node:path'); 
-// const dbPath = path.resolve(__dirname, '../../saves/personal.db')
-// const dbPath = path.join(app.getAppPath(), "../saves/main.db");
 
 // - рабочее > const dbPath = path.resolve(__dirname, "../saves/main.db");
-const dbPath = path.resolve(__dirname, "../../main.db");
+// - для итоговой работы > const dbPath = path.resolve(__dirname, "../../main.db");
+const dbPath = path.resolve(__dirname, "../saves/main.db");
 
 let database = new sqlite.Database(dbPath, sqlite.OPEN_READWRITE | sqlite.OPEN_CREATE, (error) => {
    if (error) {
@@ -30,11 +29,12 @@ function createWindow() {
       webPreferences: {
          preload: path.join(__dirname, 'preload.js'),
          nodeIntegration: true,
+         // contextIsolation: false,
       }
     })
    win.loadFile('html/index.html');
    win.maximize();
-   //win.webContents.openDevTools();
+   win.webContents.openDevTools();
 }  
 
 // Начальный скрипт, запускающийся автоматически при запуске main.js
@@ -289,9 +289,9 @@ function sqlInsertIntoFlows(data) {
       });
    });
 }
+
 function sqlInsertIntoGroups(data) {
    return new Promise((resolve, reject) => {
-
       let sqlColumns = [];
       let sqlData = [];
       for (let i in data) {
@@ -456,7 +456,6 @@ function updatePersonal(data) {
          else {
             updateStroka.push(i + " = " + data[i]);
          }
-         
       }
       else {
          updateStroka.push(i + " = " + "null")

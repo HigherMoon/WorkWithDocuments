@@ -1,9 +1,9 @@
 #sidebar {
-  width: 200px;
+  width: 300px;
   height: 100%;
   position: fixed;
-  top: 35px;
-  left: -200px;
+  top: 50px;
+  left: -300px;
   background-color: #f0f0f0;
   overflow-y: auto;
   transition: left 0.3s ease;
@@ -20,30 +20,34 @@
 
 #sidebar ul li {
   padding: 10px;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #eeeeee;
 }
 
 #sidebar ul li:hover {
   background-color: rgb(255, 201, 181);
-  transition: 0.3s;
+  transition: 0.15s;
 }
 
 #sidebar ul li a {
   text-decoration: none;
-  color: #333;
+  color: #1a1a1a;
 }
 
 #menu-toggle {
-  min-width: 200px;
-  max-width: 200px;
+  min-width: 50px;
+  max-width: 50px;
+  min-height: 50px;
+  max-height: 50px;
   padding: 10px 10px;
   font-size: 20px;
-  background-color: #e61414;
+  background-color: #4db6e7;
   color: #fff;
   border: none;
   cursor: pointer;
+  border-radius: 5px;
 }
 
 #menu-toggle:hover {
-  background-color: #45a049;
+  background-color: #e6e6e6;
+  transition: rotate(45deg);
 }

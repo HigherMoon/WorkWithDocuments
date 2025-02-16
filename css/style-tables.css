@@ -35,7 +35,17 @@ table tr:hover {
 	background-color: #f5eedd;
 }
 
+.table-personals-hours {
+	width: 30%;
+}
 
+.container-two-tables {
+	display: flex; /* Включаем Flexbox */
+	justify-content: space-between; /* Распределяем пространство между элементами */
+	align-items: center; /* Выравниваем элементы по вертикали */
+	border: 1px solid #ccc; /* Граница для наглядности */
+	padding: 10px; /* Отступ внутри контейнера */
+}
 
 
 

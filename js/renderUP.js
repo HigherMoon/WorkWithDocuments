@@ -29,13 +29,23 @@ const addCard = document.getElementById("add-card");
 const formAddCard = document.getElementById('new-up-form');
 const deleteCard = document.getElementById('delete-card');
 const deleteCardText = document.getElementById('text-delete-card');
-let selectedID = null;
 const datalistFlows = document.getElementById("flows-input-helper");
 const datalistDisciplines = document.getElementById("disciplines-input-helper");
-const inputGroup = document.getElementById("flows-input")
+const inputGroup = document.getElementById("flows-input");
+let selectedID = null;
 
+listOfValues = {
+  "Семестр": "semester",
+  "Поток": "flow_id",
+  "Дисциплина": "discipline_id",
+  "Тип": "type",
+  "Подгруппы": "subgroups",
+  "Часов на подгруппу": "sub_hours",
+  "Всего часов": "hours",
+};
 
 window.electronAPI.getDatabaseTable('syllabus').then((data) => {
+  console.log(data)
   createTableFromDatabase(data);
 });
 
@@ -68,6 +78,7 @@ const buttonOpenAddCard = document.getElementById("open-add-card").addEventListe
   });
   addCard.style.display = 'block';
 });
+
 const buttonCloseAddCard = document.getElementById("add-card-close").addEventListener("click", () => {
   console.log('закрыто');
   addCard.style.display = 'none';
@@ -79,6 +90,7 @@ const buttonCloseAddCard = document.getElementById("add-card-close").addEventLis
     document.getElementById('Часы_УП-f').value = null;
     document.getElementById('Часы-f').value = null;
 });
+
 const secondButtonCloseAddCard = document.getElementById("close-add-card").addEventListener("click", ()=>{
   console.log('закрыто');
   addCard.style.display = 'none';
@@ -90,6 +102,7 @@ const secondButtonCloseAddCard = document.getElementById("close-add-card").addEv
     document.getElementById('Часы_УП-f').value = null;
     document.getElementById('Часы-f').value = null;
 });
+
 const buttonSaveAddCard = document.getElementById('save-add-card').addEventListener("click", () => {
   data = {
     flow_ID: document.getElementById('flows-input').value,
@@ -143,7 +156,6 @@ const secondButtonCloseDeleteCard = document.getElementById("delete-card-close-2
   deleteCard.style.display = 'none';
 });
 const buttonDeleteAddCard = document.getElementById('confirm-delete-card').addEventListener("click", () => {
-  
   data = {
     UP_ID: selectedID
   }
@@ -177,14 +189,15 @@ function createTableFromDatabase(database) {
     let headTable = document.createElement("thead");
     headTable.id = "head-table";
   
-    let curPartData = database[0]
-    for (let paramOfCurPartData in curPartData) {
+    for (let paramOfCurPartData in listOfValues) {
       let headRow = document.createElement("th");
       headRow.innerHTML = paramOfCurPartData;
       headRow.id = paramOfCurPartData;
       headTable.appendChild(headRow);
     };
-    headTable.appendChild(document.createElement("th"));
+    finalCell = document.createElement("th")
+    finalCell.style.width = "70px"
+    headTable.appendChild(finalCell);
     table.appendChild(headTable);
     // ---------------------------------
     // ----- Создание тела таблицы -----
@@ -192,11 +205,10 @@ function createTableFromDatabase(database) {
       let row = document.createElement("tr");
       let curPartData = database[indexOfData];
   
-      for (let paramOfCurPartData in curPartData) {
+      for (let paramOfCurPartData in listOfValues) {
         let col = document.createElement("td");
-        if (paramOfCurPartData != "UP_ID") col.contentEditable = true;
-        col.innerHTML = curPartData[paramOfCurPartData];
-        col.id = paramOfCurPartData;
+        col.innerHTML = curPartData[listOfValues[paramOfCurPartData]];
+        col.id = listOfValues[paramOfCurPartData];
         row.appendChild(col);
       };
       let col = document.createElement("td");

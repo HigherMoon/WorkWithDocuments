@@ -13,12 +13,12 @@ let currentUP_Hours = ""
 
 // Список значений для заголовка таблицы / полученные данные
 const listHeadValuesPersonalTable = {
-  "ID": "id",
+  // "ID": "id",
   "Преподаватель": "Фамилия",
-  "Должность": "Должность",
+  // "Должность": "Должность",
   "Нагрузка": "Нагрузка",
-  "Текущая нагрузка": "Часы",
-  "Текущая нагрузка (%)": "Загрузка"
+  // "Текущая нагрузка": "Часы",
+  // "Текущая нагрузка (%)": "Загрузка"
 }
 
 
@@ -252,7 +252,9 @@ function createTableFromDatabase(database) {
     headRow.value = paramOfCurPartData;
     headTable.appendChild(headRow);
   };
-  headTable.appendChild(document.createElement("th"));
+  finalCell = document.createElement("th")
+  finalCell.style.width = "70px"
+  headTable.appendChild(finalCell);
   table.appendChild(headTable);
 
   for (let indexOfData in Object.keys(database)) {
@@ -270,6 +272,7 @@ function createTableFromDatabase(database) {
     let col = document.createElement("td");
     colbut = document.createElement("button");
     colbut.innerHTML = 'Удалить';
+    colbut.style.width = '70px';
     colbut.addEventListener("click", () => {
       deleteData = {
         "p_id": currentPersonID,
@@ -342,35 +345,25 @@ function createPersonalTableFromDatabase(database) {
     for (let headRowsValue in listHeadValuesPersonalTable) {
       if (headRowsValue == "ID") { continue }
       let col = document.createElement("td");
-      //if (paramOfCurPartData != "ID") col.contentEditable = true;
       if (listHeadValuesPersonalTable[headRowsValue] == "Нагрузка") {
-        if (curPartData[listHeadValuesPersonalTable[headRowsValue]]==null) {
-          col.innerHTML = 0;
+        if (curPartData["Нагрузка"]==null) {
+          col.innerHTML = "0 / 0";
           personalLoad = 0;
         }
         else {
-          col.innerHTML = curPartData[listHeadValuesPersonalTable[headRowsValue]];
-          personalLoad = col.innerHTML;
-        }
-      }
-      else if (listHeadValuesPersonalTable[headRowsValue] == "Часы") {
-        col.innerHTML = curPartData[listHeadValuesPersonalTable[headRowsValue]];
-        if (curPartData[listHeadValuesPersonalTable[headRowsValue]]==null) {
-          col.innerHTML = 0;
-          currentLoad = 0;
-        }
-        currentLoad = col.innerHTML;
-      }
-      else if (listHeadValuesPersonalTable[headRowsValue] == "Загрузка") {
-        col.innerHTML = (currentLoad)/(personalLoad) * 100;
-        if (col.innerHTML < 60) {
-          col.style.backgroundColor='rgba(255, 200, 200)';
-        }
-        else if (col.innerHTML >=60 && col.innerHTML < 90) {
-          col.style.backgroundColor='rgba(255, 211, 92)';
-        }
-        else if (col.innerHTML >= 90) {
-          col.style.backgroundColor='rgba(80, 255, 132)';
+          let hours = curPartData['Часы'] || 0;
+          let load = curPartData['Нагрузка'] || 0;
+          let deviation = (hours / load) * 100;
+          col.innerHTML = `${hours} / ${load} (${deviation}%)`;
+          if (deviation < 60) {
+            col.style.backgroundColor='rgba(255, 200, 200)';
+          }
+          else if (deviation >=60 && deviation < 90) {
+            col.style.backgroundColor='rgba(255, 211, 92)';
+          }
+          else if (deviation >= 90) {
+            col.style.backgroundColor='rgba(80, 255, 132)';
+          }
         }
       }
       else col.innerHTML = curPartData[listHeadValuesPersonalTable[headRowsValue]];

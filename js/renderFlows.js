@@ -208,7 +208,9 @@ function createTableFromDatabase(database, containerID) {
       headRow.id = paramOfCurPartData;
       headTable.appendChild(headRow);
     };
-    headTable.appendChild(document.createElement("th"));
+    finalCell = document.createElement("th")
+    finalCell.style.width = "70px"
+    headTable.appendChild(finalCell);
     table.appendChild(headTable);
     // ---------------------------------
     // ----- Создание тела таблицы -----

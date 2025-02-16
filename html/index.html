@@ -32,7 +32,6 @@
         </ul>
       </nav>
         
-        <!--
         <button type="button" id="openDialog" class="red">
           ТЕСТ dialog add-button
         </button>
@@ -49,9 +48,9 @@
             <button type="submit"> Закрыть </button>
           </form>
         </dialog>
-        -->
-
-        <div id="container-current-person">
+        
+        <div class="container-two-tables">
+          <div id="container-current-person">
             <div>
               <select id="select-current-год">
                 <option> 2023/2024 </option>
@@ -70,38 +69,11 @@
             <p id="current-ФИО"><strong>ФИО</strong></p>
             <p id="current-год">Год: 2025/2026</p>
             <button id="current-data"> Вывести учебный план </button>
-        </div>
+          </div>
 
-        <div id="container-personal-table">
+          <div id="container-personal-table" class="table-personals-hours"></div>
         </div>
-        <!--
-        <div id="container-selector-plan">
-          <select id="selector-plan">
-            <option value="Практики"> Практики </option>
-            <option value="Лекции"> Лекции </option>
-            <option value="Лаб_зан"> Лабораторные занятия</option>
-            <option value="Зачёт"> Зачёт </option>
-            <option value="Экзамен"> Экзамен </option>
-            <option value="Текущий_контроль"> Текущий контроль </option>
-            <option value="Консультация"> Консультация </option>
-            <option value="Учебная_практика"> Учебная практика </option>
-            <option value="Производственная_практика"> Производственная практика </option>
-            <option value="Практика_за_городом"> Практика за городом </option>
-            <option value="Преддипл_пр"> Преддипломная практика </option>
-            <option value="Науч_иссл_пр"> Научно исследовательская практика </option>
-            <option value="Науч_иссл_р"> Научно исследовательская работа </option>
-            <option value="Курс_работа"> Курсовая работа </option>
-            <option value="Выпускная_кв_р_бак_рец"> Выпускная кв_р_бак_рец </option>
-            <option value="Выпускная_кв_р_маг_рец"> Выпускная кв_р_маг_рец </option>
-            <option value="ГК_экзамен"> ГК экзамен </option>
-            <option value="ГК_кв_раб"> ГК кв_раб </option>
-            <option value="Руководство_магис_программой"> Руководство магистрской программой </option>
-            <option value="Руководство_аспир_и_соискатет"> Руководство аспирантурой и соискатет </option>
-            <option value="Диссер_совет"> Диссер. совет </option>
-          </select>
-          <button id="add-selector-plan"> Добавить активность </button>
-        </div>
-        -->
+      
         
       <div id="add-card" class="add-card">
         <div id="add-card-header" class="add-card-header">
@@ -110,13 +82,20 @@
         </div>
         <div id="add-card-content" class="add-card-content">
             <form id="new-pp-form">
-              <p> Предмет (ID) </p>
-              <input id="syllabus-input" list="syllabus-input-helper"> 
-              <datalist id="syllabus-input-helper"></datalist>
-              <p> Количество подгрупп </p>
-              <input id="inputSubGroups"> 
-              <p> Количество часов </p>
-              <input id="hours-input"> 
+              <div class="infoBlock">
+                <label class="infoLabel"> Предмет (ID) </label>
+                <input id="syllabus-input" list="syllabus-input-helper" class="infoInput">
+                <datalist id="syllabus-input-helper"></datalist>
+              </div>
+              <div class="infoBlock">
+                <label class="infoLabel"> Количество подгрупп </label>
+                <input id="inputSubGroups" class="infoInput">
+              <div class="infoBlock">
+              </div>
+              <div class="infoBlock"></div>
+                <label class="infoLabel"> Количество часов </label>
+                <input id="hours-input" class="infoInput"> 
+              </div>
             </form>
         </div>
         <div id="buttons-field">

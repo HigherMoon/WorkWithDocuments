@@ -6,31 +6,6 @@ let selectedID = null;
 
 updateCurTables();
 
-/*
-const buttonUpdateKaf = document.getElementById("button-update-table-kaf").addEventListener("click", () => {
-  let table = document.getElementById("data-table");
-  let headTable = document.getElementById("head-table");
-
-  let data = {};
-  for (let i in headTable.children) {
-    if (headTable.children[i].innerHTML != undefined)
-      data[headTable.children[i].innerHTML] = "";
-  }
-  console.log("func \"saveCurrentDataFromTable\"")
-  
-  let countOftr = table.getElementsByTagName("tr").length;
-  for (let i=0; i < countOftr; i++) {
-    let current_tr = table.getElementsByTagName("tr")[i];
-    let dataToSend = {};
-    for (let j=0; j<current_tr.getElementsByTagName("td").length; j++) {
-      let current_td = current_tr.getElementsByTagName("td")[j];
-      dataToSend[current_td.id] = current_td.innerHTML;
-    }
-    window.electronAPI.updateKafTable(dataToSend).then((answer) => {
-      console.log(answer)
-    })}});
-*/
-
 const buttonCloseAddCard = document.getElementById("add-card-close").addEventListener("click", () => {
   console.log('закрыто')
   addCard.style.display = 'none';
@@ -112,7 +87,7 @@ function updateCurTables() {
       let innerCell = document.createElement("div")
       innerCell.innerHTML = `${data[i]["secondname"]} ${data[i]["firstname"][0]}. ${data[i]["surname"][0]}.`;
       innerCell.addEventListener("click", () => {
-        updateRightColumn(data[i])
+        updateTablePersonalInfo(data[i])
       });
       innerCell.classList.add("inner-block");
       leftColumn.appendChild(innerCell);
@@ -128,7 +103,7 @@ function updateCurTables() {
 }
 
 
-function updateRightColumn(data) {
+function updateTablePersonalInfo(data) {
   dicts = {
     "firstname": "Имя",
     "secondname": "Фамилия",

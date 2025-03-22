@@ -2,6 +2,16 @@ function dropTable(name) {
     return `DROP TABLE IF EXISTS ${name}`
 }
 
+
+const createTypes = `
+    CREATE TABLE IF NOT EXISTS types (
+        id      INTEGER,
+        names   TEXT,
+    PRIMARY KEY (id),
+    UNIQUE (name))
+`;
+
+
 const createKaf = `
     CREATE TABLE IF NOT EXISTS kafedra (
         id              INTEGER, 
@@ -19,6 +29,7 @@ const createKaf = `
     PRIMARY KEY (id),
     UNIQUE (firstname, secondname, surname)))
             `;
+
 const createFlows = `
     CREATE TABLE IF NOT EXISTS flows (
         id               INTEGER NOT NULL,
@@ -58,7 +69,8 @@ const createSyllabus = `
         hours             INTEGER,
     PRIMARY KEY (id),
     UNIQUE (flow_id, discipline_id, semester, type),
-    FOREIGN KEY (flow_id) REFERENCES flows (id) ON DELETE CASCADE)
+    FOREIGN KEY (flow_id) REFERENCES flows (id) ON DELETE CASCADE,
+    FOREIGN KEY (type) REFERENCES types (id) ON DELETE CASCADE)
     `;
 const createPersonalPlan = `
     CREATE TABLE IF NOT EXISTS personal_plan (

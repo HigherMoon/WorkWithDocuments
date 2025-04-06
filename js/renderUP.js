@@ -1,4 +1,4 @@
-const containerTable = document.getElementById("container-table-up")
+const containerTable = document.getElementById("container-table")
 /*
 const saveButtonTableUP = document.getElementById("save-current-table-up").addEventListener("click", () => {
   let table = document.getElementById(`data-table`);
@@ -31,24 +31,24 @@ const deleteCard = document.getElementById('delete-card');
 const deleteCardText = document.getElementById('text-delete-card');
 const datalistFlows = document.getElementById("flows-input-helper");
 const datalistDisciplines = document.getElementById("disciplines-input-helper");
+const selectTypes = document.getElementById("Тип-f")
 const inputGroup = document.getElementById("flows-input");
 let selectedID = null;
 
 listOfValues = {
   "Семестр": "semester",
-  "Поток": "flow_id",
-  "Дисциплина": "discipline_id",
+  "Поток": "flow",
+  "Дисциплина": "discipline",
   "Тип": "type",
   "Подгруппы": "subgroups",
   "Часов на подгруппу": "sub_hours",
   "Всего часов": "hours",
 };
 
-window.electronAPI.getDatabaseTable('syllabus').then((data) => {
+window.electronAPI.getCurSyllabusTable([]).then((data) => {
   console.log(data)
   createTableFromDatabase(data);
 });
-
 
 const buttonOpenAddCard = document.getElementById("open-add-card").addEventListener("click", () => {
   while(datalistFlows.firstChild) {
@@ -57,6 +57,10 @@ const buttonOpenAddCard = document.getElementById("open-add-card").addEventListe
   while(datalistDisciplines.firstChild) {
     datalistDisciplines.removeChild(datalistDisciplines.firstChild); 
   };
+  while(selectTypes.firstChild) {
+    selectTypes.removeChild(selectTypes.firstChild); 
+  };
+  
   dataTo={};
   window.electronAPI.getCurFlows(dataTo).then((data) => {
     for (let index in data) {
@@ -76,40 +80,40 @@ const buttonOpenAddCard = document.getElementById("open-add-card").addEventListe
       datalistDisciplines.appendChild(newOption);
     }
   });
+  window.electronAPI.getCurTypes(dataTo).then((data) => {
+    for (let index in data) {
+      let objData = data[index];
+      let newOption = document.createElement("option");
+      newOption.value = objData["id"];
+      newOption.innerHTML = `${objData['name']}`;
+      selectTypes.appendChild(newOption);
+    }
+  })
   addCard.style.display = 'block';
 });
 
-const buttonCloseAddCard = document.getElementById("add-card-close").addEventListener("click", () => {
+const buttonCloseAddCard = document.getElementById("add-card-close-up").addEventListener("click", () => {
   console.log('закрыто');
   addCard.style.display = 'none';
   document.getElementById('flows-input').value = "";
-    document.getElementById('Наименование-f').value = null;
-    document.getElementById('Семестр-f').value = null;
-    document.getElementById('Тип-f').value = null;
-    document.getElementById('Количество_подгрупп-f').value = null;
-    document.getElementById('Часы_УП-f').value = null;
-    document.getElementById('Часы-f').value = null;
+  document.getElementById('Наименование-f').value = null;
+  document.getElementById('Семестр-f').value = null;
+  document.getElementById('Тип-f').value = null;
+  document.getElementById('Часы_УП-f').value = null;
+  document.getElementById('Часы-f').value = null;
 });
 
-const secondButtonCloseAddCard = document.getElementById("close-add-card").addEventListener("click", ()=>{
-  console.log('закрыто');
-  addCard.style.display = 'none';
-  document.getElementById('flows-input').value = null;
-    document.getElementById('Наименование-f').value = null;
-    document.getElementById('Семестр-f').value = null;
-    document.getElementById('Тип-f').value = null;
-    document.getElementById('Количество_подгрупп-f').value = null;
-    document.getElementById('Часы_УП-f').value = null;
-    document.getElementById('Часы-f').value = null;
-});
 
 const buttonSaveAddCard = document.getElementById('save-add-card').addEventListener("click", () => {
+  var sub_hours = document.getElementById('Часы_УП-f').value;
+  var hours = document.getElementById('Часы-f').value;
+  console.log(sub_hours, hours ) 
   data = {
     flow_ID: document.getElementById('flows-input').value,
     discipline_id: document.getElementById('Наименование-f').value,
     semester: document.getElementById('Семестр-f').value,
     type: document.getElementById('Тип-f').value,
-    subgroups: document.getElementById('Количество_подгрупп-f').value,
+    subgroups: document.getElementById('Часы_УП-f').value / document.getElementById('Часы-f').value,
     sub_hours: document.getElementById('Часы_УП-f').value,
     hours: document.getElementById('Часы-f').value
   }
@@ -128,15 +132,14 @@ const buttonSaveAddCard = document.getElementById('save-add-card').addEventListe
     window.electronAPI.insertUPTable(data).then((answer) => {
       console.log(answer)
     });
-    window.electronAPI.getDatabaseTable('syllabus').then((data) => {
+    window.electronAPI.getCurSyllabusTable('syllabus').then((data) => {
       createTableFromDatabase(data);
     });
     addCard.style.display = 'none';
-    document.getElementById('Flow_ID-f').value = null;
+    document.getElementById('flows-input').value = null;
     document.getElementById('Наименование-f').value = null;
     document.getElementById('Семестр-f').value = null;
     document.getElementById('Тип-f').value = null;
-    document.getElementById('Количество_подгрупп-f').value = null;
     document.getElementById('Часы_УП-f').value = null;
     document.getElementById('Часы-f').value = null;
   }
@@ -170,7 +173,8 @@ function updateCurTable() {
   while(containerTable.firstChild) {
     containerTable.removeChild(containerTable.firstChild); 
   };
-  window.electronAPI.getDatabaseTable('syllabus').then((data) => {
+  window.electronAPI.getCurSyllabusTable([]).then((data) => {
+    console.log(data)
     createTableFromDatabase(data);
   });
 }
@@ -217,7 +221,7 @@ function createTableFromDatabase(database) {
       colbut.addEventListener("click", () => {
         deleteData = { id: curPartData['id'] };
         window.electronAPI.deleteUPTable(deleteData).then((answer) => {
-          console.log(answer)
+          console.log(answer);
         });
         updateCurTable();
       });

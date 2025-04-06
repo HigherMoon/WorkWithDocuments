@@ -4,21 +4,13 @@
     <meta charset="UTF-8">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
     <title> Преподаватели кафедры </title>
-    
     <link rel="stylesheet" href="../css/style.css">
-  
   </head>
 
   <body>
     <div id="tm"> 
       <div id="tm-header">
         <button id="menu-toggle"> <img src="../img/icon-menu-50.svg" width="25px" height="25px"> </button>
-        <!--
-        <a id="tm-header-button" href="index.html">Распределение нагрузки</a>
-        <a id="tm-header-button" href="UP.html">Учебный план</a>
-        <a id="tm-header-button" href="Flows.html">Потоки и группы</a>
-        <a id="tm-header-button" href="Kafedra.html">Кафедра</a>
-        -->
         <p class="page"> Кафедра </p>
       </div>
     </div>
@@ -27,17 +19,18 @@
       <nav id="sidebar">
         <ul>
           <li><a id="" href="index.html">Распределение нагрузки</a></li>
-          <li><a id="" href="UP.html">Учебный план</a></li>
+          <li><a id="" href="personalHours.html">Статистика о преподавателях</a></li>
+          <li><a id="" href="syllabus.html">Учебный план</a></li>
           <li><a id="" href="disciplines.html">Дисциплины</a></li>
-          <li><a id="" href="Flows.html">Потоки и группы</a></li>
-          <li><a id="" href="Kafedra.html">Преподаватели кафедры</a></li>
+          <li><a id="" href="types.html">Типы</a></li>
+          <li><a id="" href="flows.html">Потоки и группы</a></li>
+          <li><a id="" href="kafedra.html">Преподаватели кафедры</a></li>
         </ul>
       </nav>
 
       <div id="add-card" class="add-card">
         <div id="add-card-header" class="add-card-header">
           <h3> Добавить преподавателя </h3>
-          <button id="add-card-close"> x </button>
         </div>
         <div id="add-card-content" class="add-card-content">
             <form id="new-teacher-form">
@@ -47,7 +40,7 @@
               <input id="Фамилия-f">
               <p> Отчество </p>
               <input id="Отчество-f">
-              <p> Нагрузка </p>
+              <p> Нагрузка (часы) </p>
               <input id="Нагрузка-f">
               <p> Должность </p>
               <input id="Должность-f">
@@ -60,14 +53,17 @@
               <p> Почта </p>
               <input id="Почта-f">
               <p> ГПД </p>
-              <input id="ГПД-f">
+              <select id="ГПД-f">
+                <option> Нет </option>
+                <option> Да </option>
+              </select>
               <p> Ставка </p>
               <input id="Ставка-f">
             </form>
         </div>
         <div id="buttons-field">
           <button id="save-add-card"> Сохранить </button>
-          <button id="close-add-card" > Отмена </button>
+          <button id="add-card-close-kaf" > Отмена </button>
         </div>
       </div>
     

@@ -15,9 +15,26 @@
 
 .add-card-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    padding-left: 15px;
 }
+
+#open-add-card {
+    margin-left: 5px;
+}
+#open-add-card-types {
+    margin-left: 5px;
+}
+#open-add-card-disciplines {
+    margin-left: 5px;
+}
+#open-add-card-flows {
+    margin-left: 5px;
+}
+#open-add-card-groups {
+    margin-left: 5px;
+}
+
 
 #add-card-close {
     font-size: 20px;

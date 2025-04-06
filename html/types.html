@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-    <title> Дисциплины </title>
+    <title> Типы </title>
     <link rel="stylesheet" href="../css/style.css">
   </head>
 
@@ -11,7 +11,7 @@
     <div id="tm"> 
       <div id="tm-header">
         <button id="menu-toggle"> <img src="../img/icon-menu-50.svg" width="25px" height="25px"> </button>
-        <p class="page"> Дисциплины </p>
+        <p class="page"> Типы </p>
       </div>
     </div>
 
@@ -29,15 +29,16 @@
       </nav>
 
       <div class="add-card-header">
-        <h2> Дисциплины </h2>
-        <button id="open-add-card-disciplines"> + </button>
+        <h2> Типы </h2>
+        <button id="open-add-card-types"> + </button>
       </div>
 
-      <div id="add-card-disciplines" class="add-card">
+
+      <div id="add-card-types" class="add-card">
         <div id="add-card-header" class="add-card-header">
-          <h3> Добавить дисциплину </h3>
+          <h3> Добавить тип </h3>
         </div>
-        <div id="add-card-content-disciplines" class="add-card-content">
+        <div id="add-card-content-types" class="add-card-content">
             <form id="new-flow-form">
               <p> Наименование </p>
               <input id="Наименование-f">
@@ -45,11 +46,13 @@
         </div>
         <div id="buttons-field">
           <button id="save-add-card"> Сохранить </button>
-          <button id="add-card-close-disciplines"> Отмена </button>
+          <button id="add-card-close-types" > Отмена </button>
         </div>
     </div>
 
-    <div id="container-table"></div>
+
+      <div id="container-table"></div>
+
   </body>
-  <script type="text/javascript" src="../js/renderDisciplines.js"></script>
+  <script type="text/javascript" src="../js/renderTypes.js"></script>
 </html>

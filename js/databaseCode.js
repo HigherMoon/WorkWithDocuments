@@ -2,6 +2,22 @@ function dropTable(name) {
     return `DROP TABLE IF EXISTS ${name}`
 }
 
+const createYears = `
+    CREATE TABLE IF NOT EXISTS years (
+        id      INTEGER,
+        year    TEXT,
+    PRIMARY KEY (id),
+    UNIQUE (year))
+`;
+const createPersonalHours = `
+    CREATE TABLE IF NOT EXISTS groups (
+        pId        INTEGER,
+        yId        INTEGER NOT NULL,
+        hours      INTEGER,
+    FOREIGN KEY (pId) REFERENCES kafedra (id) ON DELETE CASCADE,
+    FOREIGN KEY (yId) REFERENCES years (id) ON DELETE CASCADE,
+    UNIQUE (pId, yId))
+    `;
 
 const createTypes = `
     CREATE TABLE IF NOT EXISTS types (

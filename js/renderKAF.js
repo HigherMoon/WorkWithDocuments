@@ -6,12 +6,7 @@ let selectedID = null;
 
 updateCurTables();
 
-const buttonCloseAddCard = document.getElementById("add-card-close").addEventListener("click", () => {
-  console.log('закрыто')
-  addCard.style.display = 'none';
-});
-
-const secondButtonCloseAddCard = document.getElementById("close-add-card").addEventListener("click", ()=>{
+const buttonCloseAddCard = document.getElementById("add-card-close-kaf").addEventListener("click", () => {
   console.log('закрыто')
   addCard.style.display = 'none';
 });
@@ -86,6 +81,7 @@ function updateCurTables() {
     for (let i in data) {
       let innerCell = document.createElement("div")
       innerCell.innerHTML = `${data[i]["secondname"]} ${data[i]["firstname"][0]}. ${data[i]["surname"][0]}.`;
+      console.log(data);
       innerCell.addEventListener("click", () => {
         updateTablePersonalInfo(data[i])
       });
@@ -131,6 +127,7 @@ function updateTablePersonalInfo(data) {
 
     let input = document.createElement('input');
     input.classList.add("inputInfo")
+    input.id = key;
     input.type = "text";
     input.value = data[key];
 
@@ -140,22 +137,55 @@ function updateTablePersonalInfo(data) {
     rightColumn.appendChild(infoBlock);
   }
 
-  deleteButton = document.createElement('button');
-  deleteButton.classList.add("deleteButton");
-  deleteButton.innerHTML = 'Удалить';
-  deleteButton.addEventListener("click", () => {
+  deleteButtonIcon = document.createElement('img');
+  deleteButtonIcon.src = "../img/icon-delete.svg";
+  deleteButtonIcon.classList.add("icon-img");
+  deleteButtonIcon.classList.add("float-right");
+  deleteButtonIcon.addEventListener("click", () => {
     deleteData = { id: data['id'] };
     window.electronAPI.deleteKafTable(deleteData).then((answer) => {
       console.log(answer)
     });
     updateCurTables();
   });
-  rightColumn.appendChild(deleteButton);
+  rightColumn.appendChild(deleteButtonIcon);
 
-  saveButton = document.createElement('button');
-  saveButton.classList.add("saveButton");
-  saveButton.innerHTML = 'Сохранить';
-  rightColumn.appendChild(saveButton);
+  saveButtonIcon = document.createElement('img');
+  saveButtonIcon.src = "../img/icon-accept.svg";
+  saveButtonIcon.classList.add("icon-img")
+  saveButtonIcon.classList.add("float-right");
+  saveButtonIcon.addEventListener('click', function() {
+    idToUpdate = data["id"];
+    updatePersonalInfo(idToUpdate);  
+    updateCurTables();
+  });
+  rightColumn.appendChild(saveButtonIcon);
+}
+
+function updatePersonalInfo(id) {
+  dicts = {
+    "firstname": "Имя",
+    "secondname": "Фамилия",
+    "surname": "Отчество",
+    "academic": "Учёная стипендия",
+    "position": "Должность",
+    "rank": "Звание",
+    "hours": "Нагрузка",
+    "mail": "Почта",
+    "phone": "Телефон",
+    "gpd": "ГПД",
+    "salary": "Ставка",
+  }
+  dataToUpdate = {
+    "id" : id
+  }
+  for (key in dicts) {
+    value = document.getElementById(key);
+    dataToUpdate[key] = value.value;
+  }
+  window.electronAPI.updateKafTable(dataToUpdate).then((answer) => {
+    console.log(answer)
+  });
 }
 
 // Открытие и закрытие бокового меню

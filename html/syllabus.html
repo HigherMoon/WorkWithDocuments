@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <title> Учебный план </title>
+    
+    <link rel="stylesheet" href="../css/style.css">
+  
+  </head>
+
+  <body>
+    <div id="tm"> 
+      <div id="tm-header">
+        <button id="menu-toggle"> <img src="../img/icon-menu-50.svg" width="25px" height="25px"> </button>
+        <p class="page"> Учебный план </p>
+      </div>
+    </div>
+
+    <div id="main">
+      <nav id="sidebar">
+        <ul>
+          <li><a id="" href="index.html">Распределение нагрузки</a></li>
+          <li><a id="" href="personalHours.html">Статистика о преподавателях</a></li>
+          <li><a id="" href="syllabus.html">Учебный план</a></li>
+          <li><a id="" href="disciplines.html">Дисциплины</a></li>
+          <li><a id="" href="types.html">Типы</a></li>
+          <li><a id="" href="flows.html">Потоки и группы</a></li>
+          <li><a id="" href="kafedra.html">Преподаватели кафедры</a></li>
+        </ul>
+      </nav>
+    
+      <div id="add-card" class="add-card">
+        <div id="add-card-header" class="add-card-header">
+          <h3> Добавить предмет в учебный план </h3>
+        </div>
+        <div id="add-card-content" class="add-card-content">
+            <form id="new-up-form">
+              <p> ID потока </p>
+                <input id="flows-input" list="flows-input-helper"> 
+                <datalist id="flows-input-helper"></datalist>
+              <p> Дисциплина </p>
+                <input id="Наименование-f" list="disciplines-input-helper">
+                <datalist id="disciplines-input-helper"></datalist>
+              <p> Семестр </p>
+                <select id="Семестр-f"> 
+                  <option> 1 </option>
+                  <option> 2 </option>
+                </select>
+              <p> Тип </p>
+                <select id="Тип-f"></select>
+              <p> Часы по учебному плану </p>
+                <input id="Часы_УП-f">
+              <p> Всего часов </p>
+                <input id="Часы-f">
+            </form>
+        </div>
+        <div id="buttons-field">
+          <button id="save-add-card"> Сохранить </button>
+          <button id="add-card-close-up"> Отмена </button>
+        </div>
+    </div>
+
+
+    <div id="delete-card" class="delete-card">
+      <div class="add-card-header">
+        <h3 id="text-delete-card"> Вы точно хотите УДАЛИТЬ?  </h3>
+        <button id="delete-card-close"> x </button>
+      </div>
+      <div>
+        <button id="confirm-delete-card"> Удалить </button>
+        <button id="delete-card-close-2"> Отмена </button>
+      </div>
+    </div>
+
+
+        <div class="add-card-header">
+          <h3> Учебный план </h3>
+          <button id="open-add-card"> + </button>
+        </div>
+        <div id="container-table">
+        </div>
+        
+    </div>
+  </body>
+  <script type="text/javascript" src="../js/renderUP.js"></script>
+</html>

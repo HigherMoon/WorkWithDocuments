@@ -10,9 +10,15 @@
 body {
     background-color: #fcfcfc;
     color: #000000;
-    font-family: 'Roboto-Light';
+    font-family: 'Arial';
     font-size: 14px;
     margin: 0;
+}
+
+.icon-img {
+    width: 20px;
+    height: 20px;
+    margin: 5px;
 }
 
 #tm {
@@ -27,14 +33,14 @@ body {
 }
 
 #tm-header-button {
-    background-color: #4db6e7; /* Green */
+    background-color: #4db6e7;
     border: none;
     color: white;
     padding: 5px 10px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 15px;
+    font-size: 14px;
 }
 
 #tm-header-button:hover {
@@ -44,8 +50,7 @@ body {
 
 .page {
     color: white;
-    font-weight: 500;
-    font-size: 17px;
+    font-size: 14px;
 }
 
 .active {
@@ -105,3 +110,13 @@ button:hover {
     border-radius: 5px;
 }
  
+.saveButton {
+	margin: 5px;
+	float: right;
+}
+
+.deleteButton {
+	margin: 5px;
+	float: right;
+	background-color: #f7d1d1;
+}

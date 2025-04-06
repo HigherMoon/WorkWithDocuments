@@ -1,5 +1,5 @@
 const containerTable = document.getElementById("container-table");
-const addCard = document.getElementById("add-card-disciplines");
+const addCard = document.getElementById("add-card-types");
 
 getDataAndCreateTable()
 
@@ -9,7 +9,7 @@ const listHeadValuesPersonalTable = {
 }
 
 function getDataAndCreateTable() {
-  window.electronAPI.getCurDisciplines().then((data) => {
+  window.electronAPI.getCurTypes().then((data) => {
     createTableOfDisciplines(data);
   });
 };
@@ -34,7 +34,7 @@ const buttonSaveAddCard = document.getElementById('save-add-card').addEventListe
       name: document.getElementById('Наименование-f').value
     }
     console.log(data)
-    window.electronAPI.insertDisciplineTable(data).then((answer) => {
+    window.electronAPI.insertTypesTable(data).then((answer) => {
       console.log(answer)
     });
     getDataAndCreateTable();
@@ -44,38 +44,13 @@ const buttonSaveAddCard = document.getElementById('save-add-card').addEventListe
 
 
 
-const buttonOpenAddCardFlows = document.getElementById("open-add-card-disciplines").addEventListener("click", () => {
+const buttonOpenAddCardFlows = document.getElementById("open-add-card-types").addEventListener("click", () => {
   addCard.style.display = 'block';
 });
-const buttonCloseAddCardFlows = document.getElementById("add-card-close-disciplines").addEventListener("click", () => {
+const buttonCloseAddCardFlows = document.getElementById("add-card-close-types").addEventListener("click", () => {
   console.log('закрыто')
   addCard.style.display = 'none';
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 function createTableOfDisciplines(data) {
   if (Object.keys(data).length == 0) {
@@ -111,12 +86,12 @@ function createTableOfDisciplines(data) {
       row.appendChild(col);
     };
     let col = document.createElement("td");
-    let deleteButtonIcon = document.createElement('img');
+    deleteButtonIcon = document.createElement('img');
     deleteButtonIcon.src = "../img/icon-delete.svg";
     deleteButtonIcon.classList.add("icon-img");
     deleteButtonIcon.addEventListener("click", () => {
       deleteData = { id: curPartData['id'] };
-      window.electronAPI.deleteDisciplineTable(deleteData).then((answer) => {
+      window.electronAPI.deleteTypesTable(deleteData).then((answer) => {
         console.log(answer)
       });
       updateCurTable();
@@ -134,7 +109,7 @@ function updateCurTable() {
   while(containerTable.firstChild) {
     containerTable.removeChild(containerTable.firstChild); 
   };
-  window.electronAPI.getCurDisciplines().then((data) => {
+  window.electronAPI.getCurTypes().then((data) => {
     createTableOfDisciplines(data);
   });
 }

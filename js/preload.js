@@ -11,7 +11,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getCurPPDatabase: () => ipcRenderer.invoke('get-cur-pp-database'),
   getActualDataPPUP: (data) => ipcRenderer.invoke('get-actual-pp-up', data),
   getCurFlows: (data) => ipcRenderer.invoke('get-cur-flows', data),
+  getCurGroups: (data) => ipcRenderer.invoke('get-cur-groups', data),
   getCurDisciplines: (data) => ipcRenderer.invoke('get-cur-disciplines', data),
+  getCurTypes: (data) => ipcRenderer.invoke('get-cur-types', data),
+  getCurSyllabusTable: (data) => ipcRenderer.invoke('get-cur-syllabus', data),
+  
 
   updateFlowsTable: (data) => ipcRenderer.invoke('update-table-flows', data),
   updateGroupsTable: (data) => ipcRenderer.invoke('update-table-groups', data),
@@ -24,10 +28,14 @@ contextBridge.exposeInMainWorld('electronAPI', {
   insertGroupsTable: (data) => ipcRenderer.invoke('insert-table-groups', data),
   insertUPTable: (data) => ipcRenderer.invoke('insert-table-up', data),
   insertPPTable: (data) => ipcRenderer.invoke('insert-table-pp', data),
+  insertDisciplineTable: (data) => ipcRenderer.invoke('insert-table-disciplines', data),
+  insertTypesTable: (data) => ipcRenderer.invoke('insert-table-types', data),
 
   deleteKafTable: (data) => ipcRenderer.invoke('delete-table-kaf', data),
   deleteFlowsTable: (data) => ipcRenderer.invoke('delete-table-flows', data),
   deleteGroupsTable: (data) => ipcRenderer.invoke('delete-table-groups', data),
   deleteUPTable: (data) => ipcRenderer.invoke('delete-table-up', data),
-  deletePPTable: (data) => ipcRenderer.invoke('delete-table-pp', data)
+  deletePPTable: (data) => ipcRenderer.invoke('delete-table-pp', data),
+  deleteTypesTable: (data) => ipcRenderer.invoke('delete-table-types', data),
+  deleteDisciplineTable: (data) => ipcRenderer.invoke('delete-table-disciplines', data),
 })

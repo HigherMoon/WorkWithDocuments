@@ -4,21 +4,13 @@
     <meta charset="UTF-8">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
     <title> Потоки </title>
-    
     <link rel="stylesheet" href="../css/style.css">
-    
   </head>
 
   <body>
     <div id="tm"> 
       <div id="tm-header">
         <button id="menu-toggle"> <img src="../img/icon-menu-50.svg" width="25px" height="25px"> </button>
-        <!--
-        <a id="tm-header-button" href="index.html">Распределение нагрузки</a>
-        <a id="tm-header-button" href="UP.html">Учебный план</a>
-        <a id="tm-header-button" href="Flows.html">Потоки и группы</a>
-        <a id="tm-header-button" href="Kafedra.html">Кафедра</a>
-        -->
         <p class="page"> Потоки и группы </p>
       </div>
     </div>
@@ -27,17 +19,18 @@
       <nav id="sidebar">
         <ul>
           <li><a id="" href="index.html">Распределение нагрузки</a></li>
-          <li><a id="" href="UP.html">Учебный план</a></li>
+          <li><a id="" href="personalHours.html">Статистика о преподавателях</a></li>
+          <li><a id="" href="syllabus.html">Учебный план</a></li>
           <li><a id="" href="disciplines.html">Дисциплины</a></li>
-          <li><a id="" href="Flows.html">Потоки и группы</a></li>
-          <li><a id="" href="Kafedra.html">Преподаватели кафедры</a></li>
+          <li><a id="" href="types.html">Типы</a></li>
+          <li><a id="" href="flows.html">Потоки и группы</a></li>
+          <li><a id="" href="kafedra.html">Преподаватели кафедры</a></li>
         </ul>
       </nav>
 
       <div id="add-card-flows" class="add-card">
         <div id="add-card-header" class="add-card-header">
           <h3> Добавить Поток </h3>
-          <button id="add-card-close-flows"> x </button>
         </div>
         <div id="add-card-content-flows" class="add-card-content">
             <form id="new-flow-form">
@@ -58,14 +51,13 @@
         </div>
         <div id="buttons-field">
           <button id="save-add-card-flows"> Сохранить </button>
-          <button id="close-add-card-flows" > Отмена </button>
+          <button id="add-card-close-flows" > Отмена </button>
         </div>
     </div>
 
     <div id="add-card-groups" class="add-card">
       <div id="add-card-header" class="add-card-header">
         <h3> Добавить Группу </h3>
-        <button id="add-card-close-groups"> x </button>
       </div>
       <div id="add-card-content-groups" class="add-card-content">
           <form id="new-group-form">
@@ -81,7 +73,7 @@
       </div>
       <div id="buttons-field">
         <button id="save-add-card-groups"> Сохранить </button>
-        <button id="close-add-card-groups" > Отмена </button>
+        <button id="add-card-close-groups" > Отмена </button>
       </div>
     </div>
 

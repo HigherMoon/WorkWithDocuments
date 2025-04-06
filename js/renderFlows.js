@@ -34,12 +34,18 @@ const deleteCardGroups = document.getElementById('delete-card-groups');
 const deleteCardTextGroups = document.getElementById('text-delete-card-groups');
 let selectedID = null;
 
-window.electronAPI.getDatabaseTable('flows').then((data) => {
-  createTableFromDatabase(data, "container-table-flows");
-});
-window.electronAPI.getDatabaseTable('groups').then((data) => {
-  createTableFromDatabase(data, "container-table-groups");
-});
+
+updateTables();
+
+
+function updateTables() {
+  window.electronAPI.getDatabaseTable('flows').then((data) => {
+    createTableFromDatabase(data, "container-table-flows");
+  });
+  window.electronAPI.getCurGroups('').then((data) => {
+    createTableFromDatabase(data, "container-table-groups");
+  });
+};
 
 
 /// Кнопки для потоков
@@ -47,10 +53,6 @@ const buttonOpenAddCardFlows = document.getElementById("open-add-card-flows").ad
   addCardFlows.style.display = 'block';
 });
 const buttonCloseAddCardFlows = document.getElementById("add-card-close-flows").addEventListener("click", () => {
-  console.log('закрыто')
-  addCardFlows.style.display = 'none';
-});
-const secondButtonCloseAddCardFlows = document.getElementById("close-add-card-flows").addEventListener("click", ()=>{
   console.log('закрыто')
   addCardFlows.style.display = 'none';
 });
@@ -95,7 +97,7 @@ const buttonDeleteAddCardFlows = document.getElementById('confirm-delete-card-fl
   window.electronAPI.getDatabaseTable('flows').then((data) => {
     createTableFromDatabase(data, "container-table-flows");
   });
-  window.electronAPI.getDatabaseTable('groups').then((data) => {
+  window.electronAPI.getCurGroups('').then((data) => {
     createTableFromDatabase(data, "container-table-groups");
   });
 });
@@ -110,10 +112,6 @@ const buttonCloseAddCardGroups = document.getElementById("add-card-close-groups"
   console.log('закрыто')
   addCardGroups.style.display = 'none';
 });
-const secondButtonCloseAddCardGroups = document.getElementById("close-add-card-groups").addEventListener("click", ()=>{
-  console.log('закрыто')
-  addCardGroups.style.display = 'none';
-});
 const buttonSaveAddCardGroups = document.getElementById('save-add-card-groups').addEventListener("click", () => {
   data = {
     name: document.getElementById('Наименование-g').value,
@@ -125,7 +123,7 @@ const buttonSaveAddCardGroups = document.getElementById('save-add-card-groups').
   window.electronAPI.insertGroupsTable(data).then((answer) => {
     console.log(answer)
   });
-  window.electronAPI.getDatabaseTable('groups').then((data) => {
+  window.electronAPI.getCurGroups('').then((data) => {
     createTableFromDatabase(data, "container-table-groups");
   });
   addCardGroups.style.display = 'none';
@@ -153,7 +151,7 @@ const buttonDeleteAddCardGroups = document.getElementById('confirm-delete-card-g
     console.log(answer)
   });
   deleteCardGroups.style.display = 'none';
-  window.electronAPI.getDatabaseTable('groups').then((data) => {
+  window.electronAPI.getCurGroups('').then((data) => {
     createTableFromDatabase(data, "container-table-groups");
   });
 });
@@ -187,70 +185,89 @@ const saveButtonTableGroups = document.getElementById("save-current-table-groups
 });
 */
 function createTableFromDatabase(database, containerID) {
-    if (Object.keys(database).length == 0) {
-      console.log("<!> Пустая база данных <!>")
-      return false;
-    };
-    containerTableN = document.getElementById(containerID);
-    while(containerTableN.firstChild) {
-      containerTableN.removeChild(containerTableN.firstChild); 
-    };
-    let table = document.createElement("table");
-    table.id = `table-${containerID}`
-    // -- Создание заголовков таблицы --
-    let headTable = document.createElement("thead");
-    headTable.id = "head-table";
+  if (containerID == "container-table-groups") {
+    dicts = {
+      "flow": "Поток",
+      "name": "Наименование",
+      "students_b": "Студенты (бюджет)",
+      "students_nb": "Студенты (не бюджет)"
+    }
+  }
+  else {
+    dicts = {
+      "id": "id потока",
+      "name": "Название",
+      "faculty": "Факультет",
+      "year": "Год",
+      "education_form": "Форма образованеия"
+    }
+  }
+  if (Object.keys(database).length == 0) {
+    console.log("<!> Пустая база данных <!>")
+    return false;
+  };
+  containerTableN = document.getElementById(containerID);
+  while(containerTableN.firstChild) {
+    containerTableN.removeChild(containerTableN.firstChild); 
+  };
+  let table = document.createElement("table");
+  table.id = `table-${containerID}`
+  // -- Создание заголовков таблицы --
   
-    let curPartData = database[0]
-    for (let paramOfCurPartData in curPartData) {
-      let headRow = document.createElement("th");
-      headRow.innerHTML = paramOfCurPartData;
-      headRow.id = paramOfCurPartData;
-      headTable.appendChild(headRow);
-    };
-    finalCell = document.createElement("th")
-    finalCell.style.width = "70px"
-    headTable.appendChild(finalCell);
-    table.appendChild(headTable);
-    // ---------------------------------
-    // ----- Создание тела таблицы -----
-    for (let indexOfData in Object.keys(database)) {
-      let row = document.createElement("tr");
-      let curPartData = database[indexOfData];
-  
-      for (let paramOfCurPartData in curPartData) {
-        let col = document.createElement("td");
-        if (paramOfCurPartData != 'Group_ID') {
-          col.contentEditable = true;
-        }
-        col.innerHTML = curPartData[paramOfCurPartData];
-        col.id = paramOfCurPartData;
-        row.appendChild(col);
-      };
+  let headTable = document.createElement("thead");
+  headTable.id = "head-table";
 
+  let curPartData = database[0]
+  for (let paramOfCurPartData in dicts) {
+    let headRow = document.createElement("th");
+    headRow.innerHTML = dicts[paramOfCurPartData];
+    headRow.id = paramOfCurPartData;
+    headTable.appendChild(headRow);
+  };
+  finalCell = document.createElement("th")
+  finalCell.style.width = "70px"
+  headTable.appendChild(finalCell);
+  table.appendChild(headTable);
+
+  // ---------------------------------
+  // ----- Создание тела таблицы -----
+  for (let indexOfData in Object.keys(database)) {
+    let row = document.createElement("tr");
+    let curPartData = database[indexOfData];
+
+    for (let paramOfCurPartData in dicts) {
       let col = document.createElement("td");
-      colbut = document.createElement("button");
-      colbut.innerHTML = 'Удалить';
-      colbut.addEventListener("click", () => {
-        deleteData = { id: curPartData['id'] };
-        if (containerID=='container-table-groups') {
-          window.electronAPI.deleteGroupsTable(deleteData).then((answer) => {
-            console.log(answer)
-        })}
-        if (containerID=='container-table-flows') {
-          window.electronAPI.deleteFlowsTable(deleteData).then((answer) => {
-            console.log(answer)
-        })}
-        //deleteCard.style.display = 'none';
-        createTableFromDatabase(database, containerID);
-      });
-      col.appendChild(colbut);
+      if (paramOfCurPartData != 'Group_ID') {
+        col.contentEditable = true;
+      }
+      col.innerHTML = curPartData[paramOfCurPartData];
+      col.id = paramOfCurPartData;
       row.appendChild(col);
-      table.appendChild(row);
     };
-  
-    document.getElementById(containerID).appendChild(table);
-    console.log("Новая таблица создана.")
+
+    let col = document.createElement("td");
+    deleteButtonIcon = document.createElement('img');
+    deleteButtonIcon.src = "../img/icon-delete.svg";
+    deleteButtonIcon.classList.add("icon-img");
+    deleteButtonIcon.addEventListener("click", () => {
+      deleteData = { id: curPartData['id'] };
+      if (containerID=='container-table-groups') {
+        window.electronAPI.deleteGroupsTable(deleteData).then((answer) => {
+          console.log(answer)
+      })}
+      if (containerID=='container-table-flows') {
+        window.electronAPI.deleteFlowsTable(deleteData).then((answer) => {
+          console.log(answer)
+      })}
+      updateTables();
+    });
+    col.appendChild(deleteButtonIcon);
+    row.appendChild(col);
+    table.appendChild(row);
+  };
+
+  document.getElementById(containerID).appendChild(table);
+  console.log("Новая таблица создана.")
 };
 
 document.getElementById('menu-toggle').addEventListener('click', function() {

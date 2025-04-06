@@ -46,11 +46,12 @@ app.whenReady().then(() => {
 
 function checkDatabaseTables() { 
    database.serialize(function() {
-      //names = ['flows', 'kafedra', 'groups', 'disciplines', 'syllabus', 'personal_plan']
-      //for (id in names) {
-      //  sqlDropTable(names[id]);
-      //}
-      createDatabases();
+      names = ['flows', 'kafedra', 'groups', 'disciplines', 'syllabus', 'personal_plan', 'types', 'personal_hours', 'years']
+      names = ['syllabus']
+      for (id in names) {
+        //sqlDropTable(names[id]);
+      }
+      //createDatabases();
       //fillDatabases();
    })
 };
@@ -104,7 +105,7 @@ app.on('window-all-closed', () => {
  });
  ipcMain.handle('get-actual-pp-up', (event, data) => {
    return new Promise((resolve, reject) => {
-      resolve(getActualDataPPUP(data).then(i => { return i }));
+      resolve(getActualDataPPUP(data).then(i => { console.log(i); return i; }));
    });
  });
  ipcMain.handle('get-cur-flows', (event, data) => {
@@ -112,9 +113,24 @@ app.on('window-all-closed', () => {
       resolve(getCurFlows(data).then(i => { return i }));
    });
  });
+ ipcMain.handle('get-cur-groups', (event, data) => {
+   return new Promise((resolve, reject) => {
+      resolve(getCurGroups(data).then(i => { return i }));
+   });
+ });
  ipcMain.handle('get-cur-disciplines', (event, data) => {
    return new Promise((resolve, reject) => {
       resolve(getCurDisciplines(data).then(i => { return i }));
+   });
+ });
+ ipcMain.handle('get-cur-types', (event, data) => {
+   return new Promise((resolve, reject) => {
+      resolve(getCurTypes(data).then(i => { return i }));
+   });
+ });
+ ipcMain.handle('get-cur-syllabus', (event, data) => {
+   return new Promise((resolve, reject) => {
+      resolve(getCurSyllabus(data).then(i => { return i }));
    });
  });
 
@@ -191,7 +207,20 @@ ipcMain.handle('insert-table-groups', (event, data) => {
        }));
    });
  });
-
+ ipcMain.handle('insert-table-disciplines', (event, data) => {
+   return new Promise((resolve, reject) => {
+      resolve(sqlInsertIntoDiscipline(data).then(i => { 
+         return i;
+       }));
+   });
+ });
+ ipcMain.handle('insert-table-types', (event, data) => {
+   return new Promise((resolve, reject) => {
+      resolve(sqlInsertIntoTypes(data).then(i => { 
+         return i;
+       }));
+   });
+ });
 
  ipcMain.handle('delete-table-kaf', (event, data) => {
    return new Promise((resolve, reject) => {
@@ -224,6 +253,20 @@ ipcMain.handle('insert-table-groups', (event, data) => {
  ipcMain.handle('delete-table-pp', (event, data) => {
    return new Promise((resolve, reject) => {
       resolve(deleteFromPP(data).then(i => { 
+         return i;
+       }));
+   });
+ });
+ ipcMain.handle('delete-table-types', (event, data) => {
+   return new Promise((resolve, reject) => {
+      resolve(deleteFromTypes(data).then(i => { 
+         return i;
+       }));
+   });
+ });
+ ipcMain.handle('delete-table-disciplines', (event, data) => {
+   return new Promise((resolve, reject) => {
+      resolve(deleteFromDisciplines(data).then(i => { 
          return i;
        }));
    });
@@ -349,6 +392,72 @@ function sqlInsertIntoUP(data) {
       });
    });
 }
+
+
+function sqlInsertIntoDiscipline(data) {
+   return new Promise((resolve, reject) => {
+
+      let sqlColumns = [];
+      let sqlData = [];
+      for (let i in data) {
+         if (data[i] != "") {
+            if (isNaN(Number(data[i]))){
+               sqlData.push("\'" + data[i] + "\'");
+            }
+            else {
+              sqlData.push(data[i]);
+            }
+            sqlColumns.push(i);
+         }
+      }
+
+      let sql = `INSERT INTO disciplines (${sqlColumns.join()}) 
+         Values (${sqlData.join()})`;   
+   
+      console.log(sql)
+      database.run(sql, (err) => {
+         if (err) {
+            console.error(err.message);
+            resolve(err.message);
+         } 
+         resolve("Данные о учебной дисциплине внесены.");
+      });
+   });
+}
+
+
+function sqlInsertIntoTypes(data) {
+   return new Promise((resolve, reject) => {
+
+      let sqlColumns = [];
+      let sqlData = [];
+      for (let i in data) {
+         if (data[i] != "") {
+            if (isNaN(Number(data[i]))){
+               sqlData.push("\'" + data[i] + "\'");
+            }
+            else {
+              sqlData.push(data[i]);
+            }
+            sqlColumns.push(i);
+         }
+      }
+
+      let sql = `INSERT INTO types (${sqlColumns.join()}) 
+         Values (${sqlData.join()})`;   
+   
+      console.log(sql)
+      database.run(sql, (err) => {
+         if (err) {
+            console.error(err.message);
+            resolve(err.message);
+         } 
+         resolve("Данные о типе внесены.");
+      });
+   });
+}
+
+
 function sqlInsertIntoPP(data) {
    return new Promise((resolve, reject) => {
 
@@ -453,13 +562,9 @@ function updatePersonal(data) {
          if (isNaN(Number(data[i]))){
             updateStroka.push(i + " = \'" + data[i] + "\'");
          }
-         else {
-            updateStroka.push(i + " = " + data[i]);
-         }
+         else { updateStroka.push(i + " = " + data[i]); }
       }
-      else {
-         updateStroka.push(i + " = " + "null")
-      }
+      else { updateStroka.push(i + " = " + "null") }
    }
    return new Promise((resolve, reject) => {
       database.run(` UPDATE kafedra
@@ -665,6 +770,34 @@ function deleteFromPP(data) {
                });
    });
 }
+function deleteFromTypes(data) {
+   return new Promise((resolve, reject) => {
+      database.run(` DELETE FROM types
+               Where id = ${data.id}`, 
+               (err, rows) => { 
+                  if (err) { 
+                     return console.error(err.message) 
+                  }
+                  else {
+                     console.log(`Данные предмета из учебного плана с ID: '${data.id}' удалены`);
+                     return 'Успешно';
+                  }
+               });
+   })}
+function deleteFromDisciplines(data) {
+   return new Promise((resolve, reject) => {
+      database.run(` DELETE FROM disciplines
+               Where id = ${data.id}`, 
+               (err, rows) => { 
+                  if (err) { 
+                     return console.error(err.message) 
+                  }
+                  else {
+                     console.log(`Данные предмета из учебного плана с ID: '${data.id}' удалены`);
+                     return 'Успешно';
+                  }
+               });
+   })}
 
 /////////////////////////////////////////////////////
 /////// Заполнение таблиц рыбным текстом SQL ////////
@@ -807,7 +940,7 @@ function createDatabases() {
    PRIMARY KEY (id),
    FOREIGN KEY (flow_id) REFERENCES flows (id) ON DELETE CASCADE,
    UNIQUE (name))
-    `);
+   `);
   
       database.run(`
    CREATE TABLE IF NOT EXISTS disciplines (
@@ -815,7 +948,15 @@ function createDatabases() {
       name     TEXT NOT NULL,
    PRIMARY KEY (id),
    UNIQUE (name))
-    `);
+   `);
+
+    database.run(`
+      CREATE TABLE IF NOT EXISTS types (
+        id      INTEGER,
+        name   TEXT NOT NULL,
+    PRIMARY KEY (id),
+    UNIQUE (name))
+      `);
 
       database.run(`
    CREATE TABLE IF NOT EXISTS syllabus (
@@ -829,9 +970,10 @@ function createDatabases() {
       hours             INTEGER,
    PRIMARY KEY (id),
    UNIQUE (flow_id, discipline_id, semester, type),
-   FOREIGN KEY (flow_id) REFERENCES flows (id) ON DELETE CASCADE
+   FOREIGN KEY (type) REFERENCES types (id) ON DELETE CASCADE,
+   FOREIGN KEY (flow_id) REFERENCES flows (id) ON DELETE CASCADE,
    FOREIGN KEY (discipline_id) REFERENCES disciplines (id) ON DELETE CASCADE)
-    `);
+   `);
 
       database.run(`
    CREATE TABLE IF NOT EXISTS personal_plan (
@@ -868,6 +1010,29 @@ function getCurFlows(data) {
    });
 }
 
+function getCurGroups(data) {
+   return new Promise((resolve, reject) => {
+      sql = `
+      SELECT 
+         groups.id
+         , groups.flow_id
+         , groups.name as name
+         , groups.students_b
+         , groups.students_nb
+         , flows.name as flow
+      FROM groups
+      JOIN flows
+         ON flows.id = groups.flow_id
+      `;
+      database.all(sql, [], (err, rows) => {
+         if (err) {
+            console.error(err.message);
+         };
+      resolve(rows);
+      });
+   });
+}
+
 function getCurDisciplines(data) {
    return new Promise((resolve, reject) => {
       sql = `
@@ -875,6 +1040,48 @@ function getCurDisciplines(data) {
          id
          , name
       FROM disciplines
+      `;
+      database.all(sql, [], (err, rows) => {
+         if (err) {
+            console.error(err.message);
+         };
+      resolve(rows);
+      });
+   });
+}
+
+function getCurTypes(data) {
+   return new Promise((resolve, reject) => {
+      sql = `
+      SELECT 
+         id
+         , name
+      FROM types
+      `;
+      database.all(sql, [], (err, rows) => {
+         if (err) {
+            console.error(err.message);
+         };
+      resolve(rows);
+      });
+   });
+}
+function getCurSyllabus(data) {
+   return new Promise((resolve, reject) => {
+      sql = `
+      SELECT 
+         syllabus.id
+         , flows.name AS flow
+         , disciplines.name AS discipline
+         , types.name AS type
+         , syllabus.subgroups
+         , syllabus.sub_hours
+         , syllabus.hours
+         , syllabus.semester
+      FROM syllabus
+      JOIN types ON types.id = syllabus.type
+      JOIN disciplines ON disciplines.id = syllabus.discipline_id
+      JOIN flows ON flows.id = syllabus.flow_id
       `;
       database.all(sql, [], (err, rows) => {
          if (err) {

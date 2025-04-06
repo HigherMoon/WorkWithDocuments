@@ -1,7 +1,7 @@
 let personalTableIsCreated = false;    // Проверка создана ли уже таблица
 let currentData;                       // Текущие данные
 let currentSemester = 1;               // Текущий семестр (1, 2)
-let currentYear = "2023/2024";         // Текущий год
+let currentYear = "2025/2026";         // Текущий год
 let currentFormOfEducation = "Очное";  // Текущая форма обучения (Очное, Заочное, Очно-заочное, Аспирантура) 
 let currentPersonID = null;
 let currentPersonFIO = "";
@@ -28,10 +28,9 @@ window.electronAPI.getDatabaseStatus().then((data) => {
 });
 
 
-const pFIO = document.getElementById("current-ФИО");
 const pYear = document.getElementById("current-год");
 const containerPersonalTable = document.getElementById("container-personal-table");
-const containerTable = document.getElementById("container-data-table");
+const containerTable = document.getElementById("container-data");
 //const selectorPlan = document.getElementById("selector-plan");
 const datalistSyllabus = document.getElementById("syllabus-input-helper");
 const inputGroup = document.getElementById("group-input");
@@ -42,45 +41,23 @@ const formAddCard = document.getElementById('new-pp-form');
 //  document.getElementById("testDialog").showModal();
 //});
 
-const buttonChooseO = document.getElementById("button-o").addEventListener("click", () => {
-  currentFormOfEducation = "Очное";
-  updateInfoAboutCurrentSemesterAndFormEducation();
-});
-const buttonChooseZ = document.getElementById("button-z").addEventListener("click", () => {
-  currentFormOfEducation = "Заочное";
-  updateInfoAboutCurrentSemesterAndFormEducation();
-});
-const buttonChooseOZ = document.getElementById("button-oz").addEventListener("click", () => {
-  currentFormOfEducation = "Очно-заочное";
-  updateInfoAboutCurrentSemesterAndFormEducation();
-});
-const buttonChooseA = document.getElementById("button-a").addEventListener("click", () => {
-  currentFormOfEducation = "Аспирантура";
-  updateInfoAboutCurrentSemesterAndFormEducation(); 
-});;
-const buttonChooseSemester1 = document.getElementById("button-1-sem").addEventListener("click", () => {
-  currentSemester = 1;
-  updateInfoAboutCurrentSemesterAndFormEducation();
-});
-const buttonChooseSemester2 = document.getElementById("button-2-sem").addEventListener("click", () => {
-  currentSemester = 2;
-  updateInfoAboutCurrentSemesterAndFormEducation();
+const selectCurrentYear = document.getElementById("select-current-год");
+selectCurrentYear.addEventListener("change", () => {
+  currentYear = selectCurrentYear.value;
 });
 
-const buttonsFormsEducations = document.querySelectorAll('#container-buttons-form-education button');
-buttonsFormsEducations.forEach(button => {
-  button.addEventListener('click', function() {
-    buttonsFormsEducations.forEach(btn => btn.classList.remove('active'));
-    this.classList.add('active');
-  });
+const selectCurrentFormEducation = document.getElementById("select-current-form-education");
+selectCurrentFormEducation.addEventListener("change", () => {
+  currentFormOfEducation = selectCurrentFormEducation.value;
 });
-const buttonsSemesters = document.querySelectorAll('#container-buttons-semester button');
-buttonsSemesters.forEach(button => {
-  button.addEventListener('click', function() {
-    buttonsSemesters.forEach(btn => btn.classList.remove('active'));
-    this.classList.add('active');
-  });
+
+const selectCurrentSemester = document.getElementById("select-current-semester")
+selectCurrentSemester.addEventListener("change", () => {
+  currentSemester = selectCurrentSemester.value;
 });
+
+
+
 
 
 const buttonUpdateCurrentTableOfPerson = document.getElementById("current-data").addEventListener("click", () => {
@@ -116,6 +93,7 @@ const buttonOpenAddCard = document.getElementById("open-add-card").addEventListe
       Форма_обучения: currentFormOfEducation
     }
     window.electronAPI.getActualDataPPUP(dataTo).then((data) => {
+      console.log(dataTo);
       for (let index in data) {
         let objData = data[index];
         let newOption = document.createElement("option");
@@ -131,15 +109,9 @@ const buttonOpenAddCard = document.getElementById("open-add-card").addEventListe
 const buttonCloseAddCard = document.getElementById("add-card-close").addEventListener("click", () => {
   console.log('закрыто')
   addCard.style.display = 'none';
-  document.getElementById('group-input').value="";
   document.getElementById('hours-input').value="";
 });
-const secondButtonCloseAddCard = document.getElementById("close-add-card").addEventListener("click", ()=>{
-  console.log('закрыто')
-  addCard.style.display = 'none';
-  document.getElementById('group-input').value="";
-  document.getElementById('hours-input').value="";
-});
+
 const buttonSaveAddCard = document.getElementById('save-add-card').addEventListener("click", () => {
   data = {
     p_id: currentPersonID,
@@ -166,68 +138,6 @@ const buttonSaveAddCard = document.getElementById('save-add-card').addEventListe
   getDataAndCreateTable();
 });
 
-/*
-const buttonDeletePP = document.getElementById("open-delete-card").addEventListener("click", ()=>{
-  dataTo = {
-    Personal_ID: currentPersonID,
-    UP_ID: currentSyllabusId
-  }  
-  window.electronAPI.deletePPTable(dataTo).then((answer) => {
-    console.log(answer)
-  });
-
-  data = updateSendingData();
-
-  if (data.Personal_ID==null) {
-    console.log('Нужно выбрать препода');
-  }
-  else {
-    window.electronAPI.getCurPersonalPlan(data).then((answerData) => {
-      clearContainerTable();
-      checkAnswerData(answerData);
-    });
-  }
-  getDataAndCreateTable();
-});
-
-const buttonUpdatePP = document.getElementById("button-update-table-kaf").addEventListener("click", ()=>{
-  let table = document.getElementById("data-table");
-  let headTable = document.getElementById("head-table");
-
-  let data = {};
-  for (let i in headTable.children) {
-    if (headTable.children[i].innerHTML != undefined)
-      data[headTable.children[i].innerHTML] = "";
-  }
-  
-  let countOftr = table.getElementsByTagName("tr").length;
-  for (let i=0; i < countOftr; i++) {
-    let current_tr = table.getElementsByTagName("tr")[i];
-    let dataToSend = {};
-    for (let j=0; j<current_tr.getElementsByTagName("td").length; j++) {
-      let current_td = current_tr.getElementsByTagName("td")[j];
-      dataToSend[current_td.id] = current_td.innerHTML;
-    }
-    dataToSend["p_id"] = currentPersonID;
-    window.electronAPI.updatePPTable(dataToSend).then((answer) => {
-      console.log(answer)
-    });
-  }
-  
-  data = updateSendingData();
-
-  if (data.Personal_ID==null) {
-    console.log('Нужно выбрать препода');
-  }
-  else {
-    window.electronAPI.getCurPersonalPlan(data).then((answerData) => {
-      clearContainerTable();
-      checkAnswerData(answerData);
-    });
-  }
-  getDataAndCreateTable();
-});
-*/
 ///////////////////////////////////
 //// Создание таблиц из SQL БД ////
 ///////////////////////////////////
@@ -270,10 +180,10 @@ function createTableFromDatabase(database) {
     };
 
     let col = document.createElement("td");
-    colbut = document.createElement("button");
-    colbut.innerHTML = 'Удалить';
-    colbut.style.width = '70px';
-    colbut.addEventListener("click", () => {
+    let deleteButtonIcon = document.createElement('img');
+    deleteButtonIcon.src = "../img/icon-delete.svg";
+    deleteButtonIcon.classList.add("icon-img");
+    deleteButtonIcon.addEventListener("click", () => {
       deleteData = {
         "p_id": currentPersonID,
         "s_id": curPartData["s_id"]
@@ -284,7 +194,7 @@ function createTableFromDatabase(database) {
       updatePersonalTable();
       getDataAndCreateTable();
     })
-    col.appendChild(colbut);
+    col.appendChild(deleteButtonIcon);
     row.appendChild(col);
     table.appendChild(row);
   };
@@ -293,10 +203,6 @@ function createTableFromDatabase(database) {
    containerTable.appendChild(table);
    console.log("Новая таблица создана.")
 };
-
-function updateInfoAboutCurrentSemesterAndFormEducation() {
-  pYear.innerHTML = currentYear;
-}
 
 function updateSendingData() {
   return data = {
@@ -374,7 +280,6 @@ function createPersonalTableFromDatabase(database) {
     row.addEventListener("click", () => {
       currentPersonID = curPartData["id"];
       currentPersonFIO = curPartData["Фамилия"];
-      pFIO.innerHTML = curPartData["Фамилия"];
       data = updateSendingData();
       if (data.Personal_ID==null) {
         console.log('Нужно выбрать препода');

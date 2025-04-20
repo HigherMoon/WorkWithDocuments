@@ -98,6 +98,17 @@ app.on('window-all-closed', () => {
       resolve(getCurStatsTeachers(data).then(i => { return i }));
    });
  });
+ ipcMain.handle('get-cur-teachers', (event, data) => {
+   return new Promise((resolve, reject) => {
+      resolve(getCurTeachers(data).then(i => { return i }));
+   });
+ });
+ ipcMain.handle('get-cur-list-teachers', (event, data) => {
+   return new Promise((resolve, reject) => {
+      resolve(getCurListTeachers(data).then(i => { return i }));
+   });
+ });
+
  ipcMain.handle('get-cur-pp-database', (event) => {
    return new Promise((resolve, reject) => {
       resolve(getCurPPDB().then(i => { return i }));
@@ -171,7 +182,15 @@ app.on('window-all-closed', () => {
        }));
    });
  });
- 
+ ipcMain.handle('update-table-types', (event, data) => {
+   return new Promise((resolve, reject) => {
+      resolve(updateTypes(data).then(i => { 
+         return i;
+       }));
+   });
+ });
+
+
 ipcMain.handle('insert-table-kaf', (event, data) => {
    return new Promise((resolve, reject) => {
       resolve(sqlInsertIntoKAF(data).then(i => { 
@@ -690,6 +709,34 @@ function updatePersonalPlan(data) {
       return 'Успешно';
    });
 }
+function updateTypes(data) {
+   let updateStroka = [];
+   for (let i in data) {
+      if (data[i] != "") {
+         if (isNaN(Number(data[i]))){
+            updateStroka.push(i + " = \'" + data[i] + "\'");
+         }
+         else {
+            updateStroka.push(i + " = " + data[i]);
+         }
+      }
+      else {
+         updateStroka.push(i + " = " + "null")
+      }
+   }
+   return new Promise((resolve, reject) => {
+      database.run(`UPDATE types
+               SET name = '${data.name}'
+               WHERE id = ${data.id}`, 
+               (err, rows) => { 
+                  if (err) { 
+                     return console.error(err.message) 
+                  }
+               });
+      console.log(`Данные для '${data.s_id}' обновлены`)
+      return 'Успешно';
+   });
+}
 
 //////////////////////////////////////////////
 /////////// Удаление из таблиц SQL ///////////
@@ -1116,20 +1163,36 @@ function getCurPPDB() {
 function getActualDataPPUP(data) {
    return new Promise((resolve, reject) => {
       sql = `
-      Select 
+      SELECT 
          syllabus.id, 
-         flows.name as 'Поток', 
+         flows.name AS flow, 
          disciplines.name, 
          flows.education_form, 
          syllabus.sub_hours, 
-         syllabus.hours
-      From syllabus join flows 
+         syllabus.hours,
+         types.name AS typeName,
+         (SELECT sum(pp.hours)
+          FROM personal_plan pp
+          JOIN syllabus s
+            ON pp.s_id = s.id
+          WHERE pp.p_id != ${data.id}
+            AND syllabus.id = pp.s_id) AS usedHours
+      FROM syllabus
+      JOIN flows 
          ON syllabus.flow_id=flows.id
       JOIN disciplines 
          ON disciplines.id = syllabus.discipline_id
+      JOIN types
+         ON types.id = syllabus.type
       WHERE year='${data.Год}' 
          AND semester=${data.Семестр} 
-         AND education_form='${data.Форма_обучения}'`;
+         AND education_form='${data.Форма_обучения}'
+         AND syllabus.id NOT IN (
+            SELECT s_id
+            FROM personal_plan
+            WHERE p_id = ${data.id}
+         )
+         `;
             database.all(sql, [], (err, rows) => {
             if (err) {
                console.error(err.message);
@@ -1177,19 +1240,32 @@ function getCurPersonalPlan(data) {
    return new Promise((resolve, reject) => {
       sql = `
       SELECT 
-         personal_plan.s_id, 
-         flows.name as 'Поток', 
-         disciplines.name as 'Дисциплина',  
-         syllabus.type as 'Тип', 
-         syllabus.hours as 'Общие_часы', 
-         syllabus.sub_hours, 
-         personal_plan.hours as 'Часы_преподавателя'
-      FROM ((personal_plan JOIN syllabus 
-         ON personal_plan.s_id=syllabus.id)
-      JOIN flows 
-         ON syllabus.flow_id=flows.id)
+         personal_plan.p_id AS pId
+         , flows.id AS flowId
+         , flows.name AS flowName
+         , disciplines.id AS disciplineId
+         , disciplines.name AS disciplineName
+         , types.id AS typeId
+         , types.name AS typeName
+         , syllabus.semester AS semester
+         , syllabus.hours AS hours
+         , syllabus.sub_hours AS subHours
+         , syllabus.id as s_id
+         , personal_plan.hours AS personalHours
+         , (SELECT SUM(pp.hours) 
+            FROM syllabus s
+            JOIN personal_plan pp ON s.id = pp.s_id
+            WHERE pp.p_id != ${data.Personal_ID}
+            AND s.id = syllabus.id) AS totalHours
+      FROM personal_plan
+      JOIN syllabus
+         ON personal_plan.s_id=syllabus.id
+      JOIN flows
+         ON syllabus.flow_id=flows.id
       JOIN disciplines 
          ON disciplines.id = syllabus.discipline_id
+      JOIN types
+         ON syllabus.type = types.id
       WHERE personal_plan.p_id=${data.Personal_ID}
          AND syllabus.semester = ${data.Семестр}
          AND flows.year = '${data.Год}'
@@ -1244,27 +1320,61 @@ function getCurStatsTeachers(data) {
             };
          console.log(rows)
          resolve(rows);
-      });
-   });
-}
+})})}
 
+function getCurTeachers(data) {
+   console.log(data)
+   return new Promise((resolve, reject) => {
+      sql = `
+      Select 
+         id
+         , firstname
+         , secondname
+         , surname
+         , salary
+      From kafedra
+      `;
+      database.all(sql, [], (err, rows) => {
+      if (err) {
+         console.error(err.message);
+      };
+      console.log(rows)
+      resolve(rows);
+})})};
 
-function readXSL(filePath) {
-   file = xlsx.readFile(filePath)
-   // 1 - 8 блок который не нужен пока
-   // 2 - название предмета
-   // 15 - 21 - 1 семестр, 1 курс
-   // -- 15 зе
-   // -- 16 Лекции
-   // -- 17 Лабораторки
-   // -- 18 Практики
-   // -- 19 ИКР
-   // -- 20 СР
-   // -- 21 Контроль
-   // 22 - 27 - 2 семестр, 1 курс
-   console.log(file)
-   // data = {}
-   // sheet = 'План'
-   // for (row in file.getSheet(sheet)) {
-   // }
-}
+function getCurListTeachers(data) {
+   console.log(data)
+   return new Promise((resolve, reject) => {
+      sql = `
+         SELECT
+            flows.name AS flowName
+            , disciplines.name AS disciplineName
+            , types.name AS typeName
+            , personal_plan.subgroups 
+            , flows.year
+            , flows.education_form 
+            , syllabus.semester AS semester
+            , syllabus.hours AS hours
+            , syllabus.sub_hours AS subHours
+            , personal_plan.hours AS personalHours
+         FROM personal_plan
+         JOIN syllabus
+            ON personal_plan.s_id=syllabus.id
+         JOIN flows
+            ON syllabus.flow_id=flows.id
+         JOIN disciplines 
+            ON disciplines.id = syllabus.discipline_id
+         JOIN types
+            ON syllabus.type = types.id
+         WHERE personal_plan.p_id = ${data.currentTeacher}
+            AND flows.year = '${data.currentYear}'
+            AND flows.education_form = '${data.currentFormOfEducation}'
+      `;
+      database.all(sql, [], (err, rows) => {
+      if (err) {
+         console.error(err.message);
+      };
+      console.log(rows)
+      resolve(rows);
+   })})
+};

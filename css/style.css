@@ -13,6 +13,7 @@ body {
     font-family: 'Arial';
     font-size: 14px;
     margin: 0;
+    user-select: none; 
 }
 
 .icon-img {
@@ -67,10 +68,19 @@ button {
     border: 1px solid;
     border-color: #000000;
     border-radius: 5px;
-    padding: 5px 10px;
     color: black;
     transition: 0.3s;
 }
+.button-add-row {
+    width: 100%;
+    padding: 5px;
+}
+
+
+#open-add-card, #open-add-card-flows, #open-add-card-groups {
+    padding: 5px 10px;
+}
+
 button:hover {
     background-color: rgb(230, 230, 230);
     transition: 0.3s;
@@ -119,4 +129,17 @@ button:hover {
 	margin: 5px;
 	float: right;
 	background-color: #f7d1d1;
+}
+
+option {
+    max-width: 300px;
+	word-wrap: break-word;
+}
+
+select {
+    border-radius: 5px;
+}
+
+.edit-cell {
+    background-color: #ffd884;
 }

@@ -44,7 +44,7 @@ const buttonSaveAddCard = document.getElementById('save-add-card').addEventListe
 
 
 
-const buttonOpenAddCardFlows = document.getElementById("open-add-card-types").addEventListener("click", () => {
+const buttonOpenAddCardFlows = document.getElementById("open-add-card").addEventListener("click", () => {
   addCard.style.display = 'block';
 });
 const buttonCloseAddCardFlows = document.getElementById("add-card-close-types").addEventListener("click", () => {
@@ -72,21 +72,32 @@ function createTableOfDisciplines(data) {
     headTable.appendChild(headRow);
   }
   finalCell = document.createElement("th")
-  finalCell.style.width = "70px"
+  finalCell.style.width = "100px"
   headTable.appendChild(finalCell);
   table.appendChild(headTable);
   
   for (let indexOfData in Object.keys(data)) {
     let row = document.createElement("tr");
+    let edditableRow = null;
     let curPartData = data[indexOfData];
     for (let headRowsValue in listHeadValuesPersonalTable) {
       let col = document.createElement("td");
       col.innerHTML = curPartData[listHeadValuesPersonalTable[headRowsValue]];
       col.id = headRowsValue;
+      if (headRowsValue == "Название") {
+        edditableRow = col;
+      }
       row.appendChild(col);
     };
     let col = document.createElement("td");
-    deleteButtonIcon = document.createElement('img');
+    
+    let deleteButton = document.createElement('button');
+    let deleteButtonIcon = document.createElement('img');
+    let acceptButton = document.createElement('button');
+    let acceptButtonIcon = document.createElement('img');
+    let editButton = document.createElement('button');
+    let editButtonIcon = document.createElement('img');
+    
     deleteButtonIcon.src = "../img/icon-delete.svg";
     deleteButtonIcon.classList.add("icon-img");
     deleteButtonIcon.addEventListener("click", () => {
@@ -96,8 +107,42 @@ function createTableOfDisciplines(data) {
       });
       updateCurTable();
     });
-    col.appendChild(deleteButtonIcon);
+    deleteButton.appendChild(deleteButtonIcon);
+    col.appendChild(deleteButton);
     row.appendChild(col);
+
+    acceptButtonIcon.src = "../img/icon-accept.svg";
+    acceptButtonIcon.classList.add("icon-img");
+    acceptButton.appendChild(acceptButtonIcon);
+    acceptButton.addEventListener("click", () => {
+      edditableRow.setAttribute('contenteditable', false);
+      edditableRow.classList.remove("edit-cell");
+      acceptButton.style.display = "none";
+      editButton.style.removeProperty("display");
+      updateData = {
+        id: curPartData['id'],
+        name: edditableRow.innerHTML,
+      };
+      window.electronAPI.updateTypesTable(updateData).then((answer) => {
+        console.log(answer)
+      });
+      updateCurTable();
+    });
+    acceptButton.style.display = "none";
+    col.appendChild(acceptButton);
+    
+    editButtonIcon.src = "../img/icon-pencil.png";
+    editButtonIcon.classList.add("icon-img");
+    editButton.appendChild(editButtonIcon);
+    editButton.addEventListener("click", () => {
+      edditableRow.setAttribute('contenteditable', true);
+      edditableRow.classList.add("edit-cell");
+      acceptButton.style.removeProperty("display");
+      editButton.style.display = "none";
+    });
+    col.appendChild(editButton);
+    row.appendChild(col);
+
     table.appendChild(row);
   };
   containerTable.appendChild(table);

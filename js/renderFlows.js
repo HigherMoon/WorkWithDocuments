@@ -225,7 +225,7 @@ function createTableFromDatabase(database, containerID) {
     headTable.appendChild(headRow);
   };
   finalCell = document.createElement("th")
-  finalCell.style.width = "70px"
+  finalCell.style.width = "100px"
   headTable.appendChild(finalCell);
   table.appendChild(headTable);
 
@@ -246,7 +246,8 @@ function createTableFromDatabase(database, containerID) {
     };
 
     let col = document.createElement("td");
-    deleteButtonIcon = document.createElement('img');
+    let deleteButton = document.createElement('button');
+    let deleteButtonIcon = document.createElement('img');
     deleteButtonIcon.src = "../img/icon-delete.svg";
     deleteButtonIcon.classList.add("icon-img");
     deleteButtonIcon.addEventListener("click", () => {
@@ -261,8 +262,18 @@ function createTableFromDatabase(database, containerID) {
       })}
       updateTables();
     });
-    col.appendChild(deleteButtonIcon);
+    deleteButton.appendChild(deleteButtonIcon);
+    col.appendChild(deleteButton);
     row.appendChild(col);
+
+    let editButton = document.createElement('button');
+      let editButtonIcon = document.createElement('img');
+      editButtonIcon.src = "../img/icon-pencil.png";
+      editButtonIcon.classList.add("icon-img");
+      editButton.appendChild(editButtonIcon);
+      col.appendChild(editButton);
+      row.appendChild(col);
+
     table.appendChild(row);
   };
 

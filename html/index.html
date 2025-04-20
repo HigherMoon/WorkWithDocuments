@@ -27,49 +27,50 @@
           <li><a id="" href="kafedra.html">Преподаватели кафедры</a></li>
         </ul>
       </nav>
-      <div class="container-two-tables">
-        <div id="container-current-person">
-          <div>
-            <select id="select-current-год">
-              <option> 2025/2026 </option>
-            </select>
-            <select id="select-current-form-education">
-              <option value="Очное"> Очное </option>
-              <option value="Заочное"> Заочное </option>
-              <option value="Очно-заочное"> Очно-заочное </option>
-              <option value="Аспирантура"> Аспирантура </option>
-            </select>
-            <select id="select-current-semester">
-              <option value="1"> 1 </option>
-              <option value="2"> 2 </option>
-            </select>
-            <button id="current-data"> Вывести учебный план </button>
-          </div>
+      <div id="container-current-person">
+        <div>
+          <select id="select-current-год">
+            <option> 2025/2026 </option>
+            <option> 2026/2027 </option>
+          </select>
+          <select id="select-current-form-education">
+            <option value="Очное"> Очное </option>
+            <option value="Заочное"> Заочное </option>
+            <option value="Очно-заочное"> Очно-заочное </option>
+            <option value="Аспирантура"> Аспирантура </option>
+          </select>
+          <select id="select-current-semester">
+            <option value="1"> 1 </option>
+            <option value="2"> 2 </option>
+          </select>
+          <button id="current-data"> Вывести учебный план </button>
         </div>
       </div>
-      
+      <div>
+        <h5 id="infoFIO"> Выбран: </h5>
+      </div>
       <div id="container-personal-table" class="table-personals-hours"></div>
-      
-        
+
       <div id="add-card" class="add-card">
         <div id="add-card-header" class="add-card-header">
           <h3 id="add-card-text"> Добавить предмет для </h3>
         </div>
         <div id="add-card-content" class="add-card-content">
             <form id="new-pp-form">
-              <div class="infoBlock">
-                <label> Предмет (ID) </label>
-                <input id="syllabus-input" list="syllabus-input-helper">
-                <datalist id="syllabus-input-helper"></datalist>
+              <p> Предмет (ID) </p>
+              <input id="syllabus-input" list="syllabus-input-helper">
+              <datalist id="syllabus-input-helper"></datalist>
+              <p> Количество часов </p>
+              <input id="hours-input">
+              <div id="choose">
+                <input type="range" id="groupCount" min="0" max="0" value="0" step="1">
+                <div>Выбрано: <span id="selectedValue">0</span> групп</div>
               </div>
-              <div class="infoBlock">
-                <label> Количество подгрупп </label>
-                <input id="inputSubGroups">
-              <div class="infoBlock">
-              </div>
-              <div class="infoBlock"></div>
-                <label> Количество часов </label>
-                <input id="hours-input"> 
+              <div>
+                <h6 id="infoHours">Всего часов: </h6>
+                <h6 id="infoSubHours">Часов на подгруппу: </h6>
+                <h6 id="infoUsedHours">Часов ИСПОЛЬЗОВАНО: </h6>
+                <h6 id="infoSubGroups">Всего подгрупп: </h6>
               </div>
             </form>
         </div>
@@ -83,6 +84,7 @@
         <h3> Персональный план </h3>
         <button id="open-add-card"> + </button>
       </div>
+
       <div id="container-data"></div>
     </div>
   </body>

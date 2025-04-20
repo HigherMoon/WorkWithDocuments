@@ -44,7 +44,7 @@ const buttonSaveAddCard = document.getElementById('save-add-card').addEventListe
 
 
 
-const buttonOpenAddCardFlows = document.getElementById("open-add-card-disciplines").addEventListener("click", () => {
+const buttonOpenAddCardFlows = document.getElementById("open-add-card").addEventListener("click", () => {
   addCard.style.display = 'block';
 });
 const buttonCloseAddCardFlows = document.getElementById("add-card-close-disciplines").addEventListener("click", () => {
@@ -97,7 +97,7 @@ function createTableOfDisciplines(data) {
     headTable.appendChild(headRow);
   }
   finalCell = document.createElement("th")
-  finalCell.style.width = "70px"
+  finalCell.style.width = "100px"
   headTable.appendChild(finalCell);
   table.appendChild(headTable);
   
@@ -111,6 +111,7 @@ function createTableOfDisciplines(data) {
       row.appendChild(col);
     };
     let col = document.createElement("td");
+    let deleteButton = document.createElement('button');
     let deleteButtonIcon = document.createElement('img');
     deleteButtonIcon.src = "../img/icon-delete.svg";
     deleteButtonIcon.classList.add("icon-img");
@@ -121,8 +122,17 @@ function createTableOfDisciplines(data) {
       });
       updateCurTable();
     });
-    col.appendChild(deleteButtonIcon);
+    deleteButton.appendChild(deleteButtonIcon);
+    col.appendChild(deleteButton);
+
+    let editButton = document.createElement('button');
+    let editButtonIcon = document.createElement('img');
+    editButtonIcon.src = "../img/icon-pencil.png";
+    editButtonIcon.classList.add("icon-img");
+    editButton.appendChild(editButtonIcon);
+    col.appendChild(editButton);
     row.appendChild(col);
+
     table.appendChild(row);
   };
   containerTable.appendChild(table);

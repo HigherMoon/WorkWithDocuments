@@ -113,7 +113,7 @@ const buttonSaveAddCard = document.getElementById('save-add-card').addEventListe
     discipline_id: document.getElementById('Наименование-f').value,
     semester: document.getElementById('Семестр-f').value,
     type: document.getElementById('Тип-f').value,
-    subgroups: document.getElementById('Часы_УП-f').value / document.getElementById('Часы-f').value,
+    subgroups: document.getElementById('Часы-f').value / document.getElementById('Часы_УП-f').value,
     sub_hours: document.getElementById('Часы_УП-f').value,
     hours: document.getElementById('Часы-f').value
   }
@@ -200,7 +200,7 @@ function createTableFromDatabase(database) {
       headTable.appendChild(headRow);
     };
     finalCell = document.createElement("th")
-    finalCell.style.width = "70px"
+    finalCell.style.width = "100px"
     headTable.appendChild(finalCell);
     table.appendChild(headTable);
     // ---------------------------------
@@ -216,17 +216,29 @@ function createTableFromDatabase(database) {
         row.appendChild(col);
       };
       let col = document.createElement("td");
-      colbut = document.createElement("button");
-      colbut.innerHTML = 'Удалить';
-      colbut.addEventListener("click", () => {
+      let deleteButton = document.createElement('button');
+      let deleteButtonIcon = document.createElement('img');
+      deleteButtonIcon.src = "../img/icon-delete.svg";
+      deleteButtonIcon.classList.add("icon-img");
+      deleteButton.addEventListener("click", () => {
         deleteData = { id: curPartData['id'] };
         window.electronAPI.deleteUPTable(deleteData).then((answer) => {
           console.log(answer);
         });
         updateCurTable();
       });
-      col.appendChild(colbut);
+      deleteButton.appendChild(deleteButtonIcon);
+      col.appendChild(deleteButton);
       row.appendChild(col);
+
+      let editButton = document.createElement('button');
+      let editButtonIcon = document.createElement('img');
+      editButtonIcon.src = "../img/icon-pencil.png";
+      editButtonIcon.classList.add("icon-img");
+      editButton.appendChild(editButtonIcon);
+      col.appendChild(editButton);
+      row.appendChild(col);
+
       table.appendChild(row);
     };
   

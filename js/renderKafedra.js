@@ -137,7 +137,8 @@ function updateTablePersonalInfo(data) {
     rightColumn.appendChild(infoBlock);
   }
 
-  deleteButtonIcon = document.createElement('img');
+  let deleteButton = document.createElement('button');
+  let deleteButtonIcon = document.createElement('img');
   deleteButtonIcon.src = "../img/icon-delete.svg";
   deleteButtonIcon.classList.add("icon-img");
   deleteButtonIcon.classList.add("float-right");
@@ -148,9 +149,11 @@ function updateTablePersonalInfo(data) {
     });
     updateCurTables();
   });
-  rightColumn.appendChild(deleteButtonIcon);
+  deleteButton.appendChild(deleteButtonIcon);
+  rightColumn.appendChild(deleteButton);
 
-  saveButtonIcon = document.createElement('img');
+  let saveButton = document.createElement('button');
+  let saveButtonIcon = document.createElement('img');
   saveButtonIcon.src = "../img/icon-accept.svg";
   saveButtonIcon.classList.add("icon-img")
   saveButtonIcon.classList.add("float-right");
@@ -159,7 +162,8 @@ function updateTablePersonalInfo(data) {
     updatePersonalInfo(idToUpdate);  
     updateCurTables();
   });
-  rightColumn.appendChild(saveButtonIcon);
+  saveButton.appendChild(saveButtonIcon)
+  rightColumn.appendChild(saveButton);
 }
 
 function updatePersonalInfo(id) {

@@ -36,13 +36,6 @@
 }
 
 
-#add-card-close {
-    font-size: 20px;
-    color: grey;
-    width: 25px;
-    height: 25px;
-}
-
 #add-card-close:hover {
     color: rgb(44, 44, 44);
 }

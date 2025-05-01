@@ -89,6 +89,8 @@ function createTableOfDisciplines(data) {
       }
       row.appendChild(col);
     };
+
+    // Добавление финальных кнопок
     let col = document.createElement("td");
     
     let deleteButton = document.createElement('button');
@@ -117,8 +119,8 @@ function createTableOfDisciplines(data) {
     acceptButton.addEventListener("click", () => {
       edditableRow.setAttribute('contenteditable', false);
       edditableRow.classList.remove("edit-cell");
-      acceptButton.style.display = "none";
       editButton.style.removeProperty("display");
+      acceptButton.style.display = "none";
       updateData = {
         id: curPartData['id'],
         name: edditableRow.innerHTML,

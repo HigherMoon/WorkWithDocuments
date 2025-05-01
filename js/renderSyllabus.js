@@ -1,30 +1,5 @@
 const containerTable = document.getElementById("container-table")
-/*
-const saveButtonTableUP = document.getElementById("save-current-table-up").addEventListener("click", () => {
-  let table = document.getElementById(`data-table`);
-  let headTable = table.firstChild;
-  
-  let data = {};
-  for (let i in headTable.children) {
-    if (headTable.children[i].innerHTML != undefined)
-      data[headTable.children[i].innerHTML] = "";
-  }
-  
-  let countOftr = table.getElementsByTagName("tr").length;
 
-  for (let i=0; i < countOftr; i++) {
-    let current_tr = table.getElementsByTagName("tr")[i];
-    let dataToSend = {};
-    for (let j=0; j<current_tr.getElementsByTagName("td").length; j++) {
-      let current_td = current_tr.getElementsByTagName("td")[j];
-      dataToSend[current_td.id] = current_td.innerHTML;
-    }
-    window.electronAPI.updateUPTable(dataToSend).then((answer) => {
-      console.log(answer)
-    });
-  } 
-});
-*/
 const addCard = document.getElementById("add-card");
 const formAddCard = document.getElementById('new-up-form');
 const deleteCard = document.getElementById('delete-card');
@@ -207,17 +182,35 @@ function createTableFromDatabase(database) {
     // ----- Создание тела таблицы -----
     for (let indexOfData in Object.keys(database)) {
       let row = document.createElement("tr");
+      let edditableRow1 = null;
+      let edditableRow2 = null;
+      let edditableRow3 = null;
       let curPartData = database[indexOfData];
-  
       for (let paramOfCurPartData in listOfValues) {
         let col = document.createElement("td");
         col.innerHTML = curPartData[listOfValues[paramOfCurPartData]];
         col.id = listOfValues[paramOfCurPartData];
+        if (paramOfCurPartData == "Подгруппы") {
+          edditableRow1 = col;
+        }
+        if (paramOfCurPartData == "Часов на подгруппу") {
+          edditableRow2 = col;
+        }
+        if (paramOfCurPartData == "Всего часов") {
+          edditableRow3 = col;
+        }
         row.appendChild(col);
       };
+      // Создание финальных кнопок
       let col = document.createElement("td");
+
       let deleteButton = document.createElement('button');
       let deleteButtonIcon = document.createElement('img');
+      let acceptButton = document.createElement('button');
+      let acceptButtonIcon = document.createElement('img');
+      let editButton = document.createElement('button');
+      let editButtonIcon = document.createElement('img');
+
       deleteButtonIcon.src = "../img/icon-delete.svg";
       deleteButtonIcon.classList.add("icon-img");
       deleteButton.addEventListener("click", () => {
@@ -225,17 +218,51 @@ function createTableFromDatabase(database) {
         window.electronAPI.deleteUPTable(deleteData).then((answer) => {
           console.log(answer);
         });
-        updateCurTable();
+        updateCurTable()
       });
       deleteButton.appendChild(deleteButtonIcon);
       col.appendChild(deleteButton);
       row.appendChild(col);
 
-      let editButton = document.createElement('button');
-      let editButtonIcon = document.createElement('img');
+      acceptButtonIcon.src = "../img/icon-accept.svg";
+      acceptButtonIcon.classList.add("icon-img");
+      acceptButton.appendChild(acceptButtonIcon);
+      acceptButton.addEventListener("click", () => {
+        edditableRow1.setAttribute('contenteditable', false);
+        edditableRow1.classList.remove("edit-cell");
+        edditableRow2.setAttribute('contenteditable', false);
+        edditableRow2.classList.remove("edit-cell");
+        edditableRow3.setAttribute('contenteditable', false);
+        edditableRow3.classList.remove("edit-cell");
+        editButton.style.removeProperty("display");
+        acceptButton.style.display = "none";
+        updateData = {
+          id: curPartData['id'],
+          subgroups: edditableRow1.innerHTML,
+          sub_hours: edditableRow2.innerHTML,
+          hours: edditableRow3.innerHTML,
+        };
+        console.log(updateData);
+        window.electronAPI.updateSyllabusTable(updateData).then((answer) => {
+          console.log(answer)
+        });
+      });
+      acceptButton.style.display = "none";
+      col.appendChild(acceptButton);
+
       editButtonIcon.src = "../img/icon-pencil.png";
       editButtonIcon.classList.add("icon-img");
       editButton.appendChild(editButtonIcon);
+      editButton.addEventListener("click", () => {
+        edditableRow1.setAttribute('contenteditable', true);
+        edditableRow1.classList.add("edit-cell");
+        edditableRow2.setAttribute('contenteditable', true);
+        edditableRow2.classList.add("edit-cell");
+        edditableRow3.setAttribute('contenteditable', true);
+        edditableRow3.classList.add("edit-cell");
+        acceptButton.style.removeProperty("display");
+        editButton.style.display = "none";
+      });
       col.appendChild(editButton);
       row.appendChild(col);
 

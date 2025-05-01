@@ -231,16 +231,28 @@ function createTableFromDatabase(answerData) {
         for (const name in listOfValues) {
           let col = document.createElement("td");
           if (listOfValues[name] == "personalHours") {
-            col.innerHTML = `${curRow[listOfValues[name]]} [У других: ${curRow["totalHours"]} | Всего: ${curRow["hours"]}]`;
+            //col.innerHTML = `${curRow[listOfValues[name]]} [У других: ${curRow["totalHours"]} | Всего: ${curRow["hours"]}]`;
+            col.innerHTML = curRow[listOfValues[name]];
           }
           else {
             col.innerHTML = curRow[listOfValues[name]];
           }
+          if (listOfValues[name] == "personalHours") {
+            edditableRow1 = col;
+          }
           row.appendChild(col);
         }
+        
+        // Создание финальных кнопок
         let col = document.createElement("td");
+        
         let deleteButton = document.createElement('button');
         let deleteButtonIcon = document.createElement('img');
+        let acceptButton = document.createElement('button');
+        let acceptButtonIcon = document.createElement('img');
+        let editButton = document.createElement('button');
+        let editButtonIcon = document.createElement('img');
+
         deleteButtonIcon.src = "../img/icon-delete.svg";
         deleteButtonIcon.classList.add("icon-img");
         deleteButton.addEventListener("click", () => {
@@ -260,22 +272,110 @@ function createTableFromDatabase(answerData) {
         deleteButton.appendChild(deleteButtonIcon);
         col.appendChild(deleteButton);
 
-        let editButton = document.createElement('button');
-        let editButtonIcon = document.createElement('img');
+
+        acceptButtonIcon.src = "../img/icon-accept.svg";
+        acceptButtonIcon.classList.add("icon-img");
+        acceptButton.appendChild(acceptButtonIcon);
+        acceptButton.addEventListener("click", () => {
+          edditableRow1.setAttribute('contenteditable', false);
+          edditableRow1.classList.remove("edit-cell");
+          editButton.style.removeProperty("display");
+          acceptButton.style.display = "none";
+          console.log(curRow)
+          updateData = {
+            p_id: curRow['pId'],
+            s_id: curRow['s_id'],
+            subgroups: edditableRow1.innerHTML / curRow['subHours'],
+            hours: edditableRow1.innerHTML,
+          };
+          console.log(updateData);
+          window.electronAPI.updatePersonalHours(updateData).then((answer) => {
+            console.log(answer)
+          });
+        });
+        acceptButton.style.display = "none";
+        col.appendChild(acceptButton);
+
+
         editButtonIcon.src = "../img/icon-pencil.png";
         editButtonIcon.classList.add("icon-img");
         editButton.appendChild(editButtonIcon);
+        editButton.addEventListener("click", () => {
+          edditableRow1.setAttribute('contenteditable', true);
+          edditableRow1.classList.add("edit-cell");
+          acceptButton.style.removeProperty("display");
+          editButton.style.display = "none";
+        });
         col.appendChild(editButton);
         row.appendChild(col);
+
         tbody.appendChild(row);
       }
       // Добавление СТРОКИ ДОБАВЛЕНИЯ в конец tbody
       let addRow = document.createElement("tr");
       let col = document.createElement("td");
-      col.setAttribute('colspan', '4');
       let buttonAddRow = document.createElement("button");
+      col.setAttribute('colspan', '4');
       buttonAddRow.innerHTML = "+"
       buttonAddRow.classList.add("button-add-row");
+      buttonAddRow.addEventListener("click", () => {
+        addRow.remove();
+        let newRow = document.createElement("tr");
+        let newCol1 = document.createElement("td");
+        let newCol2 = document.createElement("td");
+        let newCol3 = document.createElement("td");
+        let newCol4 = document.createElement("td");
+
+        let inputSyllabus = document.createElement("input");
+        inputSyllabus.id = "syllabus-input";
+        inputSyllabus.list = "syllabus-input-helper";
+        let inputSyllabusDatalist = document.createElement("datalist");
+        inputSyllabusDatalist.id = "syllabus-input-helper";
+        newCol1.appendChild(inputSyllabus);
+        newCol1.appendChild(inputSyllabusDatalist);
+
+        newCol2.innerHTML = "Должно подтягиваться автоматом";
+        let divSelect = document.createElement("div");
+        divSelect.id = "choose";
+        let input = document.createElement("input");
+        input.id = "groupCount";
+        input.type = "range";
+        input.min = "0";
+        input.max = "0";
+        input.value = "0";
+        input.step = "1";
+        divSelect.appendChild(input);
+        newCol3.appendChild(divSelect);
+
+        let noButton = document.createElement('button');
+        let noButtonIcon = document.createElement('img');
+        let yesButton = document.createElement('button');
+        let yesButtonIcon = document.createElement('img');
+
+        noButtonIcon.src = "../img/icon-delete.svg";
+        noButtonIcon.classList.add("icon-img");
+        noButton.appendChild(noButtonIcon);
+        noButton.addEventListener("click", () => {
+          newRow.remove();
+        })
+        newCol4.appendChild(noButton);
+
+        yesButtonIcon.src = "../img/icon-accept.svg";
+        yesButtonIcon.classList.add("icon-img");
+        yesButton.appendChild(yesButtonIcon);
+        yesButton.addEventListener("click", () => {
+          console.log(newRow)
+        });
+        newCol4.appendChild(yesButton);
+
+        newRow.appendChild(newCol1);
+        newRow.appendChild(newCol2);
+        newRow.appendChild(newCol3);
+        newRow.appendChild(newCol4);
+
+        table.append(newRow);
+        table.append(addRow);
+      });
       col.appendChild(buttonAddRow);
       addRow.appendChild(col);
       addRow.id = "add-row";

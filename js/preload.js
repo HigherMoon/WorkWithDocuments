@@ -18,7 +18,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getCurDisciplines: (data) => ipcRenderer.invoke('get-cur-disciplines', data),
   getCurTypes: (data) => ipcRenderer.invoke('get-cur-types', data),
   getCurSyllabusTable: (data) => ipcRenderer.invoke('get-cur-syllabus', data),
-  
 
   updateFlowsTable: (data) => ipcRenderer.invoke('update-table-flows', data),
   updateGroupsTable: (data) => ipcRenderer.invoke('update-table-groups', data),
@@ -26,6 +25,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   updateUPTable: (data) => ipcRenderer.invoke('update-table-up', data),
   updatePPTable: (data) => ipcRenderer.invoke('update-table-pp', data),
   updateTypesTable: (data) => ipcRenderer.invoke('update-table-types', data),
+  updateDisciplinesTable: (data) => ipcRenderer.invoke('update-table-disciplines', data),
+  updateSyllabusTable: (data) => ipcRenderer.invoke('update-table-syllabus', data),
+  updatePersonalHours: (data) => ipcRenderer.invoke('update-table-personal-plan', data),
 
   insertKafTable: (data) => ipcRenderer.invoke('insert-table-kaf', data),
   insertFlowsTable: (data) => ipcRenderer.invoke('insert-table-flows', data),

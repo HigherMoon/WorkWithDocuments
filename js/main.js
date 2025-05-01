@@ -189,8 +189,28 @@ app.on('window-all-closed', () => {
        }));
    });
  });
-
-
+ ipcMain.handle('update-table-disciplines', (event, data) => {
+   return new Promise((resolve, reject) => {
+      resolve(updateDisciplines(data).then(i => { 
+         return i;
+       }));
+   });
+ });
+ ipcMain.handle('update-table-syllabus', (event, data) => {
+   return new Promise((resolve, reject) => {
+      resolve(updateSyllabus(data).then(i => { 
+         return i;
+       }));
+   });
+ });
+ ipcMain.handle('update-table-personal-plan', (event, data) => {
+   return new Promise((resolve, reject) => {
+      resolve(updatePersonalPlanHours(data).then(i => { 
+         return i;
+       }));
+   });
+ });
+ 
 ipcMain.handle('insert-table-kaf', (event, data) => {
    return new Promise((resolve, reject) => {
       resolve(sqlInsertIntoKAF(data).then(i => { 
@@ -733,10 +753,100 @@ function updateTypes(data) {
                      return console.error(err.message) 
                   }
                });
-      console.log(`Данные для '${data.s_id}' обновлены`)
+      console.log(`Данные для '${data.name}' обновлены`)
       return 'Успешно';
    });
 }
+function updateDisciplines(data) {
+   let updateStroka = [];
+   for (let i in data) {
+      if (data[i] != "") {
+         if (isNaN(Number(data[i]))){
+            updateStroka.push(i + " = \'" + data[i] + "\'");
+         }
+         else {
+            updateStroka.push(i + " = " + data[i]);
+         }
+      }
+      else {
+         updateStroka.push(i + " = " + "null")
+      }
+   }
+   return new Promise((resolve, reject) => {
+      database.run(`UPDATE disciplines
+               SET name = '${data.name}'
+               WHERE id = ${data.id}`, 
+               (err, rows) => { 
+                  if (err) { 
+                     return console.error(err.message) 
+                  }
+               });
+      console.log(`Данные для '${data.name}' обновлены`)
+      return 'Успешно';
+   });
+}
+function updateSyllabus(data) {
+   let updateStroka = [];
+   for (let i in data) {
+      if (data[i] != "") {
+         if (isNaN(Number(data[i]))){
+            updateStroka.push(i + " = \'" + data[i] + "\'");
+         }
+         else {
+            updateStroka.push(i + " = " + data[i]);
+         }
+      }
+      else {
+         updateStroka.push(i + " = " + "null")
+      }
+   }
+   return new Promise((resolve, reject) => {
+      database.run(`UPDATE syllabus
+               SET subgroups = '${data.subgroups}',
+                   sub_hours = '${data.sub_hours}',
+                   hours = '${data.hours}'
+               WHERE id = ${data.id}`, 
+               (err, rows) => { 
+                  if (err) { 
+                     return console.error(err.message) 
+                  }
+               });
+      console.log(`Данные для '${data.name}' обновлены`)
+      return 'Успешно';
+   });
+}
+function updatePersonalPlanHours(data) {
+   let updateStroka = [];
+   for (let i in data) {
+      if (data[i] != "") {
+         if (isNaN(Number(data[i]))){
+            updateStroka.push(i + " = \'" + data[i] + "\'");
+         }
+         else {
+            updateStroka.push(i + " = " + data[i]);
+         }
+      }
+      else {
+         updateStroka.push(i + " = " + "null")
+      }
+   }
+   return new Promise((resolve, reject) => {
+      database.run(`UPDATE syllabus
+               SET subgroups = '${data.subgroups}',
+                   hours = '${data.hours}'
+               WHERE p_id = ${data.p_id}
+                  AND s_id = ${data.s_id}`, 
+               (err, rows) => { 
+                  if (err) { 
+                     return console.error(err.message) 
+                  }
+               });
+      console.log(`Данные для '${data.name}' обновлены`)
+      return 'Успешно';
+   });
+}
+
+
 
 //////////////////////////////////////////////
 /////////// Удаление из таблиц SQL ///////////

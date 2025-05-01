@@ -103,16 +103,28 @@ function createTableOfDisciplines(data) {
   
   for (let indexOfData in Object.keys(data)) {
     let row = document.createElement("tr");
+    let edditableRow = null;
     let curPartData = data[indexOfData];
     for (let headRowsValue in listHeadValuesPersonalTable) {
       let col = document.createElement("td");
       col.innerHTML = curPartData[listHeadValuesPersonalTable[headRowsValue]];
       col.id = headRowsValue;
+      if (headRowsValue == "Название") {
+        edditableRow = col;
+      }
       row.appendChild(col);
     };
+
+    // Добавление финальных кнопок в строке
     let col = document.createElement("td");
+  
     let deleteButton = document.createElement('button');
     let deleteButtonIcon = document.createElement('img');
+    let acceptButton = document.createElement('button');
+    let acceptButtonIcon = document.createElement('img');
+    let editButton = document.createElement('button');
+    let editButtonIcon = document.createElement('img');
+
     deleteButtonIcon.src = "../img/icon-delete.svg";
     deleteButtonIcon.classList.add("icon-img");
     deleteButtonIcon.addEventListener("click", () => {
@@ -125,11 +137,35 @@ function createTableOfDisciplines(data) {
     deleteButton.appendChild(deleteButtonIcon);
     col.appendChild(deleteButton);
 
-    let editButton = document.createElement('button');
-    let editButtonIcon = document.createElement('img');
+    acceptButtonIcon.src = "../img/icon-accept.svg";
+    acceptButtonIcon.classList.add("icon-img");
+    acceptButton.appendChild(acceptButtonIcon);
+    acceptButton.addEventListener("click", () => {
+      edditableRow.setAttribute('contenteditable', false);
+      edditableRow.classList.remove("edit-cell");
+      editButton.style.removeProperty("display");
+      acceptButton.style.display = "none";
+      updateData = {
+        id: curPartData['id'],
+        name: edditableRow.innerHTML,
+      };
+      window.electronAPI.updateDisciplinesTable(updateData).then((answer) => {
+        console.log(answer)
+      });
+      updateCurTable();
+    });
+    acceptButton.style.display = "none";
+    col.appendChild(acceptButton);
+
     editButtonIcon.src = "../img/icon-pencil.png";
     editButtonIcon.classList.add("icon-img");
     editButton.appendChild(editButtonIcon);
+    editButton.addEventListener("click", () => {
+      edditableRow.setAttribute('contenteditable', true);
+      edditableRow.classList.add("edit-cell");
+      acceptButton.style.removeProperty("display");
+      editButton.style.display = "none";
+    });
     col.appendChild(editButton);
     row.appendChild(col);
 

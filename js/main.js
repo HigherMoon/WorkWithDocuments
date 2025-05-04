@@ -1,16 +1,15 @@
-const xlsx = require('../node_modules/xlsx');
 const sqlite = require("../node_modules/sqlite3").verbose();
-const fs = require('fs');
 
 const { app, BrowserWindow, ipcMain } = require('electron/main');
 const { table, error } = require('node:console');
 const { type } = require('node:os');
 const path = require('node:path'); 
 
-// - рабочее > const dbPath = path.resolve(__dirname, "../saves/main.db");
-// - для итоговой работы > const dbPath = path.resolve(__dirname, "../../main.db");
+// - для удобства разработки > const dbPath = path.resolve(__dirname, "../saves/main.db");
+// - для итогового вариант приложени > const dbPath = path.resolve(__dirname, "../../main.db");
 const dbPath = path.resolve(__dirname, "../saves/main.db");
 
+// Создание базы данных, попытка открыть существующий, иначе создать новую
 let database = new sqlite.Database(dbPath, sqlite.OPEN_READWRITE | sqlite.OPEN_CREATE, (error) => {
    if (error) {
       errorDatabase = error;
@@ -22,6 +21,7 @@ let database = new sqlite.Database(dbPath, sqlite.OPEN_READWRITE | sqlite.OPEN_C
 }});   
 let errorDatabase;
 
+// Создание первоначсального окна приложения
 function createWindow() {
    const win = new BrowserWindow({
       width: 1200,
@@ -29,43 +29,27 @@ function createWindow() {
       webPreferences: {
          preload: path.join(__dirname, 'preload.js'),
          nodeIntegration: true,
-         // contextIsolation: false,
       }
     })
-   win.loadFile('html/index.html');
-   win.maximize();
-   win.webContents.openDevTools();
+   win.loadFile('html/index.html'); // Открытие первой страницы
+   win.maximize(); // Раскрытие приложения на весь экран
+   win.webContents.openDevTools(); // Открытие инструмента разработчика из браузера
 }  
 
-// Начальный скрипт, запускающийся автоматически при запуске main.js
+// Начальный скрипт, запускающийся автоматически при запуске приложения
 app.whenReady().then(() => {
     createWindow();
     checkDatabaseTables();
-    database.run('PRAGMA foreign_keys = 1');
 })
 
-function checkDatabaseTables() { 
-   database.serialize(function() {
-      names = ['flows', 'kafedra', 'groups', 'disciplines', 'syllabus', 'personal_plan', 'types', 'personal_hours', 'years']
-      names = ['syllabus']
-      for (id in names) {
-        //sqlDropTable(names[id]);
-      }
-      //createDatabases();
-      //fillDatabases();
-   })
-};
-
-
+// Событие закрытия всех окон приложения
 app.on('window-all-closed', () => {
    database.close(); 
    app.quit();
 })
 
-//////////////////////////////////////////////////
-/////// Получение таблицы и инфы о бд SQL ////////
-//////////////////////////////////////////////////
- ipcMain.handle('get-database-status', (event) => {
+// Текущий статус базы данных
+ipcMain.handle('get-database-status', (event) => {
    if (errorDatabase == undefined) errorDatabase = "Подключено"
    let answer = {
       "err": errorDatabase,
@@ -73,9 +57,10 @@ app.on('window-all-closed', () => {
    }
    return answer;
  });
- ipcMain.handle('get-table-DB', (event, tableName) => {
+
+ ipcMain.handle('get-table-database', (event, data) => {
    return new Promise((resolve, reject) => {
-      resolve(sqlSelectAllFromTable(tableName).then(i => { return i }));
+      resolve(sqlSelectAllFromTable(data).then(i => { return i }));
    });
  });
  ipcMain.handle('get-cur-UP', (event, data) => {
@@ -116,7 +101,7 @@ app.on('window-all-closed', () => {
  });
  ipcMain.handle('get-actual-pp-up', (event, data) => {
    return new Promise((resolve, reject) => {
-      resolve(getActualDataPPUP(data).then(i => { console.log(i); return i; }));
+      resolve(getActualDataPPUP(data).then(i => { return i; }));
    });
  });
  ipcMain.handle('get-cur-flows', (event, data) => {
@@ -211,7 +196,7 @@ app.on('window-all-closed', () => {
    });
  });
  
-ipcMain.handle('insert-table-kaf', (event, data) => {
+ipcMain.handle('insert-table-kafedra', (event, data) => {
    return new Promise((resolve, reject) => {
       resolve(sqlInsertIntoKAF(data).then(i => { 
          return i;
@@ -1043,9 +1028,7 @@ function sqlSelectAllFromTable(tableName) {
    });
 };
 
-///////////////////////////////////////////////
-/////// Удаление и создание таблиц SQL ////////
-///////////////////////////////////////////////
+// Удаление таблицы по названию
 function sqlDropTable(tableName) {
    return new Promise((resolve, reject) => {
       database.run(`DROP TABLE ${tableName}`, (err, rows) => {
@@ -1053,100 +1036,9 @@ function sqlDropTable(tableName) {
             return console.error(`(-) ${err.message}`);
          }
          return console.log(`(-) Таблица '${tableName}' удалена.`);
-      });
-   });
-    
-};  
-function createDatabases() {
-   return new Promise((resolve, reject) => {
-      database.run(`
-   CREATE TABLE IF NOT EXISTS kafedra (
-      id              INTEGER, 
-      firstname       TEXT NOT NULL,
-      secondname      REAL NOT NULL,
-      surname         TEXT,
-      position        TEXT,
-      rank            TEXT,
-      academic        TEXT,
-      mail            TEXT, 
-      phone           REAL,
-      gpd             REAL,
-      salary          REAL,
-      hours           REAL,
-   PRIMARY KEY (id),
-   UNIQUE (firstname, secondname, surname))
-    `);
-
-      database.run(`
-   CREATE TABLE IF NOT EXISTS flows (
-      id               INTEGER NOT NULL,
-      name             TEXT NOT NULL,
-      faculty          TEXT NOT NULL,
-      year             TEXT NOT NULL,
-      education_form   TEXT NOT NULL,
-   PRIMARY KEY (id))
-    `);
-
-      database.run(`      
-   CREATE TABLE IF NOT EXISTS groups (
-      id             INTEGER,
-      flow_id        INTEGER NOT NULL,
-      name           TEXT NOT NULL,
-      students_b     INTEGER,
-      students_nb    INTEGER,
-   PRIMARY KEY (id),
-   FOREIGN KEY (flow_id) REFERENCES flows (id) ON DELETE CASCADE,
-   UNIQUE (name))
-   `);
-  
-      database.run(`
-   CREATE TABLE IF NOT EXISTS disciplines (
-      id       INTEGER,
-      name     TEXT NOT NULL,
-   PRIMARY KEY (id),
-   UNIQUE (name))
-   `);
-
-    database.run(`
-      CREATE TABLE IF NOT EXISTS types (
-        id      INTEGER,
-        name   TEXT NOT NULL,
-    PRIMARY KEY (id),
-    UNIQUE (name))
-      `);
-
-      database.run(`
-   CREATE TABLE IF NOT EXISTS syllabus (
-      id                INTEGER,
-      flow_id           INTEGER NOT NULL,
-      discipline_id     INTEGER NOT NULL,
-      semester          INTEGER,
-      type              INTEGER,
-      subgroups         INTEGER,
-      sub_hours         INTEGER,
-      hours             INTEGER,
-   PRIMARY KEY (id),
-   UNIQUE (flow_id, discipline_id, semester, type),
-   FOREIGN KEY (type) REFERENCES types (id) ON DELETE CASCADE,
-   FOREIGN KEY (flow_id) REFERENCES flows (id) ON DELETE CASCADE,
-   FOREIGN KEY (discipline_id) REFERENCES disciplines (id) ON DELETE CASCADE)
-   `);
-
-      database.run(`
-   CREATE TABLE IF NOT EXISTS personal_plan (
-      p_id        INTEGER,
-      s_id        INTEGER,
-      subgroups   INTEGER NOT NULL,
-      hours       INTEGER NOT NULL,
-   PRIMARY KEY (p_id, s_id),
-   FOREIGN KEY (s_id) REFERENCES syllabus (id) ON DELETE CASCADE,
-   FOREIGN KEY (p_id) REFERENCES kafedra (id) ON DELETE CASCADE)
-    `);
-      console.log(`(+) Таблицы созданы.`)
-    });
+      })
+   })
 };
-
-
 
 function getCurFlows(data) {
    return new Promise((resolve, reject) => {

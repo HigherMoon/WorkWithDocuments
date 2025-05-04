@@ -98,3 +98,92 @@ const createPersonalPlan = `
     FOREIGN KEY (s_id) REFERENCES syllabus (s_id) ON DELETE CASCADE,
     FOREIGN KEY (p_id) REFERENCES kafedra (p_id) ON DELETE CASCADE
     `;
+
+function createDatabases() {
+return new Promise((resolve, reject) => {
+    database.run(`
+CREATE TABLE IF NOT EXISTS kafedra (
+    id              INTEGER, 
+    firstname       TEXT NOT NULL,
+    secondname      REAL NOT NULL,
+    surname         TEXT,
+    position        TEXT,
+    rank            TEXT,
+    academic        TEXT,
+    mail            TEXT, 
+    phone           REAL,
+    gpd             REAL,
+    salary          REAL,
+    hours           REAL,
+PRIMARY KEY (id),
+UNIQUE (firstname, secondname, surname))
+    `);
+
+    database.run(`
+CREATE TABLE IF NOT EXISTS flows (
+    id               INTEGER NOT NULL,
+    name             TEXT NOT NULL,
+    faculty          TEXT NOT NULL,
+    year             TEXT NOT NULL,
+    education_form   TEXT NOT NULL,
+PRIMARY KEY (id))
+    `);
+
+    database.run(`      
+CREATE TABLE IF NOT EXISTS groups (
+    id             INTEGER,
+    flow_id        INTEGER NOT NULL,
+    name           TEXT NOT NULL,
+    students_b     INTEGER,
+    students_nb    INTEGER,
+PRIMARY KEY (id),
+FOREIGN KEY (flow_id) REFERENCES flows (id) ON DELETE CASCADE,
+UNIQUE (name))
+`);
+
+    database.run(`
+CREATE TABLE IF NOT EXISTS disciplines (
+    id       INTEGER,
+    name     TEXT NOT NULL,
+PRIMARY KEY (id),
+UNIQUE (name))
+`);
+
+    database.run(`
+    CREATE TABLE IF NOT EXISTS types (
+        id      INTEGER,
+        name   TEXT NOT NULL,
+    PRIMARY KEY (id),
+    UNIQUE (name))
+    `);
+
+    database.run(`
+CREATE TABLE IF NOT EXISTS syllabus (
+    id                INTEGER,
+    flow_id           INTEGER NOT NULL,
+    discipline_id     INTEGER NOT NULL,
+    semester          INTEGER,
+    type              INTEGER,
+    subgroups         INTEGER,
+    sub_hours         INTEGER,
+    hours             INTEGER,
+PRIMARY KEY (id),
+UNIQUE (flow_id, discipline_id, semester, type),
+FOREIGN KEY (type) REFERENCES types (id) ON DELETE CASCADE,
+FOREIGN KEY (flow_id) REFERENCES flows (id) ON DELETE CASCADE,
+FOREIGN KEY (discipline_id) REFERENCES disciplines (id) ON DELETE CASCADE)
+`);
+
+    database.run(`
+CREATE TABLE IF NOT EXISTS personal_plan (
+    p_id        INTEGER,
+    s_id        INTEGER,
+    subgroups   INTEGER NOT NULL,
+    hours       INTEGER NOT NULL,
+PRIMARY KEY (p_id, s_id),
+FOREIGN KEY (s_id) REFERENCES syllabus (id) ON DELETE CASCADE,
+FOREIGN KEY (p_id) REFERENCES kafedra (id) ON DELETE CASCADE)
+    `);
+    console.log(`(+) Таблицы созданы.`)
+    });
+};

@@ -2,7 +2,7 @@ const { contextBridge, ipcRenderer } = require('electron/renderer')
 
 contextBridge.exposeInMainWorld('electronAPI', {
   getDatabaseStatus: () => ipcRenderer.invoke('get-database-status'),
-  getDatabaseTable: (tableName) => ipcRenderer.invoke('get-table-DB', tableName),
+  getDatabaseTable: (data) => ipcRenderer.invoke('get-table-database', data),
   
   getCurTeachers: (data) => ipcRenderer.invoke('get-cur-teachers', data),
   getCurListTeachers: (data) => ipcRenderer.invoke('get-cur-list-teachers', data),
@@ -29,7 +29,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   updateSyllabusTable: (data) => ipcRenderer.invoke('update-table-syllabus', data),
   updatePersonalHours: (data) => ipcRenderer.invoke('update-table-personal-plan', data),
 
-  insertKafTable: (data) => ipcRenderer.invoke('insert-table-kaf', data),
+  insertKafTable: (data) => ipcRenderer.invoke('insert-table-kafedra', data),
   insertFlowsTable: (data) => ipcRenderer.invoke('insert-table-flows', data),
   insertGroupsTable: (data) => ipcRenderer.invoke('insert-table-groups', data),
   insertUPTable: (data) => ipcRenderer.invoke('insert-table-up', data),

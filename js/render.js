@@ -84,10 +84,11 @@ selectCurrentSemester.addEventListener("change", () => {
 
 
 const buttonUpdateCurrentTableOfPerson = document.getElementById("current-data").addEventListener("click", () => {
-  if (currentPersonFIO == "") { alert('Выберите преподавателя, чей учебный план надо вывести.') }
+  if (currentPersonFIO == "") {
+    alert('Выберите преподавателя, чей учебный план надо вывести.')
+  }
   else {
     data = updateSendingData();
-
     if (data.Personal_ID==null) {
       console.log('Нужно выбрать препода');
     }
@@ -115,7 +116,7 @@ const buttonOpenAddCard = document.getElementById("open-add-card").addEventListe
       id: currentPersonID,
       Год: currentYear,
       Семестр: currentSemester,
-      Форма_обучения: currentFormOfEducation
+      Форма_обучения: currentFormOfEducation,
     }
     window.electronAPI.getActualDataPPUP(dataTo).then((data) => {
       console.log(dataTo);
@@ -135,7 +136,7 @@ const buttonOpenAddCard = document.getElementById("open-add-card").addEventListe
 });
 
 const buttonCloseAddCard = document.getElementById("add-card-close").addEventListener("click", () => {
-  console.log('закрыто')
+  console.log('закрыто');
   addCard.style.display = 'none';
   document.getElementById('hours-input').value="";
   document.getElementById('groupCount').value = "";
@@ -144,7 +145,7 @@ const buttonCloseAddCard = document.getElementById("add-card-close").addEventLis
 
 const buttonSaveAddCard = document.getElementById('save-add-card').addEventListener("click", () => {
   if (document.getElementById('groupCount').value == 0) {
-    alert('НЕЛЬЗЯ ПОСТАВИТЬ 0')
+    alert('НЕЛЬЗЯ ПОСТАВИТЬ 0');
     return false;
   }
   data = {
@@ -166,7 +167,7 @@ const buttonSaveAddCard = document.getElementById('save-add-card').addEventListe
       checkAnswerData(answerData);
     });
   };
-  console.log('закрыто')
+  console.log('закрыто');
   addCard.style.display = 'none';
   document.getElementById('hours-input').value="";
   document.getElementById('groupCount').value = "";
@@ -180,11 +181,11 @@ const buttonSaveAddCard = document.getElementById('save-add-card').addEventListe
 ///////////////////////////////////
 function createTableFromDatabase(answerData) {    
   if (Object.keys(answerData).length == 0) {
-    console.log("<!> Пустая база данных <!>")
+    console.log("<!> Пустая база данных <!>");
     return false;
   };
   let table = document.createElement("table");
-  table.id = "data-table"
+  table.id = "data-table";
   // -- Создание заголовков таблицы --
   let headTable = document.createElement("thead");
   headTable.id = "head-table";
@@ -246,41 +247,41 @@ function createTableFromDatabase(answerData) {
         // Создание финальных кнопок
         let col = document.createElement("td");
         
-        let deleteButton = document.createElement('button');
-        let deleteButtonIcon = document.createElement('img');
-        let acceptButton = document.createElement('button');
-        let acceptButtonIcon = document.createElement('img');
-        let editButton = document.createElement('button');
-        let editButtonIcon = document.createElement('img');
+        let delete_button = document.createElement('button');
+        let delete_button_icon = document.createElement('img');
+        let accept_button = document.createElement('button');
+        let accept_button_icon = document.createElement('img');
+        let edit_button = document.createElement('button');
+        let edit_button_icon = document.createElement('img');
 
-        deleteButtonIcon.src = "../img/icon-delete.svg";
-        deleteButtonIcon.classList.add("icon-img");
-        deleteButton.addEventListener("click", () => {
+        delete_button_icon.src = "../img/icon-delete.svg";
+        delete_button_icon.classList.add("icon-img");
+        delete_button.addEventListener("click", () => {
           console.log(curRow)
           deleteData = {
             "p_id": currentPersonID,
-            "s_id": curRow["s_id"]
+            "s_id": curRow["s_id"],
           };
-          console.log('aaaaa')
-          console.log(deleteData)
+          console.log('aaaaa');
+          console.log(deleteData);
           window.electronAPI.deletePPTable(deleteData).then((answer) => {
             console.log(answer);
           });
           updatePersonalTable();
           getDataAndCreateTable();
         })
-        deleteButton.appendChild(deleteButtonIcon);
-        col.appendChild(deleteButton);
+        delete_button.appendChild(delete_button_icon);
+        col.appendChild(delete_button);
 
 
-        acceptButtonIcon.src = "../img/icon-accept.svg";
-        acceptButtonIcon.classList.add("icon-img");
-        acceptButton.appendChild(acceptButtonIcon);
-        acceptButton.addEventListener("click", () => {
+        accept_button_icon.src = "../img/icon-accept.svg";
+        accept_button_icon.classList.add("icon-img");
+        accept_button.appendChild(accept_button_icon);
+        accept_button.addEventListener("click", () => {
           edditableRow1.setAttribute('contenteditable', false);
           edditableRow1.classList.remove("edit-cell");
-          editButton.style.removeProperty("display");
-          acceptButton.style.display = "none";
+          edit_button.style.removeProperty("display");
+          accept_button.style.display = "none";
           console.log(curRow)
           updateData = {
             p_id: curRow['pId'],
@@ -293,50 +294,50 @@ function createTableFromDatabase(answerData) {
             console.log(answer)
           });
         });
-        acceptButton.style.display = "none";
-        col.appendChild(acceptButton);
+        accept_button.style.display = "none";
+        col.appendChild(accept_button);
 
 
-        editButtonIcon.src = "../img/icon-pencil.png";
-        editButtonIcon.classList.add("icon-img");
-        editButton.appendChild(editButtonIcon);
-        editButton.addEventListener("click", () => {
+        edit_button_icon.src = "../img/icon-pencil.png";
+        edit_button_icon.classList.add("icon-img");
+        edit_button.appendChild(edit_button_icon);
+        edit_button.addEventListener("click", () => {
           edditableRow1.setAttribute('contenteditable', true);
           edditableRow1.classList.add("edit-cell");
-          acceptButton.style.removeProperty("display");
-          editButton.style.display = "none";
+          accept_button.style.removeProperty("display");
+          edit_button.style.display = "none";
         });
-        col.appendChild(editButton);
+        col.appendChild(edit_button);
         row.appendChild(col);
 
         tbody.appendChild(row);
       }
       // Добавление СТРОКИ ДОБАВЛЕНИЯ в конец tbody
-      let addRow = document.createElement("tr");
+      let add_row = document.createElement("tr");
       let col = document.createElement("td");
-      let buttonAddRow = document.createElement("button");
+      let button_add_row = document.createElement("button");
       col.setAttribute('colspan', '4');
-      buttonAddRow.innerHTML = "+"
-      buttonAddRow.classList.add("button-add-row");
-      buttonAddRow.addEventListener("click", () => {
-        addRow.remove();
+      button_add_row.innerHTML = "+"
+      button_add_row.classList.add("button-add-row");
+      button_add_row.addEventListener("click", () => {
+        add_row.remove();
         let newRow = document.createElement("tr");
         let newCol1 = document.createElement("td");
         let newCol2 = document.createElement("td");
         let newCol3 = document.createElement("td");
         let newCol4 = document.createElement("td");
 
-        let inputSyllabus = document.createElement("input");
-        inputSyllabus.id = "syllabus-input";
-        inputSyllabus.list = "syllabus-input-helper";
-        let inputSyllabusDatalist = document.createElement("datalist");
-        inputSyllabusDatalist.id = "syllabus-input-helper";
-        newCol1.appendChild(inputSyllabus);
-        newCol1.appendChild(inputSyllabusDatalist);
+        let input_syllabus = document.createElement("input");
+        input_syllabus.id = "syllabus-input";
+        input_syllabus.list = "syllabus-input-helper";
+        let input_syllabus_datalist = document.createElement("datalist");
+        input_syllabus_datalist.id = "syllabus-input-helper";
+        newCol1.appendChild(input_syllabus);
+        newCol1.appendChild(input_syllabus_datalist);
 
         newCol2.innerHTML = "Должно подтягиваться автоматом";
-        let divSelect = document.createElement("div");
-        divSelect.id = "choose";
+        let div_select = document.createElement("div");
+        div_select.id = "choose";
         let input = document.createElement("input");
         input.id = "groupCount";
         input.type = "range";
@@ -344,29 +345,29 @@ function createTableFromDatabase(answerData) {
         input.max = "0";
         input.value = "0";
         input.step = "1";
-        divSelect.appendChild(input);
-        newCol3.appendChild(divSelect);
+        div_select.appendChild(input);
+        newCol3.appendChild(div_select);
 
-        let noButton = document.createElement('button');
-        let noButtonIcon = document.createElement('img');
-        let yesButton = document.createElement('button');
-        let yesButtonIcon = document.createElement('img');
+        let no_button = document.createElement('button');
+        let no_button_icon = document.createElement('img');
+        let yes_button = document.createElement('button');
+        let yes_button_icon = document.createElement('img');
 
-        noButtonIcon.src = "../img/icon-delete.svg";
-        noButtonIcon.classList.add("icon-img");
-        noButton.appendChild(noButtonIcon);
-        noButton.addEventListener("click", () => {
+        no_button_icon.src = "../img/icon-delete.svg";
+        no_button_icon.classList.add("icon-img");
+        no_button.appendChild(no_button_icon);
+        no_button.addEventListener("click", () => {
           newRow.remove();
         })
-        newCol4.appendChild(noButton);
+        newCol4.appendChild(no_button);
 
-        yesButtonIcon.src = "../img/icon-accept.svg";
-        yesButtonIcon.classList.add("icon-img");
-        yesButton.appendChild(yesButtonIcon);
-        yesButton.addEventListener("click", () => {
+        yes_button_icon.src = "../img/icon-accept.svg";
+        yes_button_icon.classList.add("icon-img");
+        yes_button.appendChild(yes_button_icon);
+        yes_button.addEventListener("click", () => {
           console.log(newRow)
         });
-        newCol4.appendChild(yesButton);
+        newCol4.appendChild(yes_button);
 
         newRow.appendChild(newCol1);
         newRow.appendChild(newCol2);
@@ -374,13 +375,13 @@ function createTableFromDatabase(answerData) {
         newRow.appendChild(newCol4);
 
         table.append(newRow);
-        table.append(addRow);
+        table.append(add_row);
       });
-      col.appendChild(buttonAddRow);
-      addRow.appendChild(col);
-      addRow.id = "add-row";
-      addRow.classList.add("text-align-center");
-      tbody.appendChild(addRow);
+      col.appendChild(button_add_row);
+      add_row.appendChild(col);
+      add_row.id = "add-row";
+      add_row.classList.add("text-align-center");
+      tbody.appendChild(add_row);
       // Добавление tbody в таблицу
       table.appendChild(tbody);
     }
@@ -390,7 +391,7 @@ function createTableFromDatabase(answerData) {
    console.log("Новая таблица создана.")
 };
 
-
+// cоздание заголовка таблицы
 function createHeadRow() {
   head = document.createElement("thead")
   row = document.createElement("tr")
@@ -415,7 +416,7 @@ function createHeadRow() {
   return head
 }
 
-
+// Обновление данных для получения перcонального плана
 function updateSendingData() {
   return data = {
     Год: currentYear,
@@ -426,6 +427,7 @@ function updateSendingData() {
   }
 }
 
+// Получение перcонального плана и его вывод на странице
 function getDataAndCreateTable() {
   window.electronAPI.getCurPPDatabase().then((data) => {
     currentPersonalDataSQL = data;
@@ -435,7 +437,7 @@ function getDataAndCreateTable() {
 
 function createPersonalTableFromDatabase(database) {
   if (Object.keys(database).length == 0) {
-    console.log("Пустая бд")
+    console.log("Пустая бд");
     return false;
   };
   while(containerPersonalTable.firstChild) {

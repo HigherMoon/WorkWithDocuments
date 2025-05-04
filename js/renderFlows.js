@@ -42,7 +42,7 @@ function updateTables() {
   window.electronAPI.getDatabaseTable('flows').then((data) => {
     createTableFromDatabase(data, "container-table-flows");
   });
-  window.electronAPI.getCurGroups('').then((data) => {
+  window.electronAPI.getGroups('').then((data) => {
     createTableFromDatabase(data, "container-table-groups");
   });
 };
@@ -64,7 +64,7 @@ const buttonSaveAddCardFlows = document.getElementById('save-add-card-flows').ad
     education_form: document.getElementById('Форма_обучения-f').value
   }
   console.log(data)
-  window.electronAPI.insertFlowsTable(data).then((answer) => {
+  window.electronAPI.insertFlow(data).then((answer) => {
     console.log(answer)
   });
   window.electronAPI.getDatabaseTable('flows').then((data) => {
@@ -90,14 +90,14 @@ const buttonDeleteAddCardFlows = document.getElementById('confirm-delete-card-fl
   data = {
     Flow_ID: selectedID
   }
-  window.electronAPI.deleteFlowsTable(data).then((answer) => {
+  window.electronAPI.deleteFlow(data).then((answer) => {
     console.log(answer)
   });
   deleteCardFlows.style.display = 'none';
   window.electronAPI.getDatabaseTable('flows').then((data) => {
     createTableFromDatabase(data, "container-table-flows");
   });
-  window.electronAPI.getCurGroups('').then((data) => {
+  window.electronAPI.getGroups('').then((data) => {
     createTableFromDatabase(data, "container-table-groups");
   });
 });
@@ -120,10 +120,10 @@ const buttonSaveAddCardGroups = document.getElementById('save-add-card-groups').
     students_nb: document.getElementById('Студенты_ВБ-g').value == "" ? 0 : document.getElementById('Студенты_ВБ-g').value
   }
   console.log(data)
-  window.electronAPI.insertGroupsTable(data).then((answer) => {
+  window.electronAPI.insertGroup(data).then((answer) => {
     console.log(answer)
   });
-  window.electronAPI.getCurGroups('').then((data) => {
+  window.electronAPI.getGroups('').then((data) => {
     createTableFromDatabase(data, "container-table-groups");
   });
   addCardGroups.style.display = 'none';
@@ -147,11 +147,11 @@ const buttonDeleteAddCardGroups = document.getElementById('confirm-delete-card-g
   data = {
     Group_ID: selectedID
   }
-  window.electronAPI.deleteGroupsTable(data).then((answer) => {
+  window.electronAPI.deleteGroup(data).then((answer) => {
     console.log(answer)
   });
   deleteCardGroups.style.display = 'none';
-  window.electronAPI.getCurGroups('').then((data) => {
+  window.electronAPI.getGroups('').then((data) => {
     createTableFromDatabase(data, "container-table-groups");
   });
 });
@@ -253,11 +253,11 @@ function createTableFromDatabase(database, containerID) {
     deleteButtonIcon.addEventListener("click", () => {
       deleteData = { id: curPartData['id'] };
       if (containerID=='container-table-groups') {
-        window.electronAPI.deleteGroupsTable(deleteData).then((answer) => {
+        window.electronAPI.deleteGroup(deleteData).then((answer) => {
           console.log(answer)
       })}
       if (containerID=='container-table-flows') {
-        window.electronAPI.deleteFlowsTable(deleteData).then((answer) => {
+        window.electronAPI.deleteFlow(deleteData).then((answer) => {
           console.log(answer)
       })}
       updateTables();

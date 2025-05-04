@@ -42,7 +42,7 @@ const buttonSaveAddCard = document.getElementById('save-add-card').addEventListe
       salary: document.getElementById('Ставка-f').value
     }
     console.log(data)
-    window.electronAPI.insertKafTable(data).then((answer) => {
+    window.electronAPI.insertPerson(data).then((answer) => {
       console.log(answer)
     });
     updateCurTables();
@@ -144,7 +144,7 @@ function updateTablePersonalInfo(data) {
   deleteButtonIcon.classList.add("float-right");
   deleteButtonIcon.addEventListener("click", () => {
     deleteData = { id: data['id'] };
-    window.electronAPI.deleteKafTable(deleteData).then((answer) => {
+    window.electronAPI.deletePerson(deleteData).then((answer) => {
       console.log(answer)
     });
     updateCurTables();

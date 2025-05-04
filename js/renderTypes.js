@@ -9,7 +9,7 @@ const listHeadValuesPersonalTable = {
 }
 
 function getDataAndCreateTable() {
-  window.electronAPI.getCurTypes().then((data) => {
+  window.electronAPI.getTypes().then((data) => {
     createTableOfDisciplines(data);
   });
 };
@@ -34,7 +34,7 @@ const buttonSaveAddCard = document.getElementById('save-add-card').addEventListe
       name: document.getElementById('Наименование-f').value
     }
     console.log(data)
-    window.electronAPI.insertTypesTable(data).then((answer) => {
+    window.electronAPI.insertType(data).then((answer) => {
       console.log(answer)
     });
     getDataAndCreateTable();
@@ -104,7 +104,7 @@ function createTableOfDisciplines(data) {
     deleteButtonIcon.classList.add("icon-img");
     deleteButtonIcon.addEventListener("click", () => {
       deleteData = { id: curPartData['id'] };
-      window.electronAPI.deleteTypesTable(deleteData).then((answer) => {
+      window.electronAPI.deleteType(deleteData).then((answer) => {
         console.log(answer)
       });
       updateCurTable();
@@ -156,7 +156,7 @@ function updateCurTable() {
   while(containerTable.firstChild) {
     containerTable.removeChild(containerTable.firstChild); 
   };
-  window.electronAPI.getCurTypes().then((data) => {
+  window.electronAPI.getTypes().then((data) => {
     createTableOfDisciplines(data);
   });
 }

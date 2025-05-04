@@ -20,7 +20,7 @@ listOfValues = {
   "Всего часов": "hours",
 };
 
-window.electronAPI.getCurSyllabusTable([]).then((data) => {
+window.electronAPI.getSyllabus([]).then((data) => {
   console.log(data)
   createTableFromDatabase(data);
 });
@@ -37,7 +37,7 @@ const buttonOpenAddCard = document.getElementById("open-add-card").addEventListe
   };
   
   dataTo={};
-  window.electronAPI.getCurFlows(dataTo).then((data) => {
+  window.electronAPI.getFlows(dataTo).then((data) => {
     for (let index in data) {
       let objData = data[index];
       let newOption = document.createElement("option");
@@ -46,7 +46,7 @@ const buttonOpenAddCard = document.getElementById("open-add-card").addEventListe
       datalistFlows.appendChild(newOption);
     }
   });
-  window.electronAPI.getCurDisciplines(dataTo).then((data) => {
+  window.electronAPI.getDisciplines(dataTo).then((data) => {
     for (let index in data) {
       let objData = data[index];
       let newOption = document.createElement("option");
@@ -55,7 +55,7 @@ const buttonOpenAddCard = document.getElementById("open-add-card").addEventListe
       datalistDisciplines.appendChild(newOption);
     }
   });
-  window.electronAPI.getCurTypes(dataTo).then((data) => {
+  window.electronAPI.getTypes(dataTo).then((data) => {
     for (let index in data) {
       let objData = data[index];
       let newOption = document.createElement("option");
@@ -104,10 +104,10 @@ const buttonSaveAddCard = document.getElementById('save-add-card').addEventListe
   }
   else {
     console.log(data)
-    window.electronAPI.insertUPTable(data).then((answer) => {
+    window.electronAPI.insertSyllabus(data).then((answer) => {
       console.log(answer)
     });
-    window.electronAPI.getCurSyllabusTable('syllabus').then((data) => {
+    window.electronAPI.getSyllabus('syllabus').then((data) => {
       createTableFromDatabase(data);
     });
     addCard.style.display = 'none';
@@ -137,7 +137,7 @@ const buttonDeleteAddCard = document.getElementById('confirm-delete-card').addEv
   data = {
     UP_ID: selectedID
   }
-  window.electronAPI.deleteUPTable(data).then((answer) => {
+  window.electronAPI.deleteSyllabus(data).then((answer) => {
     console.log(answer)
   });
    deleteCard.style.display = 'none';
@@ -148,7 +148,7 @@ function updateCurTable() {
   while(containerTable.firstChild) {
     containerTable.removeChild(containerTable.firstChild); 
   };
-  window.electronAPI.getCurSyllabusTable([]).then((data) => {
+  window.electronAPI.getSyllabus([]).then((data) => {
     console.log(data)
     createTableFromDatabase(data);
   });
@@ -215,7 +215,7 @@ function createTableFromDatabase(database) {
       deleteButtonIcon.classList.add("icon-img");
       deleteButton.addEventListener("click", () => {
         deleteData = { id: curPartData['id'] };
-        window.electronAPI.deleteUPTable(deleteData).then((answer) => {
+        window.electronAPI.deleteSyllabus(deleteData).then((answer) => {
           console.log(answer);
         });
         updateCurTable()

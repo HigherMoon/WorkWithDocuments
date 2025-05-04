@@ -39,7 +39,6 @@ function createWindow() {
 // Начальный скрипт, запускающийся автоматически при запуске приложения
 app.whenReady().then(() => {
     createWindow();
-    checkDatabaseTables();
 })
 
 // Событие закрытия всех окон приложения

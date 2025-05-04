@@ -1,22 +1,23 @@
-let personalTableIsCreated = false;    // Проверка создана ли уже таблица
-let currentData;                       // Текущие данные
-let currentSemester = 1;               // Текущий семестр (1, 2)
-let currentYear = "2025/2026";         // Текущий год
+let personalTableIsCreated = false;    // Проверка создана ли уже таблица с персональным планом
+let currentData;                       // Текущие данные об преподаватеях
+let currentSemester = 1;               // Текущий семестр (1, 2), по умолчанию - 1
+let currentYear = "2025/2026";         // Текущий год, по умолчанию - 2025/2026
 let currentFormOfEducation = "Очное";  // Текущая форма обучения (Очное, Заочное, Очно-заочное, Аспирантура) 
-let currentPersonID = null;
-let currentPersonFIO = "";
+let currentPersonID = null;            // Текущий ID выбранного учителя
+let currentPersonFIO = "";             // Текущее ФИО выбранного учителя 
 let currentPersonData;                 // Текущая информация о преподавателе
-let currentPersonalDataSQL;            
+let currentPersonalDataSQL;
 let currentTableDataFromSQL = "";      
 let currentSyllabusId = "";             
 let currentUP_Hours = "";
 let optionsList = {};
 
-// Список значений для заголовка таблицы / полученные данные
+// Список значений для заголовка таблицы с преподавателями и их нагрузкой
 const listHeadValuesPersonalTable = {
   "Преподаватель": "Фамилия",
   "Нагрузка": "Нагрузка",
 }
+// Список значений для заголовка таблицы персонального плана человека
 const listHeadValuesPersonalPlanTable = {
   "Поток": "flowName",
   "Дисциплина": "disciplineName",
@@ -29,9 +30,8 @@ const listHeadValuesPersonalPlanTable = {
 getDataAndCreateTable();
 window.electronAPI.getDatabaseStatus().then((data) => {
   console.log(`Путь: ${data.db_path}\nСтатус: ${data.err}`);
-});
+})
 
-const pYear = document.getElementById("current-год");
 const containerPersonalTable = document.getElementById("container-personal-table");
 const containerTable = document.getElementById("container-data");
 const datalistSyllabus = document.getElementById("syllabus-input-helper");
@@ -53,7 +53,7 @@ syllabusInput.addEventListener("change", () => {
   document.getElementById('infoHours').innerHTML = `Всего часов: ${curData["hours"]}`;
   document.getElementById('infoSubHours').innerHTML = `Часов на подгруппу: ${curData["sub_hours"]}`;
   document.getElementById('infoUsedHours').innerHTML = `Часов ИСПОЛЬЗОВАНО: ${curData["usedHours"]}`;
-  document.getElementById('infoSubGroups').innerHTML = ` Всего подгрупп: ${curData["hours"] / curData["sub_hours"]}`;
+  document.getElementById('infoSubGroups').innerHTML = `Всего подгрупп: ${curData["hours"] / curData["sub_hours"]}`;
 
   first.max = (curData["hours"] - curData["usedHours"]) / curData["sub_hours"];
   first.addEventListener("change", () => {
@@ -62,26 +62,26 @@ syllabusInput.addEventListener("change", () => {
     second.value = first.value;
     document.getElementById('hours-input').value = curData["sub_hours"] * second.value;
   })
-});
+})
 
-const selectCurrentYear = document.getElementById("select-current-год");
+const selectCurrentYear = document.getElementById("select-current-year");
 selectCurrentYear.addEventListener("change", () => {
   currentYear = selectCurrentYear.value;
   console.log(currentYear);
-});
+})
 
 const selectCurrentFormEducation = document.getElementById("select-current-form-education");
 selectCurrentFormEducation.addEventListener("change", () => {
   currentFormOfEducation = selectCurrentFormEducation.value;
-});
+})
 
 const selectCurrentSemester = document.getElementById("select-current-semester")
 selectCurrentSemester.addEventListener("change", () => {
   currentSemester = selectCurrentSemester.value;
-});
+})
 
-
-const buttonUpdateCurrentTableOfPerson = document.getElementById("current-data").addEventListener("click", () => {
+const buttonUpdateCurrentTableOfPerson = document.getElementById("current-data");
+buttonUpdateCurrentTableOfPerson.addEventListener("click", () => {
   if (currentPersonFIO == "") {
     alert('Выберите преподавателя, чей учебный план надо вывести.')
   }
@@ -90,17 +90,13 @@ const buttonUpdateCurrentTableOfPerson = document.getElementById("current-data")
     if (data.Personal_ID==null) {
       console.log('Нужно выбрать препода');
     }
-    else {
-      window.electronAPI.getCurPersonalPlan(data).then((answerData) => {
-        clearContainerTable();
-        console.log(answerData);
-        checkAnswerData(answerData);
-      });
-    }}
-});
+    else showPersonalPlan(data);
+  }
+})
 
 
-const buttonOpenAddCard = document.getElementById("open-add-card").addEventListener("click", () => {
+const buttonOpenAddCard = document.getElementById("open-add-card");
+buttonOpenAddCard.addEventListener("click", () => {
   if (currentPersonFIO=="") {
     alert('Выберите преподавателя, которому добавляется предмет')
   }
@@ -131,17 +127,19 @@ const buttonOpenAddCard = document.getElementById("open-add-card").addEventListe
     addCard.style.display = 'block';
     console.log(optionsList)
   }
-});
+})
 
-const buttonCloseAddCard = document.getElementById("add-card-close").addEventListener("click", () => {
+const buttonCloseAddCard = document.getElementById("add-card-close");
+buttonCloseAddCard.addEventListener("click", () => {
   console.log('закрыто');
   addCard.style.display = 'none';
   document.getElementById('hours-input').value="";
   document.getElementById('groupCount').value = "";
   document.getElementById("syllabus-input").value = "";
-});
+})
 
-const buttonSaveAddCard = document.getElementById('save-add-card').addEventListener("click", () => {
+const buttonSaveAddCard = document.getElementById('save-add-card');
+buttonSaveAddCard.addEventListener("click", () => {
   if (document.getElementById('groupCount').value == 0) {
     alert('НЕЛЬЗЯ ПОСТАВИТЬ 0');
     return false;
@@ -152,27 +150,21 @@ const buttonSaveAddCard = document.getElementById('save-add-card').addEventListe
     subgroups: document.getElementById('groupCount').value,
     hours: document.getElementById('hours-input').value,
   }
-  window.electronAPI.insertPPTable(data).then((answer) => {
+  window.electronAPI.insertPersonalPlan(data).then((answer) => {
     console.log(answer);
   });
   data = updateSendingData();
   if (data.Personal_ID==null) {
     console.log('Нужно выбрать препода');
   }
-  else {
-    window.electronAPI.getCurPersonalPlan(data).then((answerData) => {
-      clearContainerTable();
-      checkAnswerData(answerData);
-    });
-  };
+  else showPersonalPlan(data);
   console.log('закрыто');
   addCard.style.display = 'none';
   document.getElementById('hours-input').value="";
   document.getElementById('groupCount').value = "";
   document.getElementById("syllabus-input").value = "";
   getDataAndCreateTable();
-});
-
+})
 
 ///////////////////////////////////
 //// Создание таблиц из SQL БД ////
@@ -262,7 +254,7 @@ function createTableFromDatabase(answerData) {
           };
           console.log('aaaaa');
           console.log(deleteData);
-          window.electronAPI.deletePPTable(deleteData).then((answer) => {
+          window.electronAPI.deletePersonalPlan(deleteData).then((answer) => {
             console.log(answer);
           });
           updatePersonalTable();
@@ -387,7 +379,7 @@ function createTableFromDatabase(answerData) {
    // Добавление таблицы на страницу
    containerTable.appendChild(table);
    console.log("Новая таблица создана.")
-};
+}
 
 // cоздание заголовка таблицы
 function createHeadRow() {
@@ -431,7 +423,7 @@ function getDataAndCreateTable() {
     currentPersonalDataSQL = data;
     createPersonalTableFromDatabase(data);
   });
-};
+}
 
 function createPersonalTableFromDatabase(database) {
   if (Object.keys(database).length == 0) {
@@ -497,31 +489,23 @@ function createPersonalTableFromDatabase(database) {
       if (data.Personal_ID==null) {
         console.log('Нужно выбрать препода');
       }
-      else {
-        window.electronAPI.getCurPersonalPlan(data).then((answerData) => {
-          clearContainerTable();
-          checkAnswerData(answerData);
-        });
-      }
+      else showPersonalPlan(data);
     });
     table.appendChild(row);
   };
   containerPersonalTable.appendChild(table);
   personalTableIsCreated == true;
   console.log("Таблица с преподавателями создана.")
-};
+}
 
 function clearContainerTable() {
   while(containerTable.firstChild) {
     containerTable.removeChild(containerTable.firstChild)
-}};
+}}
 
 function updatePersonalTable() {
   data = updateSendingData();
-  window.electronAPI.getCurPersonalPlan(data).then((answerData) => {
-    clearContainerTable();
-    checkAnswerData(answerData);
-  });
+  showPersonalPlan(data);
 }
 
 function checkAnswerData(answerData) {
@@ -533,7 +517,15 @@ function checkAnswerData(answerData) {
   else createTableFromDatabase(answerData);
 }
 
+function showPersonalPlan(data) {
+  window.electronAPI.getPersonalPlan(data).then((answerData) => {
+    clearContainerTable();
+    checkAnswerData(answerData);
+  })
+}
+
+// Сайдбар
 document.getElementById('menu-toggle').addEventListener('click', function() {
   var sidebar = document.getElementById('sidebar');
   sidebar.classList.toggle('open');
-});
+})

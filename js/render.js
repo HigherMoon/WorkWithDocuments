@@ -26,12 +26,10 @@ const listHeadValuesPersonalPlanTable = {
   "Текущая нагрузка": "personalHours",
 }
 
-
 getDataAndCreateTable();
 window.electronAPI.getDatabaseStatus().then((data) => {
   console.log(`Путь: ${data.db_path}\nСтатус: ${data.err}`);
 });
-
 
 const pYear = document.getElementById("current-год");
 const containerPersonalTable = document.getElementById("container-personal-table");
@@ -247,16 +245,16 @@ function createTableFromDatabase(answerData) {
         // Создание финальных кнопок
         let col = document.createElement("td");
         
-        let delete_button = document.createElement('button');
-        let delete_button_icon = document.createElement('img');
-        let accept_button = document.createElement('button');
-        let accept_button_icon = document.createElement('img');
-        let edit_button = document.createElement('button');
-        let edit_button_icon = document.createElement('img');
+        let deleteButton = document.createElement('button');
+        let deleteButtonIcon = document.createElement('img');
+        let acceptButton = document.createElement('button');
+        let acceptButtonIcon = document.createElement('img');
+        let editButton = document.createElement('button');
+        let editButtonIcon = document.createElement('img');
 
-        delete_button_icon.src = "../img/icon-delete.svg";
-        delete_button_icon.classList.add("icon-img");
-        delete_button.addEventListener("click", () => {
+        deleteButtonIcon.src = "../img/icon-delete.svg";
+        deleteButtonIcon.classList.add("icon-img");
+        deleteButton.addEventListener("click", () => {
           console.log(curRow)
           deleteData = {
             "p_id": currentPersonID,
@@ -270,18 +268,18 @@ function createTableFromDatabase(answerData) {
           updatePersonalTable();
           getDataAndCreateTable();
         })
-        delete_button.appendChild(delete_button_icon);
-        col.appendChild(delete_button);
+        deleteButton.appendChild(deleteButtonIcon);
+        col.appendChild(deleteButton);
 
 
-        accept_button_icon.src = "../img/icon-accept.svg";
-        accept_button_icon.classList.add("icon-img");
-        accept_button.appendChild(accept_button_icon);
-        accept_button.addEventListener("click", () => {
+        acceptButtonIcon.src = "../img/icon-accept.svg";
+        acceptButtonIcon.classList.add("icon-img");
+        acceptButton.appendChild(acceptButtonIcon);
+        acceptButton.addEventListener("click", () => {
           edditableRow1.setAttribute('contenteditable', false);
           edditableRow1.classList.remove("edit-cell");
-          edit_button.style.removeProperty("display");
-          accept_button.style.display = "none";
+          editButton.style.removeProperty("display");
+          acceptButton.style.display = "none";
           console.log(curRow)
           updateData = {
             p_id: curRow['pId'],
@@ -294,46 +292,46 @@ function createTableFromDatabase(answerData) {
             console.log(answer)
           });
         });
-        accept_button.style.display = "none";
-        col.appendChild(accept_button);
+        acceptButton.style.display = "none";
+        col.appendChild(acceptButton);
 
 
-        edit_button_icon.src = "../img/icon-pencil.png";
-        edit_button_icon.classList.add("icon-img");
-        edit_button.appendChild(edit_button_icon);
-        edit_button.addEventListener("click", () => {
+        editButtonIcon.src = "../img/icon-pencil.png";
+        editButtonIcon.classList.add("icon-img");
+        editButton.appendChild(editButtonIcon);
+        editButton.addEventListener("click", () => {
           edditableRow1.setAttribute('contenteditable', true);
           edditableRow1.classList.add("edit-cell");
-          accept_button.style.removeProperty("display");
-          edit_button.style.display = "none";
+          acceptButton.style.removeProperty("display");
+          editButton.style.display = "none";
         });
-        col.appendChild(edit_button);
+        col.appendChild(editButton);
         row.appendChild(col);
 
         tbody.appendChild(row);
       }
       // Добавление СТРОКИ ДОБАВЛЕНИЯ в конец tbody
-      let add_row = document.createElement("tr");
+      let addRow = document.createElement("tr");
       let col = document.createElement("td");
-      let button_add_row = document.createElement("button");
+      let buttonAddRow = document.createElement("button");
       col.setAttribute('colspan', '4');
-      button_add_row.innerHTML = "+"
-      button_add_row.classList.add("button-add-row");
-      button_add_row.addEventListener("click", () => {
-        add_row.remove();
+      buttonAddRow.innerHTML = "+"
+      buttonAddRow.classList.add("button-add-row");
+      buttonAddRow.addEventListener("click", () => {
+        addRow.remove();
         let newRow = document.createElement("tr");
         let newCol1 = document.createElement("td");
         let newCol2 = document.createElement("td");
         let newCol3 = document.createElement("td");
         let newCol4 = document.createElement("td");
 
-        let input_syllabus = document.createElement("input");
-        input_syllabus.id = "syllabus-input";
-        input_syllabus.list = "syllabus-input-helper";
-        let input_syllabus_datalist = document.createElement("datalist");
-        input_syllabus_datalist.id = "syllabus-input-helper";
-        newCol1.appendChild(input_syllabus);
-        newCol1.appendChild(input_syllabus_datalist);
+        let inputSyllabus = document.createElement("input");
+        inputSyllabus.id = "syllabus-input";
+        inputSyllabus.list = "syllabus-input-helper";
+        let inputSyllabusDatalist = document.createElement("datalist");
+        inputSyllabusDatalist.id = "syllabus-input-helper";
+        newCol1.appendChild(inputSyllabus);
+        newCol1.appendChild(inputSyllabusDatalist);
 
         newCol2.innerHTML = "Должно подтягиваться автоматом";
         let div_select = document.createElement("div");
@@ -348,26 +346,26 @@ function createTableFromDatabase(answerData) {
         div_select.appendChild(input);
         newCol3.appendChild(div_select);
 
-        let no_button = document.createElement('button');
-        let no_button_icon = document.createElement('img');
-        let yes_button = document.createElement('button');
-        let yes_button_icon = document.createElement('img');
+        let noButton = document.createElement('button');
+        let noButtonIcon = document.createElement('img');
+        let yesButton = document.createElement('button');
+        let yesButtonIcon = document.createElement('img');
 
-        no_button_icon.src = "../img/icon-delete.svg";
-        no_button_icon.classList.add("icon-img");
-        no_button.appendChild(no_button_icon);
-        no_button.addEventListener("click", () => {
+        noButtonIcon.src = "../img/icon-delete.svg";
+        noButtonIcon.classList.add("icon-img");
+        noButton.appendChild(noButtonIcon);
+        noButton.addEventListener("click", () => {
           newRow.remove();
         })
-        newCol4.appendChild(no_button);
+        newCol4.appendChild(noButton);
 
-        yes_button_icon.src = "../img/icon-accept.svg";
-        yes_button_icon.classList.add("icon-img");
-        yes_button.appendChild(yes_button_icon);
-        yes_button.addEventListener("click", () => {
+        yesButtonIcon.src = "../img/icon-accept.svg";
+        yesButtonIcon.classList.add("icon-img");
+        yesButton.appendChild(yesButtonIcon);
+        yesButton.addEventListener("click", () => {
           console.log(newRow)
         });
-        newCol4.appendChild(yes_button);
+        newCol4.appendChild(yesButton);
 
         newRow.appendChild(newCol1);
         newRow.appendChild(newCol2);
@@ -375,13 +373,13 @@ function createTableFromDatabase(answerData) {
         newRow.appendChild(newCol4);
 
         table.append(newRow);
-        table.append(add_row);
+        table.append(addRow);
       });
-      col.appendChild(button_add_row);
-      add_row.appendChild(col);
-      add_row.id = "add-row";
-      add_row.classList.add("text-align-center");
-      tbody.appendChild(add_row);
+      col.appendChild(buttonAddRow);
+      addRow.appendChild(col);
+      addRow.id = "add-row";
+      addRow.classList.add("text-align-center");
+      tbody.appendChild(addRow);
       // Добавление tbody в таблицу
       table.appendChild(tbody);
     }

@@ -11,6 +11,7 @@ const dbPath = path.resolve(__dirname, "../saves/main.db");
 
 // Создание базы данных, попытка открыть существующий, иначе создать новую
 let database = new sqlite.Database(dbPath, sqlite.OPEN_READWRITE | sqlite.OPEN_CREATE, (error) => {
+   checkAndCreateDatabase();
    if (error) {
       errorDatabase = error;
       return console.error(error.message);
@@ -24,6 +25,7 @@ let errorDatabase;
 // Создание первоначсального окна приложения
 function createWindow() {
    const win = new BrowserWindow({
+      autoHideMenuBar: true,
       width: 1200,
       height: 700,
       webPreferences: {
@@ -126,6 +128,16 @@ ipcMain.handle('get-database-status', (event) => {
  ipcMain.handle('get-cur-syllabus', (event, data) => {
    return new Promise((resolve, reject) => {
       resolve(getCurSyllabus(data).then(i => { return i }));
+   });
+ });
+ ipcMain.handle('get-actual-flows-for-personal-hours', (event, data) => {
+   return new Promise((resolve, reject) => {
+      resolve(getActualFlowsForPersonalHours(data).then(i => { return i }));
+   });
+ });
+ ipcMain.handle('get-actual-syllabus-for-personal-hours', (event, data) => {
+   return new Promise((resolve, reject) => {
+      resolve(getActualSyllabusForPeronalHours(data).then(i => { return i }));
    });
  });
 
@@ -898,17 +910,18 @@ function deleteFromUP(data) {
 }
 function deleteFromPP(data) {
    return new Promise((resolve, reject) => {
-      database.run(` DELETE FROM personal_plan
-               Where s_id = ${data.s_id} and p_id=${data.p_id}`, 
-               (err, rows) => { 
-                  if (err) { 
-                     return console.error(err.message) 
-                  }
-                  else {
-                     console.log(`Данные предмета из учебного плана с ID: '${data.s_id}' удалены`);
-                     return 'Успешно';
-                  }
-               });
+      database.run(
+         ` DELETE FROM personal_plan
+         Where s_id = ${data.s_id} and p_id=${data.p_id}`, 
+         (err, rows) => { 
+            if (err) { 
+               return console.error(err.message) 
+            }
+            else {
+               console.log(`Данные предмета из учебного плана с ID: '${data.s_id}' удалены`);
+               return 'Успешно';
+            }
+         });
    });
 }
 function deleteFromTypes(data) {
@@ -1137,9 +1150,68 @@ function getCurSyllabus(data) {
          };
       resolve(rows);
       });
-   });
+   })
 }
-
+///
+function getActualFlowsForPersonalHours(data) {
+   return new Promise((resolve, reject) => {
+      sql = `
+      SELECT
+         id, name
+      FROM flows
+      WHERE education_form = '${data.education_form}'
+         AND year = '${data.year}'
+      `;
+      database.all(sql, [], (err, rows) => {
+         if (err) {
+            console.error(err.message);
+         };
+      resolve(rows);
+      });
+   })
+}
+function getActualSyllabusForPeronalHours(data) {
+   return new Promise((resolve, reject) => {
+      sql = `
+      SELECT
+         syllabus.id AS syllabus_id
+         , syllabus.discipline_id
+         , disciplines.name AS discipline
+         , flows.id AS flows_id
+         , flows.name AS flows_name
+         , syllabus.sub_hours
+         , syllabus.subgroups
+         , syllabus.hours
+         , types.name AS type_name
+         , types.id AS type_id
+         , 0 + (SELECT sum(pp.hours)
+            FROM personal_plan pp
+            JOIN syllabus s
+               ON pp.s_id = s.id
+            WHERE syllabus.id = pp.s_id 
+         ) AS used_hours
+      FROM syllabus
+      JOIN flows
+         ON flows.id = syllabus.flow_id
+      JOIN disciplines
+         ON disciplines.id = syllabus.discipline_id
+      JOIN types
+         ON types.id = syllabus.type
+      WHERE flows.year = '${data.year}'
+         AND flows.education_form = '${data.education_form}'
+         AND syllabus.id NOT IN (SELECT s_id
+                                 FROM personal_plan
+                                 WHERE p_id = ${data.p_id})
+      `;
+      database.all(sql, [], (err, rows) => {
+         if (err) {
+            console.error(err.message);
+         };
+      resolve(rows);
+      });
+   })
+}
+////
 function getCurPPDB() {
    return new Promise((resolve, reject) => {
       sql = `
@@ -1172,12 +1244,11 @@ function getActualDataPPUP(data) {
          syllabus.sub_hours, 
          syllabus.hours,
          types.name AS typeName,
-         (SELECT sum(pp.hours)
+         0 + (SELECT sum(pp.hours)
           FROM personal_plan pp
           JOIN syllabus s
             ON pp.s_id = s.id
-          WHERE pp.p_id != ${data.id}
-            AND syllabus.id = pp.s_id) AS usedHours
+          WHERE syllabus.id = pp.s_id) AS usedHours
       FROM syllabus
       JOIN flows 
          ON syllabus.flow_id=flows.id
@@ -1253,11 +1324,10 @@ function getCurPersonalPlan(data) {
          , syllabus.sub_hours AS subHours
          , syllabus.id as s_id
          , personal_plan.hours AS personalHours
-         , (SELECT SUM(pp.hours) 
+         , 0 + (SELECT SUM(pp.hours) 
             FROM syllabus s
             JOIN personal_plan pp ON s.id = pp.s_id
-            WHERE pp.p_id != ${data.Personal_ID}
-            AND s.id = syllabus.id) AS totalHours
+            WHERE s.id = syllabus.id) AS totalHours
       FROM personal_plan
       JOIN syllabus
          ON personal_plan.s_id=syllabus.id
@@ -1344,7 +1414,6 @@ function getCurTeachers(data) {
 })})};
 
 function getCurListTeachers(data) {
-   console.log(data)
    return new Promise((resolve, reject) => {
       sql = `
          SELECT
@@ -1379,3 +1448,91 @@ function getCurListTeachers(data) {
       resolve(rows);
    })})
 };
+
+function checkAndCreateDatabase() {
+   console.log('yes');
+      database.run(`
+   CREATE TABLE IF NOT EXISTS kafedra (
+      id              INTEGER, 
+      firstname       TEXT NOT NULL,
+      secondname      REAL NOT NULL,
+      surname         TEXT,
+      position        TEXT,
+      rank            TEXT,
+      academic        TEXT,
+      mail            TEXT, 
+      phone           REAL,
+      gpd             REAL,
+      salary          REAL,
+      hours           REAL,
+   PRIMARY KEY (id),
+   UNIQUE (firstname, secondname, surname))
+      `);
+
+      database.run(`
+   CREATE TABLE IF NOT EXISTS flows (
+      id               INTEGER NOT NULL,
+      name             TEXT NOT NULL,
+      faculty          TEXT NOT NULL,
+      year             TEXT NOT NULL,
+      education_form   TEXT NOT NULL,
+   PRIMARY KEY (id))
+      `);
+
+      database.run(`      
+   CREATE TABLE IF NOT EXISTS groups (
+      id             INTEGER,
+      flow_id        INTEGER NOT NULL,
+      name           TEXT NOT NULL,
+      students_b     INTEGER,
+      students_nb    INTEGER,
+   PRIMARY KEY (id),
+   FOREIGN KEY (flow_id) REFERENCES flows (id) ON DELETE CASCADE,
+   UNIQUE (name))
+   `);
+
+      database.run(`
+   CREATE TABLE IF NOT EXISTS disciplines (
+      id       INTEGER,
+      name     TEXT NOT NULL,
+   PRIMARY KEY (id),
+   UNIQUE (name))
+   `);
+
+      database.run(`
+   CREATE TABLE IF NOT EXISTS types (
+      id      INTEGER,
+      name   TEXT NOT NULL,
+   PRIMARY KEY (id),
+   UNIQUE (name))
+      `);
+
+      database.run(`
+   CREATE TABLE IF NOT EXISTS syllabus (
+      id                INTEGER,
+      flow_id           INTEGER NOT NULL,
+      discipline_id     INTEGER NOT NULL,
+      semester          INTEGER,
+      type              INTEGER,
+      subgroups         INTEGER,
+      sub_hours         INTEGER,
+      hours             INTEGER,
+   PRIMARY KEY (id),
+   UNIQUE (flow_id, discipline_id, semester, type),
+   FOREIGN KEY (type) REFERENCES types (id) ON DELETE CASCADE,
+   FOREIGN KEY (flow_id) REFERENCES flows (id) ON DELETE CASCADE,
+   FOREIGN KEY (discipline_id) REFERENCES disciplines (id) ON DELETE CASCADE)
+   `);
+
+      database.run(`
+   CREATE TABLE IF NOT EXISTS personal_plan (
+      p_id        INTEGER,
+      s_id        INTEGER,
+      subgroups   INTEGER NOT NULL,
+      hours       INTEGER NOT NULL,
+   PRIMARY KEY (p_id, s_id),
+   FOREIGN KEY (s_id) REFERENCES syllabus (id) ON DELETE CASCADE,
+   FOREIGN KEY (p_id) REFERENCES kafedra (id) ON DELETE CASCADE)
+      `);
+      console.log(`(+) Таблицы созданы.`)
+}

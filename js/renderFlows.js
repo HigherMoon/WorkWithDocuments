@@ -237,9 +237,6 @@ function createTableFromDatabase(database, containerID) {
 
     for (let paramOfCurPartData in dicts) {
       let col = document.createElement("td");
-      if (paramOfCurPartData != 'Group_ID') {
-        col.contentEditable = true;
-      }
       col.innerHTML = curPartData[paramOfCurPartData];
       col.id = paramOfCurPartData;
       row.appendChild(col);

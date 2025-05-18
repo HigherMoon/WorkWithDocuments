@@ -11,7 +11,7 @@ body {
     background-color: #fcfcfc;
     color: #000000;
     font-family: 'Arial';
-    font-size: 14px;
+    font-size: 16px;
     margin: 0;
     user-select: none; 
 }
@@ -41,7 +41,7 @@ body {
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 14px;
+    font-size: 16px;
 }
 
 #tm-header-button:hover {
@@ -51,7 +51,7 @@ body {
 
 .page {
     color: white;
-    font-size: 14px;
+    font-size: 16px;
 }
 
 .active {
@@ -60,10 +60,12 @@ body {
 
 #buttons-field {
     display: inline-block;
-    padding-top: 5%;
+    padding: 10px;
 }
 
 button {
+    font-size: 16px;
+    padding: 5px;
     background-color: white;
     border: 1px solid;
     border-color: #000000;
@@ -71,9 +73,15 @@ button {
     color: black;
     transition: 0.3s;
 }
+
 .button-add-row {
     width: 100%;
-    padding: 5px;
+    background-color: #ffebe9;
+    transition: 0.5s;
+}
+.button-add-row:hover {
+    background-color: #dde6d2;
+    transition: 0.5s;
 }
 
 
@@ -137,9 +145,33 @@ option {
 }
 
 select {
+    font-size: 16px;
+    padding: 5px;
+    background-color: white;
+    border: 1px solid;
+    border-color: #000000;
     border-radius: 5px;
+    color: black;
+    transition: 0.3s;
+}
+
+select:hover {
+    background-color: #dddddd;
+    transition: 0.3s;
+}
+
+select option {
+    background-color: white;
 }
 
 .edit-cell {
     background-color: #ffd884;
+}
+
+#container-data {
+    padding: 5px;
+}
+
+#syllabus-input {
+    width: 100%;
 }

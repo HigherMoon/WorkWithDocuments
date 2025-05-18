@@ -36,23 +36,35 @@
         </div>
         <div id="add-card-content" class="add-card-content">
             <form id="new-up-form">
-              <p> ID потока </p>
-                <input id="flows-input" list="flows-input-helper"> 
-                <datalist id="flows-input-helper"></datalist>
-              <p> Дисциплина </p>
-                <input id="Наименование-f" list="disciplines-input-helper">
-                <datalist id="disciplines-input-helper"></datalist>
-              <p> Семестр </p>
-                <select id="Семестр-f"> 
+              <div class="infoBlock">
+                <p class="infoLabel"> Поток </p>
+                <input id="flows-input" list="flows-input-helper" class="inputInfo"> 
+                  <datalist id="flows-input-helper"></datalist>
+              </div>
+              <div class="infoBlock">
+                <p class="infoLabel"> Дисциплина </p>
+                <input id="Наименование-f" list="disciplines-input-helper" class="inputInfo">
+                  <datalist id="disciplines-input-helper"></datalist>
+              </div>
+              <div class="infoBlock">
+                <p class="infoLabel"> Семестр </p>
+                <select id="Семестр-f" class="inputInfo"> 
                   <option> 1 </option>
                   <option> 2 </option>
                 </select>
-              <p> Тип </p>
-                <select id="Тип-f"></select>
-              <p> Часы по учебному плану (на одну подгруппу) </p>
-                <input id="Часы_УП-f">
-              <p> Всего часов </p>
-                <input id="Часы-f">
+              </div>
+              <div class="infoBlock">
+                <p class="infoLabel"> Тип </p>
+                <select id="Тип-f" class="inputInfo"></select>
+              </div>
+              <div class="infoBlock">
+                <p class="infoLabel"> Часы на подгруппу </p>
+                <input id="Часы_УП-f" class="inputInfo">
+              </div>
+              <div class="infoBlock">
+                <p class="infoLabel"> Всего часов </p>
+                <input id="Часы-f" class="inputInfo">
+              </div>
             </form>
         </div>
         <div id="buttons-field">

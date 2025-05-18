@@ -11,6 +11,9 @@ let currentTableDataFromSQL = "";
 let currentSyllabusId = "";             
 let currentUP_Hours = "";
 let optionsList = {};
+let selectedPerson = null;
+let addRowCreated = false;
+let dictAddSyllabus = {};
 
 // Список значений для заголовка таблицы с преподавателями и их нагрузкой
 const listHeadValuesPersonalTable = {
@@ -33,7 +36,7 @@ window.electronAPI.getDatabaseStatus().then((data) => {
 })
 
 const containerPersonalTable = document.getElementById("container-personal-table");
-const containerTable = document.getElementById("container-data");
+const containerPersonalPlanTable = document.getElementById("container-data");
 const datalistSyllabus = document.getElementById("syllabus-input-helper");
 const inputGroup = document.getElementById("group-input");
 const addCard = document.getElementById('add-card');
@@ -80,55 +83,6 @@ selectCurrentSemester.addEventListener("change", () => {
   currentSemester = selectCurrentSemester.value;
 })
 
-const buttonUpdateCurrentTableOfPerson = document.getElementById("current-data");
-buttonUpdateCurrentTableOfPerson.addEventListener("click", () => {
-  if (currentPersonFIO == "") {
-    alert('Выберите преподавателя, чей учебный план надо вывести.')
-  }
-  else {
-    data = updateSendingData();
-    if (data.Personal_ID==null) {
-      console.log('Нужно выбрать препода');
-    }
-    else showPersonalPlan(data);
-  }
-})
-
-
-const buttonOpenAddCard = document.getElementById("open-add-card");
-buttonOpenAddCard.addEventListener("click", () => {
-  if (currentPersonFIO=="") {
-    alert('Выберите преподавателя, которому добавляется предмет')
-  }
-  else {
-    document.getElementById('add-card-text').innerHTML = `Добавить предмет для ${currentPersonFIO}`;
-    while(datalistSyllabus.firstChild) {
-      datalistSyllabus.removeChild(datalistSyllabus.firstChild); 
-    };
-    currentYear = selectCurrentYear.value;
-    dataTo = {
-      id: currentPersonID,
-      Год: currentYear,
-      Семестр: currentSemester,
-      Форма_обучения: currentFormOfEducation,
-    }
-    window.electronAPI.getActualDataPPUP(dataTo).then((data) => {
-      console.log(dataTo);
-      for (let index in data) {
-        let objData = data[index];
-        console.log(objData)
-        let newOption = document.createElement("option");
-        newOption.value = objData["id"];
-        newOption.innerHTML = `${objData['flow']} | ${objData['name']} | ${objData['education_form']} | ${objData['typeName']} | Всего часов: ${objData['hours']} `;
-        datalistSyllabus.appendChild(newOption);
-        optionsList[objData["id"]] = objData;
-      }
-    });
-    addCard.style.display = 'block';
-    console.log(optionsList)
-  }
-})
-
 const buttonCloseAddCard = document.getElementById("add-card-close");
 buttonCloseAddCard.addEventListener("click", () => {
   console.log('закрыто');
@@ -138,44 +92,19 @@ buttonCloseAddCard.addEventListener("click", () => {
   document.getElementById("syllabus-input").value = "";
 })
 
-const buttonSaveAddCard = document.getElementById('save-add-card');
-buttonSaveAddCard.addEventListener("click", () => {
-  if (document.getElementById('groupCount').value == 0) {
-    alert('НЕЛЬЗЯ ПОСТАВИТЬ 0');
-    return false;
-  }
-  data = {
-    p_id: currentPersonID,
-    s_id: document.getElementById("syllabus-input").value,
-    subgroups: document.getElementById('groupCount').value,
-    hours: document.getElementById('hours-input').value,
-  }
-  window.electronAPI.insertPersonalPlan(data).then((answer) => {
-    console.log(answer);
-  });
-  data = updateSendingData();
-  if (data.Personal_ID==null) {
-    console.log('Нужно выбрать препода');
-  }
-  else showPersonalPlan(data);
-  console.log('закрыто');
-  addCard.style.display = 'none';
-  document.getElementById('hours-input').value="";
-  document.getElementById('groupCount').value = "";
-  document.getElementById("syllabus-input").value = "";
-  getDataAndCreateTable();
-})
-
 ///////////////////////////////////
 //// Создание таблиц из SQL БД ////
 ///////////////////////////////////
-function createTableFromDatabase(answerData) {    
+function createPersonalPlanTableContainer(answerData) {
+  document.getElementById("text-personal-text").innerHTML = "Персональный план";
+  let table = document.createElement("table");
+  table.id = "data-table";
+  
   if (Object.keys(answerData).length == 0) {
     console.log("<!> Пустая база данных <!>");
     return false;
   };
-  let table = document.createElement("table");
-  table.id = "data-table";
+
   // -- Создание заголовков таблицы --
   let headTable = document.createElement("thead");
   headTable.id = "head-table";
@@ -191,7 +120,7 @@ function createTableFromDatabase(answerData) {
     }
       result[curRow["semester"]][curRow["typeName"]].push(curRow);
   }
-  console.log(result);
+  // Заполнение данных
   for (const semester in result) {
     currentTimeTitle = document.createElement("p");
     currentTimeTitle.innerHTML = `Семестр: ${semester}, ${currentFormOfEducation} форма обучения`;
@@ -205,7 +134,7 @@ function createTableFromDatabase(answerData) {
       row = document.createElement("tr");
       th = document.createElement("th");
       th.innerHTML = `${type} по:`;
-      th.setAttribute('colspan', '4');
+      th.setAttribute('colspan', '6');
       row.appendChild(th);
       thead.appendChild(row);
       table.appendChild(thead);
@@ -214,6 +143,8 @@ function createTableFromDatabase(answerData) {
         "disciplineName",
         "flowName",
         "personalHours",
+        "totalHours",
+        "hours",
       ]
       tbody = document.createElement("tbody");
       for (const index in result[semester][type]) {
@@ -221,9 +152,12 @@ function createTableFromDatabase(answerData) {
         row = document.createElement("tr");
         for (const name in listOfValues) {
           let col = document.createElement("td");
-          if (listOfValues[name] == "personalHours") {
+          if (listOfValues[name] == "totalHours") {
             //col.innerHTML = `${curRow[listOfValues[name]]} [У других: ${curRow["totalHours"]} | Всего: ${curRow["hours"]}]`;
-            col.innerHTML = curRow[listOfValues[name]];
+            totalHours = curRow["totalHours"];
+            if (totalHours == null) { totalHours = 0 };
+            hours = curRow["hours"];
+            col.innerHTML = hours - totalHours;
           }
           else {
             col.innerHTML = curRow[listOfValues[name]];
@@ -252,17 +186,13 @@ function createTableFromDatabase(answerData) {
             "p_id": currentPersonID,
             "s_id": curRow["s_id"],
           };
-          console.log('aaaaa');
-          console.log(deleteData);
           window.electronAPI.deletePersonalPlan(deleteData).then((answer) => {
             console.log(answer);
           });
           updatePersonalTable();
-          getDataAndCreateTable();
         })
         deleteButton.appendChild(deleteButtonIcon);
         col.appendChild(deleteButton);
-
 
         acceptButtonIcon.src = "../img/icon-accept.svg";
         acceptButtonIcon.classList.add("icon-img");
@@ -287,7 +217,6 @@ function createTableFromDatabase(answerData) {
         acceptButton.style.display = "none";
         col.appendChild(acceptButton);
 
-
         editButtonIcon.src = "../img/icon-pencil.png";
         editButtonIcon.classList.add("icon-img");
         editButton.appendChild(editButtonIcon);
@@ -303,91 +232,25 @@ function createTableFromDatabase(answerData) {
         tbody.appendChild(row);
       }
       // Добавление СТРОКИ ДОБАВЛЕНИЯ в конец tbody
-      let addRow = document.createElement("tr");
-      let col = document.createElement("td");
-      let buttonAddRow = document.createElement("button");
-      col.setAttribute('colspan', '4');
-      buttonAddRow.innerHTML = "+"
-      buttonAddRow.classList.add("button-add-row");
-      buttonAddRow.addEventListener("click", () => {
-        addRow.remove();
-        let newRow = document.createElement("tr");
-        let newCol1 = document.createElement("td");
-        let newCol2 = document.createElement("td");
-        let newCol3 = document.createElement("td");
-        let newCol4 = document.createElement("td");
-
-        let inputSyllabus = document.createElement("input");
-        inputSyllabus.id = "syllabus-input";
-        inputSyllabus.list = "syllabus-input-helper";
-        let inputSyllabusDatalist = document.createElement("datalist");
-        inputSyllabusDatalist.id = "syllabus-input-helper";
-        newCol1.appendChild(inputSyllabus);
-        newCol1.appendChild(inputSyllabusDatalist);
-
-        newCol2.innerHTML = "Должно подтягиваться автоматом";
-        let div_select = document.createElement("div");
-        div_select.id = "choose";
-        let input = document.createElement("input");
-        input.id = "groupCount";
-        input.type = "range";
-        input.min = "0";
-        input.max = "0";
-        input.value = "0";
-        input.step = "1";
-        div_select.appendChild(input);
-        newCol3.appendChild(div_select);
-
-        let noButton = document.createElement('button');
-        let noButtonIcon = document.createElement('img');
-        let yesButton = document.createElement('button');
-        let yesButtonIcon = document.createElement('img');
-
-        noButtonIcon.src = "../img/icon-delete.svg";
-        noButtonIcon.classList.add("icon-img");
-        noButton.appendChild(noButtonIcon);
-        noButton.addEventListener("click", () => {
-          newRow.remove();
-        })
-        newCol4.appendChild(noButton);
-
-        yesButtonIcon.src = "../img/icon-accept.svg";
-        yesButtonIcon.classList.add("icon-img");
-        yesButton.appendChild(yesButtonIcon);
-        yesButton.addEventListener("click", () => {
-          console.log(newRow)
-        });
-        newCol4.appendChild(yesButton);
-
-        newRow.appendChild(newCol1);
-        newRow.appendChild(newCol2);
-        newRow.appendChild(newCol3);
-        newRow.appendChild(newCol4);
-
-        table.append(newRow);
-        table.append(addRow);
-      });
-      col.appendChild(buttonAddRow);
-      addRow.appendChild(col);
-      addRow.id = "add-row";
-      addRow.classList.add("text-align-center");
+      let addRow = createAddRow(tbody);
       tbody.appendChild(addRow);
       // Добавление tbody в таблицу
       table.appendChild(tbody);
     }
   }
    // Добавление таблицы на страницу
-   containerTable.appendChild(table);
+   containerPersonalPlanTable.appendChild(table);
    console.log("Новая таблица создана.")
 }
 
 // cоздание заголовка таблицы
 function createHeadRow() {
-  head = document.createElement("thead")
-  row = document.createElement("tr")
+  head = document.createElement("thead");
+  row = document.createElement("tr");
+  row.classList.add("sticky-head");
   
   col1 = document.createElement("td");
-  col1.innerHTML = "Дисциплины";
+  col1.innerHTML = "Дисциплина";
   row.appendChild(col1);
   
   col2 = document.createElement("td");
@@ -399,8 +262,16 @@ function createHeadRow() {
   row.appendChild(col3);
 
   col4 = document.createElement("td");
-  col4.innerHTML = "";
+  col4.innerHTML = "Свободно";
   row.appendChild(col4);
+  
+  col5 = document.createElement("td");
+  col5.innerHTML = "Всего";
+  row.appendChild(col5);
+
+  col6 = document.createElement("td");
+  col6.innerHTML = "";
+  row.appendChild(col6);
 
   head.appendChild(row);
   return head
@@ -421,11 +292,12 @@ function updateSendingData() {
 function getDataAndCreateTable() {
   window.electronAPI.getCurPPDatabase().then((data) => {
     currentPersonalDataSQL = data;
-    createPersonalTableFromDatabase(data);
+    createTablePersonalHours(data);
   });
 }
 
-function createPersonalTableFromDatabase(database) {
+function createTablePersonalHours(database) {
+  document.getElementById("text-personal-text").innerHTML = "";
   if (Object.keys(database).length == 0) {
     console.log("Пустая бд");
     return false;
@@ -482,14 +354,34 @@ function createPersonalTableFromDatabase(database) {
     };
     // -- При нажатии на строку выбирается текущая ФИО и ID препода
     row.addEventListener("click", () => {
-      document.getElementById('infoFIO').innerHTML = `Выбран: ${currentPersonFIO}`;
-      currentPersonID = curPartData["id"];
-      currentPersonFIO = curPartData["Фамилия"];
-      data = updateSendingData();
-      if (data.Personal_ID==null) {
-        console.log('Нужно выбрать препода');
+      ///
+      if (selectedPerson === row) {
+        // Случай, когда отжали человека и теперь мы видим список всех с кафедры
+        document.getElementById("text-personal-text").innerHTML = "";
+        console.log('все выбраны');
+        const allRows = table.querySelectorAll('tr');
+        allRows.forEach(r => r.style.display = '');
+        selectedPerson = null;
+        addRowCreated = false;
+        clearPersonalPlanContainer();
       }
-      else showPersonalPlan(data);
+      else {
+        // Случай, когда мы прожали по человеку и хотим о нём инфу всю
+        const allRows = table.querySelectorAll('tr');
+        allRows.forEach(r => {
+          if (r !== row) {
+            r.style.display = 'none';
+          }})
+        selectedPerson = row;
+        currentPersonID = curPartData["id"];
+        currentPersonFIO = curPartData["Фамилия"];
+        data = updateSendingData();
+        if (data.Personal_ID==null) {
+          console.log('Нужно выбрать препода');
+        }
+        else showPersonalPlan(data);
+      }
+      ///
     });
     table.appendChild(row);
   };
@@ -498,9 +390,9 @@ function createPersonalTableFromDatabase(database) {
   console.log("Таблица с преподавателями создана.")
 }
 
-function clearContainerTable() {
-  while(containerTable.firstChild) {
-    containerTable.removeChild(containerTable.firstChild)
+function clearPersonalPlanContainer() {
+  while(containerPersonalPlanTable.firstChild) {
+    containerPersonalPlanTable.removeChild(containerPersonalPlanTable.firstChild)
 }}
 
 function updatePersonalTable() {
@@ -508,23 +400,173 @@ function updatePersonalTable() {
   showPersonalPlan(data);
 }
 
-function checkAnswerData(answerData) {
+function checkAndCreatePersonalHoursTable(answerData) {
   if (answerData.length==0) {
-    let textEmptyTable = document.createElement("p");
-    textEmptyTable.innerHTML = "Пустая таблица";
-    containerTable.appendChild(textEmptyTable);
+    let table = document.createElement("table");
+    table.id = "data-table";
+    table.classList.add("A4Table");
+
+    let headFirst = createHeadRow();
+    table.appendChild(headFirst);
+
+    let tbody = document.createElement("tbody");
+    let addRow = createAddRow(tbody);
+
+    tbody.appendChild(addRow);
+    table.appendChild(tbody);
+    containerPersonalPlanTable.appendChild(table);
+    document.getElementById("text-personal-text").innerHTML = "Персональный план";
   }
-  else createTableFromDatabase(answerData);
+  else createPersonalPlanTableContainer(answerData);
 }
 
 function showPersonalPlan(data) {
   window.electronAPI.getPersonalPlan(data).then((answerData) => {
-    clearContainerTable();
-    checkAnswerData(answerData);
+    clearPersonalPlanContainer();
+    checkAndCreatePersonalHoursTable(answerData);
   })
 }
 
-// Сайдбар
+function createAddRowFields() {
+  let newRow = document.createElement("tr");
+  let newCol1 = document.createElement("td");
+  let newCol2 = document.createElement("td");
+  let newCol3 = document.createElement("td");
+  // newCol3.setAttribute('colspan', '3');
+  let newCol4 = document.createElement("td");
+  let newCol5 = document.createElement("td");
+  let newCol6 = document.createElement("td");
+
+  const inputSyllabus = document.createElement("input");
+  inputSyllabus.id = "syllabus-input";
+  inputSyllabus.setAttribute("list", "syllabusInputHelper");
+  let inputSyllabusDatalist = document.createElement("datalist");
+  inputSyllabusDatalist.id = "syllabusInputHelper";
+  let dataToSendSyllabus = {
+    year: currentYear,
+    education_form: currentFormOfEducation,
+    p_id: currentPersonID,
+  };
+  let syllabusInfos = {};
+  window.electronAPI.getActualSyllabusForPeronalHours(dataToSendSyllabus).then((answerData) => {
+    for (let syllabusRowId in answerData) {
+      let objData = answerData[syllabusRowId];
+      console.log(objData)
+      let newOption = document.createElement("option");
+      let usedHours = objData["used_hours"];
+      if (usedHours == null) {
+        usedHours = 0;
+      }
+      let freeHours = objData["hours"] - usedHours;
+      if (freeHours == 0) { continue }
+      let textValue = `${objData["flows_name"]} | ${objData["discipline"]} | ${objData["type_name"]} | Всего: ${objData["hours"]} / ${objData["sub_hours"]} | Свободно: ${freeHours}`;
+      dictAddSyllabus[textValue] = objData["syllabus_id"];
+      syllabusInfos[textValue] = objData;
+      newOption.value = textValue;
+      newOption.innerHTML = `${objData['syllabus_id']}`;
+      inputSyllabusDatalist.appendChild(newOption);
+    }
+  });
+  inputSyllabus.addEventListener("change", () => {
+    let valueAddSyllabus = inputSyllabus.value;
+    newCol2.innerHTML = valueAddSyllabus.split()[0];
+    let usedHours = syllabusInfos[inputSyllabus.value]["used_hours"]
+    if (usedHours == null) {
+      usedHours = 0;
+    }
+    inputHours.max = syllabusInfos[inputSyllabus.value]["hours"] - usedHours;
+    inputHours.step = syllabusInfos[inputSyllabus.value]["hours"] / syllabusInfos[inputSyllabus.value]["subgroups"];
+    newCol4.innerHTML = syllabusInfos[inputSyllabus.value]["hours"] - usedHours;
+    newCol5.innerHTML = syllabusInfos[inputSyllabus.value]["hours"];
+  });
+  newCol1.appendChild(inputSyllabusDatalist);
+  newCol1.appendChild(inputSyllabus);
+
+  newCol2.innerHTML = "Должно подтягиваться автоматом";
+  let divSelect = document.createElement("div");
+  divSelect.id = "choose";
+  let inputHours = document.createElement("input");
+  inputHours.id = "groupCount";
+  inputHours.type = "number";
+  inputHours.min = "0";
+  // input.max = maxSyllabusHours[inputSyllabus.value];
+  inputHours.value = "0";
+  //input.step = "1";
+  divSelect.appendChild(inputHours);
+  newCol3.appendChild(divSelect);
+
+  let noButton = document.createElement('button');
+  let noButtonIcon = document.createElement('img');
+  let yesButton = document.createElement('button');
+  let yesButtonIcon = document.createElement('img');
+
+  noButtonIcon.src = "../img/icon-delete.svg";
+  noButtonIcon.classList.add("icon-img");
+  noButton.appendChild(noButtonIcon);
+  noButton.addEventListener("click", () => {
+    console.log('YEEEEES')
+    newRow.remove();
+    addRowCreated = false;     
+  })
+  newCol6.appendChild(noButton);
+
+  yesButtonIcon.src = "../img/icon-accept.svg";
+  yesButtonIcon.classList.add("icon-img");
+  yesButton.appendChild(yesButtonIcon);
+  yesButton.addEventListener("click", () => {
+    dataToAdd = {
+      "p_id": currentPersonID,
+      "s_id": syllabusInfos[inputSyllabus.value]["syllabus_id"],
+      "hours": inputHours.value,
+      "subgroups": inputHours.value / syllabusInfos[inputSyllabus.value]["sub_hours"],
+    }
+    console.log(dataToAdd)
+    window.electronAPI.insertPersonalPlan(dataToAdd).then((answer) => {
+      console.log(answer);
+      data = updateSendingData();
+      showPersonalPlan(data);
+    });
+    addRowCreated = false;
+  });
+  newCol6.appendChild(yesButton);
+
+  newRow.appendChild(newCol1);
+  newRow.appendChild(newCol2);
+  newRow.appendChild(newCol3);
+  newRow.appendChild(newCol4);
+  newRow.appendChild(newCol5);
+  newRow.appendChild(newCol6);
+  return newRow;
+}
+
+function createAddRow(tbody) {
+  let addRow = document.createElement("tr");
+  let col = document.createElement("td");
+  col.setAttribute('colspan', '6');
+  col.innerHTML = "+"
+  col.classList.add("button-add-row");
+
+
+  
+  col.addEventListener("click", () => {
+    if (addRowCreated == true) {
+      console.log('Нельзя добавить ещё')
+      return false;
+    }
+    else {
+      addRowCreated = true;
+      addRow.remove();
+      let newRow = createAddRowFields();
+      tbody.append(newRow);
+      tbody.append(addRow);
+    }
+  });
+  addRow.appendChild(col);
+  addRow.id = "add-row";
+  addRow.classList.add("text-align-center");
+  return addRow
+}
+
 document.getElementById('menu-toggle').addEventListener('click', function() {
   var sidebar = document.getElementById('sidebar');
   sidebar.classList.toggle('open');

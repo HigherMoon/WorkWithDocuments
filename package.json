@@ -2,35 +2,26 @@
   "name": "wwd",
   "version": "1.0.0",
   "description": "Best program",
+  "homepage": "https://github.com/HigherMoon/WorkWithDocuments#readme",
   "main": "js/main.js",
-  "scripts": {
-    "start": "electron-forge start",
-    "package": "electron-forge package",
-    "postinstall": "install-app-deps",
-    "make": "electron-forge make"
+  "bugs": {
+    "url": "https://github.com/HigherMoon/WorkWithDocuments/issues"
   },
-  "author": "Yakov",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/HigherMoon/WorkWithDocuments.git"
+  },
   "license": "ISC",
+  "author": "Yakov",
+  "type": "commonjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron ."
+  },
   "devDependencies": {
-    "@electron-forge/cli": "^7.2.0",
-    "@electron-forge/maker-deb": "^7.2.0",
-    "@electron-forge/maker-rpm": "^7.2.0",
-    "@electron-forge/maker-squirrel": "^7.2.0",
-    "@electron-forge/maker-zip": "^7.2.0",
-    "@electron-forge/plugin-auto-unpack-natives": "^7.2.0",
-    "electron": "^28.3.3",
-    "electron-builder": "^24.13.3",
-    "sqlite3": "^5.1.7"
+    "electron": "^36.2.0"
   },
   "dependencies": {
-    "@electron/remote": "^2.1.2",
-    "electron-prebuilt": "^1.4.13",
-    "electron-squirrel-startup": "^1.0.0",
-    "jquery": "^3.7.1",
-    "node-xlsx": "^0.23.0",
-    "read-excel-file": "^5.7.1",
-    "sqlite3": "^5.1.7",
-    "xlsx": "^0.18.5",
-    "xslx": "^1.0.0"
+    "sqlite3": "^5.1.7"
   }
 }

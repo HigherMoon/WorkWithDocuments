@@ -1,17 +1,15 @@
 #container-table {
 	overflow-x: auto;
-	table-layout: auto;
+	table-layout: auto;	
 	max-width: 100%;
 	word-wrap: break-word;
   }
 
 table {
-	overflow-x: auto;
 	margin-top: 0px;
-	margin-bottom: 20px;
 	border-bottom: 1px solid #eee;
 	width: 100%;
-	table-layout: fixed;
+	table-layout: auto;
 	border: none;
 	word-wrap: break-word;
 }
@@ -22,12 +20,11 @@ table th {
 	border: none;
 	padding: 10px 15px;
 	background: #d8d8d8;
-	font-size: 13px;
+	font-size: 15px;
 	border-left: 1px solid #ddd;
 	border-right: 1px solid #ddd;
 }
 table td {
-	text-align: left;
 	border-left: 1px solid #ddd;
 	border-right: 1px solid #ddd;
 	padding: 10px 15px;
@@ -44,7 +41,19 @@ table tr:hover {
 }
 
 .table-personals-hours {
+	border: 1px solid #000000;
+	max-height: 16pc;
+	overflow-y: auto;
 	max-width: 70%;
+}
+
+.table-personal-hours {
+	max-height: 50pc;
+	overflow-y: auto;
+}
+
+.sticky-head {
+	
 }
 
 .container-two-tables {
@@ -54,8 +63,6 @@ table tr:hover {
 	border: 1px solid #ccc; /* Граница для наглядности */
 	padding: 10px; /* Отступ внутри контейнера */
 }
-
-
 
 
 .twoTables {

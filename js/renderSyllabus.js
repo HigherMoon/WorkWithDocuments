@@ -9,6 +9,8 @@ const datalistDisciplines = document.getElementById("disciplines-input-helper");
 const selectTypes = document.getElementById("Тип-f")
 const inputGroup = document.getElementById("flows-input");
 let selectedID = null;
+let flowsDict = {};
+let disciplineDict = {};
 
 listOfValues = {
   "Семестр": "semester",
@@ -41,8 +43,9 @@ const buttonOpenAddCard = document.getElementById("open-add-card").addEventListe
     for (let index in data) {
       let objData = data[index];
       let newOption = document.createElement("option");
-      newOption.value = objData["id"];
-      newOption.innerHTML = `${objData['name']} | ${objData['year']} | ${objData['education_form']}`;
+      newOption.innerHTML = objData["id"];
+      newOption.value = `${objData['name']} | ${objData['year']} | ${objData['education_form']}`;
+      flowsDict[`${objData['name']} | ${objData['year']} | ${objData['education_form']}`] = objData["id"]
       datalistFlows.appendChild(newOption);
     }
   });
@@ -50,8 +53,9 @@ const buttonOpenAddCard = document.getElementById("open-add-card").addEventListe
     for (let index in data) {
       let objData = data[index];
       let newOption = document.createElement("option");
-      newOption.value = objData["id"];
-      newOption.innerHTML = `${objData['name']}`;
+      newOption.innerHTML = objData["id"];
+      newOption.value = `${objData['name']}`;
+      disciplineDict[objData["name"]] = objData["id"]
       datalistDisciplines.appendChild(newOption);
     }
   });
@@ -84,8 +88,8 @@ const buttonSaveAddCard = document.getElementById('save-add-card').addEventListe
   var hours = document.getElementById('Часы-f').value;
   console.log(sub_hours, hours ) 
   data = {
-    flow_ID: document.getElementById('flows-input').value,
-    discipline_id: document.getElementById('Наименование-f').value,
+    flow_ID: flowsDict[document.getElementById('flows-input').value],
+    discipline_id: disciplineDict[document.getElementById('Наименование-f').value],
     semester: document.getElementById('Семестр-f').value,
     type: document.getElementById('Тип-f').value,
     subgroups: document.getElementById('Часы-f').value / document.getElementById('Часы_УП-f').value,
@@ -96,6 +100,8 @@ const buttonSaveAddCard = document.getElementById('save-add-card').addEventListe
       data.type=="" || data.subgroups=="" ||
       data.sub_hours=="" || data.hours=="")
   {
+    console.log(document.getElementById('flows-input').innerHTML)
+    console.log(document.getElementById('Наименование-f').innerHTML)
     alert('Заполнить надо всё!')
     console.log('Не всё')
   }

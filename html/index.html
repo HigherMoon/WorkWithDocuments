@@ -43,11 +43,7 @@
             <option value="1"> 1 </option>
             <option value="2"> 2 </option>
           </select>
-          <button id="current-data"> Вывести учебный план </button>
         </div>
-      </div>
-      <div>
-        <h5 id="infoFIO"> Выбран: </h5>
       </div>
       <div id="container-personal-table" class="table-personals-hours"></div>
 
@@ -59,11 +55,11 @@
             <form id="new-pp-form">
               <p> Предмет (ID) </p>
               <input id="syllabus-input" list="syllabus-input-helper">
-              <datalist id="syllabus-input-helper"></datalist>
+                <datalist id="syllabus-input-helper"></datalist>
               <p> Количество часов </p>
               <input id="hours-input">
               <div id="choose">
-                <input type="range" id="groupCount"   >
+                <input type="range" id="groupCount">
                 <div>Выбрано: <span id="selectedValue">0</span> групп</div>
               </div>
               <div>
@@ -80,12 +76,11 @@
         </div>
       </div>
 
-      <div class="add-card-header">
-        <h3> Персональный план </h3>
-        <button id="open-add-card"> + </button>
+      <div class="add-card-header-text">
+        <h4 id="text-personal-text"> Персональный план </h4>
       </div>
 
-      <div id="container-data"></div>
+      <div id="container-data" class="table-personal-hours"></div>
     </div>
   </body>
   <script type="text/javascript" src="../js/render.js"></script>

@@ -149,6 +149,7 @@ function createPersonalPlanTableContainer(answerData) {
       tbody = document.createElement("tbody");
       for (const index in result[semester][type]) {
         curRow = result[semester][type][index];
+        let edditableRow1;
         row = document.createElement("tr");
         for (const name in listOfValues) {
           let col = document.createElement("td");
@@ -178,13 +179,14 @@ function createPersonalPlanTableContainer(answerData) {
         let editButton = document.createElement('button');
         let editButtonIcon = document.createElement('img');
 
+        let curCurRow = curRow;
         deleteButtonIcon.src = "../img/icon-delete.svg";
         deleteButtonIcon.classList.add("icon-img");
         deleteButton.addEventListener("click", () => {
-          console.log(curRow)
+          console.log(curCurRow)
           deleteData = {
             "p_id": currentPersonID,
-            "s_id": curRow["s_id"],
+            "s_id": curCurRow["s_id"],
           };
           window.electronAPI.deletePersonalPlan(deleteData).then((answer) => {
             console.log(answer);
@@ -302,30 +304,116 @@ function createTablePersonalHours(database) {
     console.log("Пустая бд");
     return false;
   };
+  
+  // Очистка контейнера
   while(containerPersonalTable.firstChild) {
     containerPersonalTable.removeChild(containerPersonalTable.firstChild); 
   }
+  
   let table = document.createElement("table");
   let headTable = document.createElement("thead");
   table.id = "scroll-table-body";
   headTable.id = "head-table";
 
+  // Создание строки заголовков
+  let headRow = document.createElement("tr");
+  
+  // Добавляем поле поиска только для столбца "Преподаватель"
   for (let paramOfCurPartData in listHeadValuesPersonalTable) {
     if (paramOfCurPartData == "ID") { continue }
-    let headRow = document.createElement("th");
-    headRow.innerHTML = paramOfCurPartData;
-    headRow.id = paramOfCurPartData;
-    headTable.appendChild(headRow);
+    
+    let headCell = document.createElement("th");
+    headCell.id = paramOfCurPartData;
+    
+    if (paramOfCurPartData === "Преподаватель") {
+      // Создаем контейнер для заголовка и поля поиска
+      let searchContainer = document.createElement("div");
+      searchContainer.style.display = "flex";
+      searchContainer.style.alignItems = "center";
+      searchContainer.style.gap = "5px";
+      
+      // Текст заголовка
+      let headerText = document.createElement("span");
+      headerText.textContent = paramOfCurPartData;
+      searchContainer.appendChild(headerText);
+      
+      // Поле ввода для поиска
+      let searchInput = document.createElement("input");
+      searchInput.type = "text";
+      searchInput.placeholder = "Поиск...";
+      searchInput.style.width = "120px";
+      searchInput.style.padding = "3px";
+      
+      // Кнопка сброса поиска
+      let resetButton = document.createElement("button");
+      resetButton.innerHTML = "×";
+      resetButton.style.display = "none";
+      resetButton.style.background = "transparent";
+      resetButton.style.border = "none";
+      resetButton.style.cursor = "pointer";
+      resetButton.style.fontSize = "16px";
+      resetButton.style.padding = "0 5px";
+      
+      // Обработчик ввода текста
+      searchInput.addEventListener("input", function() {
+        const searchText = this.value.toLowerCase();
+        if (searchText) {
+          resetButton.style.display = "inline";
+        } else {
+          resetButton.style.display = "none";
+        }
+        
+        // Фильтрация строк таблицы
+        const rows = table.querySelectorAll("tbody tr");
+        rows.forEach(row => {
+          const nameCell = row.querySelector("td:first-child");
+          if (nameCell) {
+            const nameText = nameCell.textContent.toLowerCase();
+            if (nameText.includes(searchText)) {
+              row.style.display = "";
+            } else {
+              row.style.display = "none";
+            }
+          }
+        });
+      });
+      
+      // Обработчик сброса поиска
+      resetButton.addEventListener("click", function() {
+        searchInput.value = "";
+        resetButton.style.display = "none";
+        
+        // Показываем все строки
+        const rows = table.querySelectorAll("tbody tr");
+        rows.forEach(row => row.style.display = "");
+      });
+      
+      searchContainer.appendChild(searchInput);
+      searchContainer.appendChild(resetButton);
+      headCell.appendChild(searchContainer);
+    } else {
+      // Обычный заголовок для других столбцов
+      headCell.textContent = paramOfCurPartData;
+    }
+    
+    headRow.appendChild(headCell);
   }
+  
+  headTable.appendChild(headRow);
   table.appendChild(headTable);
+
+  // Создание тела таблицы
+  let tbody = document.createElement("tbody");
   
   for (let indexOfData in Object.keys(database)) {
     let row = document.createElement("tr");
     let curPartData = database[indexOfData];
     let personalLoad = 0;
     let currentLoad = 0;
+    
     for (let headRowsValue in listHeadValuesPersonalTable) {
       if (headRowsValue == "ID") { continue }
+      
       let col = document.createElement("td");
       if (listHeadValuesPersonalTable[headRowsValue] == "Нагрузка") {
         if (curPartData["Нагрузка"]==null) {
@@ -352,11 +440,10 @@ function createTablePersonalHours(database) {
       col.id = headRowsValue;
       row.appendChild(col);
     };
-    // -- При нажатии на строку выбирается текущая ФИО и ID препода
+    
+    // Обработчик клика по строке
     row.addEventListener("click", () => {
-      ///
       if (selectedPerson === row) {
-        // Случай, когда отжали человека и теперь мы видим список всех с кафедры
         document.getElementById("text-personal-text").innerHTML = "";
         console.log('все выбраны');
         const allRows = table.querySelectorAll('tr');
@@ -366,12 +453,12 @@ function createTablePersonalHours(database) {
         clearPersonalPlanContainer();
       }
       else {
-        // Случай, когда мы прожали по человеку и хотим о нём инфу всю
         const allRows = table.querySelectorAll('tr');
         allRows.forEach(r => {
           if (r !== row) {
             r.style.display = 'none';
-          }})
+          }
+        })
         selectedPerson = row;
         currentPersonID = curPartData["id"];
         currentPersonFIO = curPartData["Фамилия"];
@@ -381,12 +468,14 @@ function createTablePersonalHours(database) {
         }
         else showPersonalPlan(data);
       }
-      ///
     });
-    table.appendChild(row);
+    
+    tbody.appendChild(row);
   };
+  
+  table.appendChild(tbody);
   containerPersonalTable.appendChild(table);
-  personalTableIsCreated == true;
+  personalTableIsCreated = true;
   console.log("Таблица с преподавателями создана.")
 }
 
@@ -432,7 +521,6 @@ function createAddRowFields() {
   let newCol1 = document.createElement("td");
   let newCol2 = document.createElement("td");
   let newCol3 = document.createElement("td");
-  // newCol3.setAttribute('colspan', '3');
   let newCol4 = document.createElement("td");
   let newCol5 = document.createElement("td");
   let newCol6 = document.createElement("td");
@@ -448,17 +536,14 @@ function createAddRowFields() {
     p_id: currentPersonID,
   };
   let syllabusInfos = {};
+  
   window.electronAPI.getActualSyllabusForPeronalHours(dataToSendSyllabus).then((answerData) => {
     for (let syllabusRowId in answerData) {
       let objData = answerData[syllabusRowId];
-      console.log(objData)
       let newOption = document.createElement("option");
-      let usedHours = objData["used_hours"];
-      if (usedHours == null) {
-        usedHours = 0;
-      }
+      let usedHours = objData["used_hours"] || 0;
       let freeHours = objData["hours"] - usedHours;
-      if (freeHours == 0) { continue }
+      if (freeHours <= 0) { continue }
       let textValue = `${objData["flows_name"]} | ${objData["discipline"]} | ${objData["type_name"]} | Всего: ${objData["hours"]} / ${objData["sub_hours"]} | Свободно: ${freeHours}`;
       dictAddSyllabus[textValue] = objData["syllabus_id"];
       syllabusInfos[textValue] = objData;
@@ -467,31 +552,48 @@ function createAddRowFields() {
       inputSyllabusDatalist.appendChild(newOption);
     }
   });
-  inputSyllabus.addEventListener("change", () => {
-    let valueAddSyllabus = inputSyllabus.value;
-    newCol2.innerHTML = valueAddSyllabus.split()[0];
-    let usedHours = syllabusInfos[inputSyllabus.value]["used_hours"]
-    if (usedHours == null) {
-      usedHours = 0;
-    }
-    inputHours.max = syllabusInfos[inputSyllabus.value]["hours"] - usedHours;
-    inputHours.step = syllabusInfos[inputSyllabus.value]["hours"] / syllabusInfos[inputSyllabus.value]["subgroups"];
-    newCol4.innerHTML = syllabusInfos[inputSyllabus.value]["hours"] - usedHours;
-    newCol5.innerHTML = syllabusInfos[inputSyllabus.value]["hours"];
-  });
-  newCol1.appendChild(inputSyllabusDatalist);
-  newCol1.appendChild(inputSyllabus);
 
-  newCol2.innerHTML = "Должно подтягиваться автоматом";
-  let divSelect = document.createElement("div");
-  divSelect.id = "choose";
+  // Создаем поле ввода часов заранее, но делаем его disabled
   let inputHours = document.createElement("input");
   inputHours.id = "groupCount";
   inputHours.type = "number";
   inputHours.min = "0";
-  // input.max = maxSyllabusHours[inputSyllabus.value];
   inputHours.value = "0";
-  //input.step = "1";
+  inputHours.disabled = true; // Изначально поле заблокировано
+  inputHours.addEventListener("input", validateHoursInput);
+
+  inputSyllabus.addEventListener("change", () => {
+    if (!inputSyllabus.value) {
+      inputHours.disabled = true;
+      inputHours.value = "0";
+      validateHoursInput();
+      return;
+    }
+    
+    // Разблокируем поле ввода часов при выборе предмета
+    inputHours.disabled = false;
+    
+    let valueAddSyllabus = inputSyllabus.value;
+    newCol2.innerHTML = valueAddSyllabus.split()[0];
+    let usedHours = syllabusInfos[inputSyllabus.value]["used_hours"] || 0;
+    inputHours.max = syllabusInfos[inputSyllabus.value]["hours"] - usedHours;
+    inputHours.min = "0";
+    inputHours.step = syllabusInfos[inputSyllabus.value]["sub_hours"];
+    newCol4.innerHTML = syllabusInfos[inputSyllabus.value]["hours"] - usedHours;
+    newCol5.innerHTML = syllabusInfos[inputSyllabus.value]["hours"];
+    
+    // Устанавливаем начальное значение
+    inputHours.value = syllabusInfos[inputSyllabus.value]["sub_hours"] || "0";
+    validateHoursInput();
+  });
+
+  newCol1.appendChild(inputSyllabusDatalist);
+  newCol1.appendChild(inputSyllabus);
+
+  newCol2.innerHTML = "—"; // Заглушка до выбора значения
+  
+  let divSelect = document.createElement("div");
+  divSelect.id = "choose";
   divSelect.appendChild(inputHours);
   newCol3.appendChild(divSelect);
 
@@ -504,15 +606,17 @@ function createAddRowFields() {
   noButtonIcon.classList.add("icon-img");
   noButton.appendChild(noButtonIcon);
   noButton.addEventListener("click", () => {
-    console.log('YEEEEES')
     newRow.remove();
     addRowCreated = false;     
-  })
+  });
   newCol6.appendChild(noButton);
 
   yesButtonIcon.src = "../img/icon-accept.svg";
   yesButtonIcon.classList.add("icon-img");
   yesButton.appendChild(yesButtonIcon);
+  yesButton.id = "submit-hours-btn";
+  yesButton.disabled = true; // Изначально кнопка заблокирована
+  
   yesButton.addEventListener("click", () => {
     dataToAdd = {
       "p_id": currentPersonID,
@@ -520,9 +624,7 @@ function createAddRowFields() {
       "hours": inputHours.value,
       "subgroups": inputHours.value / syllabusInfos[inputSyllabus.value]["sub_hours"],
     }
-    console.log(dataToAdd)
     window.electronAPI.insertPersonalPlan(dataToAdd).then((answer) => {
-      console.log(answer);
       data = updateSendingData();
       showPersonalPlan(data);
     });
@@ -530,12 +632,43 @@ function createAddRowFields() {
   });
   newCol6.appendChild(yesButton);
 
+  function validateHoursInput() {
+    const value = parseFloat(inputHours.value);
+    const min = parseFloat(inputHours.min);
+    const max = parseFloat(inputHours.max);
+    
+    if (isNaN(value)) {
+      inputHours.value = min;
+      yesButton.disabled = true;
+      return;
+    }
+    
+    if (value < min) {
+      inputHours.value = min;
+    } else if (value > max) {
+      inputHours.value = max;
+    }
+    
+    yesButton.disabled = (value <= 0 || inputHours.disabled);
+    
+    if (inputSyllabus.value && syllabusInfos[inputSyllabus.value]) {
+      const subHours = syllabusInfos[inputSyllabus.value]["sub_hours"];
+      if (subHours > 0 && value > 0) {
+        const remainder = value % subHours;
+        if (remainder !== 0) {
+          inputHours.value = Math.floor(value / subHours) * subHours;
+        }
+      }
+    }
+  }
+
   newRow.appendChild(newCol1);
   newRow.appendChild(newCol2);
   newRow.appendChild(newCol3);
   newRow.appendChild(newCol4);
   newRow.appendChild(newCol5);
   newRow.appendChild(newCol6);
+  
   return newRow;
 }
 

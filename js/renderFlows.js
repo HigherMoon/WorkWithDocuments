@@ -57,13 +57,20 @@ const buttonCloseAddCardFlows = document.getElementById("add-card-close-flows").
   addCardFlows.style.display = 'none';
 });
 const buttonSaveAddCardFlows = document.getElementById('save-add-card-flows').addEventListener("click", () => {
+  let nameField = document.getElementById('Наименование-f');
+  let flowIdField = document.getElementById('Факультет-f');
+  let yearField = document.getElementById('Год-f');
+  let educationFormField = document.getElementById('Форма_обучения-f');
   data = {
-    name: document.getElementById('Наименование-f').value,
-    faculty: document.getElementById('Факультет-f').value,
-    year: document.getElementById('Год-f').value,
-    education_form: document.getElementById('Форма_обучения-f').value
+    "name": nameField.value,
+    "faculty": flowIdField.value,
+    "year": yearField.value,
+    "education_form": educationFormField.value
   }
-  console.log(data)
+  nameField.value = "";
+  flowIdField.value = "";
+  yearField.value = "";
+  educationFormField.value = "";
   window.electronAPI.insertFlow(data).then((answer) => {
     console.log(answer)
   });
@@ -113,13 +120,20 @@ const buttonCloseAddCardGroups = document.getElementById("add-card-close-groups"
   addCardGroups.style.display = 'none';
 });
 const buttonSaveAddCardGroups = document.getElementById('save-add-card-groups').addEventListener("click", () => {
+  let nameField = document.getElementById('Наименование-g');
+  let flowIdField = document.getElementById('Flow_ID-g');
+  let studentsBField = document.getElementById('Студенты_Б-g');
+  let studentsNBField = document.getElementById('Студенты_ВБ-g');
   data = {
-    name: document.getElementById('Наименование-g').value,
-    flow_id: document.getElementById('Flow_ID-g').value,
-    students_b: document.getElementById('Студенты_Б-g').value == "" ? 0 : document.getElementById('Студенты_Б-g').value,
-    students_nb: document.getElementById('Студенты_ВБ-g').value == "" ? 0 : document.getElementById('Студенты_ВБ-g').value
+    name: nameField.value,
+    flow_id: flowIdField.value,
+    students_b: studentsBField.value == "" ? 0 : studentsBField.value,
+    students_nb: studentsNBField.value == "" ? 0 : studentsNBField.value
   }
-  console.log(data)
+  nameField.value = "";
+  flowIdField.value = "";
+  studentsBField = "";
+  studentsNBField = "";
   window.electronAPI.insertGroup(data).then((answer) => {
     console.log(answer)
   });

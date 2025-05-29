@@ -138,3 +138,14 @@ table tr:hover {
 .text-align-center {
 	text-align: center;
 }
+
+.table-names {
+	max-height: 55pc;
+	border: 1px solid #000000;
+}
+
+.table-flows {
+	max-height: 24pc;
+	border: 1px solid #000000;
+	overflow-y: auto;
+}

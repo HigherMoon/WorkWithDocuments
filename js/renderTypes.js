@@ -30,10 +30,11 @@ const buttonSaveAddCard = document.getElementById('save-add-card').addEventListe
   };
   if (errorNumber > 0) { alert(errorText) }
   else {
+    nameField = document.getElementById('Наименование-f');
     data = {
-      name: document.getElementById('Наименование-f').value
+      name: nameField.value,
     }
-    console.log(data)
+    nameField.value = "";
     window.electronAPI.insertType(data).then((answer) => {
       console.log(answer)
     });

@@ -42,7 +42,7 @@ const buttonSaveAddCard = document.getElementById('save-add-card').addEventListe
       salary: document.getElementById('Ставка-f').value
     }
     console.log(data)
-    window.electronAPI.insertPerson(data).then((answer) => {
+    window.electronAPI.insertTeacher(data).then((answer) => {
       console.log(answer)
     });
     updateCurTables();
@@ -67,7 +67,7 @@ const secondButtonCloseDeleteCard = document.getElementById("delete-card-close-2
 
 
 function updateCurTables() {
-  window.electronAPI.getDatabaseTable('kafedra').then((data) => {
+  window.electronAPI.getAllFromTable('kafedra').then((data) => {
     let rightColumn = document.getElementById("right");
     while(rightColumn.firstChild) {
       rightColumn.removeChild(rightColumn.firstChild); 
@@ -144,7 +144,7 @@ function updateTablePersonalInfo(data) {
   deleteButtonIcon.classList.add("float-right");
   deleteButtonIcon.addEventListener("click", () => {
     deleteData = { id: data['id'] };
-    window.electronAPI.deletePerson(deleteData).then((answer) => {
+    window.electronAPI.deleteTeacher(deleteData).then((answer) => {
       console.log(answer)
     });
     updateCurTables();
@@ -187,7 +187,7 @@ function updatePersonalInfo(id) {
     value = document.getElementById(key);
     dataToUpdate[key] = value.value;
   }
-  window.electronAPI.updateKafTable(dataToUpdate).then((answer) => {
+  window.electronAPI.updateTeacher(dataToUpdate).then((answer) => {
     console.log(answer)
   });
 }

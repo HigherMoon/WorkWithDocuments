@@ -16,7 +16,7 @@ function getDataAndCreateTable() {
 
 
 
-const buttonSaveAddCard = document.getElementById('save-add-card').addEventListener("click", () => {
+const buttonSaveAddCard = document.getElementById("save-add-card").addEventListener("click", () => {
   let errorNumber = 0;
   let errorText = "";
   let listOfReqCels = {
@@ -30,7 +30,7 @@ const buttonSaveAddCard = document.getElementById('save-add-card').addEventListe
   };
   if (errorNumber > 0) { alert(errorText) }
   else {
-    nameField = document.getElementById('Наименование-f');
+    nameField = document.getElementById("Наименование-f");
     data = {
       "name": nameField.value
     }
@@ -39,18 +39,17 @@ const buttonSaveAddCard = document.getElementById('save-add-card').addEventListe
       console.log(answer)
     });
     getDataAndCreateTable();
-    addCard.style.display = 'none';
+    addCard.style.display = "none";
   }
 });
 
 
 
 const buttonOpenAddCardFlows = document.getElementById("open-add-card").addEventListener("click", () => {
-  addCard.style.display = 'block';
+  addCard.style.display = "block";
 });
 const buttonCloseAddCardFlows = document.getElementById("add-card-close-disciplines").addEventListener("click", () => {
-  console.log('закрыто')
-  addCard.style.display = 'none';
+  addCard.style.display = "none";
 });
 
 
@@ -119,17 +118,17 @@ function createTableOfDisciplines(data) {
     // Добавление финальных кнопок в строке
     let col = document.createElement("td");
   
-    let deleteButton = document.createElement('button');
-    let deleteButtonIcon = document.createElement('img');
-    let acceptButton = document.createElement('button');
-    let acceptButtonIcon = document.createElement('img');
-    let editButton = document.createElement('button');
-    let editButtonIcon = document.createElement('img');
+    let deleteButton = document.createElement("button");
+    let deleteButtonIcon = document.createElement("img");
+    let acceptButton = document.createElement("button");
+    let acceptButtonIcon = document.createElement("img");
+    let editButton = document.createElement("button");
+    let editButtonIcon = document.createElement("img");
 
     deleteButtonIcon.src = "../img/icon-delete.svg";
     deleteButtonIcon.classList.add("icon-img");
     deleteButtonIcon.addEventListener("click", () => {
-      deleteData = { id: curPartData['id'] };
+      deleteData = { id: curPartData["id"] };
       window.electronAPI.deleteDiscipline(deleteData).then((answer) => {
         console.log(answer)
       });
@@ -142,15 +141,15 @@ function createTableOfDisciplines(data) {
     acceptButtonIcon.classList.add("icon-img");
     acceptButton.appendChild(acceptButtonIcon);
     acceptButton.addEventListener("click", () => {
-      edditableRow.setAttribute('contenteditable', false);
+      edditableRow.setAttribute("contenteditable", false);
       edditableRow.classList.remove("edit-cell");
       editButton.style.removeProperty("display");
       acceptButton.style.display = "none";
       updateData = {
-        id: curPartData['id'],
+        id: curPartData["id"],
         name: edditableRow.innerHTML,
       };
-      window.electronAPI.updateDisciplinesTable(updateData).then((answer) => {
+      window.electronAPI.updateDiscipline(updateData).then((answer) => {
         console.log(answer)
       });
       updateCurTable();
@@ -162,7 +161,7 @@ function createTableOfDisciplines(data) {
     editButtonIcon.classList.add("icon-img");
     editButton.appendChild(editButtonIcon);
     editButton.addEventListener("click", () => {
-      edditableRow.setAttribute('contenteditable', true);
+      edditableRow.setAttribute("contenteditable", true);
       edditableRow.classList.add("edit-cell");
       acceptButton.style.removeProperty("display");
       editButton.style.display = "none";
@@ -187,7 +186,7 @@ function updateCurTable() {
 }
 
 
-document.getElementById('menu-toggle').addEventListener('click', function() {
-  var sidebar = document.getElementById('sidebar');
-  sidebar.classList.toggle('open');
+document.getElementById("menu-toggle").addEventListener("click", function() {
+  var sidebar = document.getElementById("sidebar");
+  sidebar.classList.toggle("open");
 });

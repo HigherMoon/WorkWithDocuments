@@ -39,31 +39,27 @@ const containerPersonalTable = document.getElementById("container-personal-table
 const containerPersonalPlanTable = document.getElementById("container-data");
 const datalistSyllabus = document.getElementById("syllabus-input-helper");
 const inputGroup = document.getElementById("group-input");
-const addCard = document.getElementById('add-card');
-const formAddCard = document.getElementById('new-pp-form');
+const addCard = document.getElementById("add-card");
+const formAddCard = document.getElementById("new-pp-form");
 
 // Обновление колонки с выбором предмета
 const syllabusInput = document.getElementById("syllabus-input");
 syllabusInput.addEventListener("change", () => {
   curData = optionsList[syllabusInput.value]
-  console.log(curData);
-  if (curData["typeName"] in ["Лекция", "Практика", "Лабораторные занятия"]) {
-    console.log('yes')
-  }
   first = document.getElementById("groupCount");
   second = document.getElementById("selectedValue");
 
-  document.getElementById('infoHours').innerHTML = `Всего часов: ${curData["hours"]}`;
-  document.getElementById('infoSubHours').innerHTML = `Часов на подгруппу: ${curData["sub_hours"]}`;
-  document.getElementById('infoUsedHours').innerHTML = `Часов ИСПОЛЬЗОВАНО: ${curData["usedHours"]}`;
-  document.getElementById('infoSubGroups').innerHTML = `Всего подгрупп: ${curData["hours"] / curData["sub_hours"]}`;
+  document.getElementById("infoHours").innerHTML = `Всего часов: ${curData["hours"]}`;
+  document.getElementById("infoSubHours").innerHTML = `Часов на подгруппу: ${curData["sub_hours"]}`;
+  document.getElementById("infoUsedHours").innerHTML = `Часов ИСПОЛЬЗОВАНО: ${curData["usedHours"]}`;
+  document.getElementById("infoSubGroups").innerHTML = `Всего подгрупп: ${curData["hours"] / curData["sub_hours"]}`;
 
   first.max = (curData["hours"] - curData["usedHours"]) / curData["sub_hours"];
   first.addEventListener("change", () => {
     console.log(curData)
     second.innerHTML = first.value;
     second.value = first.value;
-    document.getElementById('hours-input').value = curData["sub_hours"] * second.value;
+    document.getElementById("hours-input").value = curData["sub_hours"] * second.value;
   })
 })
 
@@ -85,10 +81,10 @@ selectCurrentSemester.addEventListener("change", () => {
 
 const buttonCloseAddCard = document.getElementById("add-card-close");
 buttonCloseAddCard.addEventListener("click", () => {
-  console.log('закрыто');
-  addCard.style.display = 'none';
-  document.getElementById('hours-input').value="";
-  document.getElementById('groupCount').value = "";
+  console.log("закрыто");
+  addCard.style.display = "none";
+  document.getElementById("hours-input").value="";
+  document.getElementById("groupCount").value = "";
   document.getElementById("syllabus-input").value = "";
 })
 
@@ -134,7 +130,7 @@ function createPersonalPlanTableContainer(answerData) {
       row = document.createElement("tr");
       th = document.createElement("th");
       th.innerHTML = `${type} по:`;
-      th.setAttribute('colspan', '6');
+      th.setAttribute("colspan", "6");
       row.appendChild(th);
       thead.appendChild(row);
       table.appendChild(thead);
@@ -172,12 +168,12 @@ function createPersonalPlanTableContainer(answerData) {
         // Создание финальных кнопок
         let col = document.createElement("td");
         
-        let deleteButton = document.createElement('button');
-        let deleteButtonIcon = document.createElement('img');
-        let acceptButton = document.createElement('button');
-        let acceptButtonIcon = document.createElement('img');
-        let editButton = document.createElement('button');
-        let editButtonIcon = document.createElement('img');
+        let deleteButton = document.createElement("button");
+        let deleteButtonIcon = document.createElement("img");
+        let acceptButton = document.createElement("button");
+        let acceptButtonIcon = document.createElement("img");
+        let editButton = document.createElement("button");
+        let editButtonIcon = document.createElement("img");
 
         let curCurRow = curRow;
         deleteButtonIcon.src = "../img/icon-delete.svg";
@@ -188,7 +184,7 @@ function createPersonalPlanTableContainer(answerData) {
             "p_id": currentPersonID,
             "s_id": curCurRow["s_id"],
           };
-          window.electronAPI.deletePersonalPlan(deleteData).then((answer) => {
+          window.electronAPI.deleteFromPersonalPlan(deleteData).then((answer) => {
             console.log(answer);
           });
           updatePersonalTable();
@@ -200,19 +196,19 @@ function createPersonalPlanTableContainer(answerData) {
         acceptButtonIcon.classList.add("icon-img");
         acceptButton.appendChild(acceptButtonIcon);
         acceptButton.addEventListener("click", () => {
-          edditableRow1.setAttribute('contenteditable', false);
+          edditableRow1.setAttribute("contenteditable", false);
           edditableRow1.classList.remove("edit-cell");
           editButton.style.removeProperty("display");
           acceptButton.style.display = "none";
           console.log(curRow)
           updateData = {
-            p_id: curRow['pId'],
-            s_id: curRow['s_id'],
-            subgroups: edditableRow1.innerHTML / curRow['subHours'],
+            p_id: curRow["pId"],
+            s_id: curRow["s_id"],
+            subgroups: edditableRow1.innerHTML / curRow["subHours"],
             hours: edditableRow1.innerHTML,
           };
           console.log(updateData);
-          window.electronAPI.updatePersonalHours(updateData).then((answer) => {
+          window.electronAPI.updatePersonalPlan(updateData).then((answer) => {
             console.log(answer)
           });
         });
@@ -223,7 +219,7 @@ function createPersonalPlanTableContainer(answerData) {
         editButtonIcon.classList.add("icon-img");
         editButton.appendChild(editButtonIcon);
         editButton.addEventListener("click", () => {
-          edditableRow1.setAttribute('contenteditable', true);
+          edditableRow1.setAttribute("contenteditable", true);
           edditableRow1.classList.add("edit-cell");
           acceptButton.style.removeProperty("display");
           editButton.style.display = "none";
@@ -292,7 +288,7 @@ function updateSendingData() {
 
 // Получение перcонального плана и его вывод на странице
 function getDataAndCreateTable() {
-  window.electronAPI.getCurPPDatabase().then((data) => {
+  window.electronAPI.getAllPersonalPlans().then((data) => {
     currentPersonalDataSQL = data;
     createTablePersonalHours(data);
   });
@@ -421,18 +417,18 @@ function createTablePersonalHours(database) {
           personalLoad = 0;
         }
         else {
-          let hours = curPartData['Часы'] || 0;
-          let load = curPartData['Нагрузка'] || 0;
+          let hours = curPartData["Часы"] || 0;
+          let load = curPartData["Нагрузка"] || 0;
           let deviation = (hours / load) * 100;
           col.innerHTML = `${hours} / ${load} (${deviation.toFixed(2)}%)`;
           if (deviation < 60) {
-            col.style.backgroundColor='rgba(255, 200, 200)';
+            col.style.backgroundColor="rgba(255, 200, 200)";
           }
           else if (deviation >=60 && deviation < 90) {
-            col.style.backgroundColor='rgba(255, 211, 92)';
+            col.style.backgroundColor="rgba(255, 211, 92)";
           }
           else if (deviation >= 90) {
-            col.style.backgroundColor='rgba(80, 255, 132)';
+            col.style.backgroundColor="rgba(80, 255, 132)";
           }
         }
       }
@@ -445,18 +441,18 @@ function createTablePersonalHours(database) {
     row.addEventListener("click", () => {
       if (selectedPerson === row) {
         document.getElementById("text-personal-text").innerHTML = "";
-        console.log('все выбраны');
-        const allRows = table.querySelectorAll('tr');
-        allRows.forEach(r => r.style.display = '');
+        console.log("все выбраны");
+        const allRows = table.querySelectorAll("tr");
+        allRows.forEach(r => r.style.display = "");
         selectedPerson = null;
         addRowCreated = false;
         clearPersonalPlanContainer();
       }
       else {
-        const allRows = table.querySelectorAll('tr');
+        const allRows = table.querySelectorAll("tr");
         allRows.forEach(r => {
           if (r !== row) {
-            r.style.display = 'none';
+            r.style.display = "none";
           }
         })
         selectedPerson = row;
@@ -464,7 +460,7 @@ function createTablePersonalHours(database) {
         currentPersonFIO = curPartData["Фамилия"];
         data = updateSendingData();
         if (data.Personal_ID==null) {
-          console.log('Нужно выбрать препода');
+          console.log("Нужно выбрать препода");
         }
         else showPersonalPlan(data);
       }
@@ -537,7 +533,7 @@ function createAddRowFields() {
   };
   let syllabusInfos = {};
   
-  window.electronAPI.getActualSyllabusForPeronalHours(dataToSendSyllabus).then((answerData) => {
+  window.electronAPI.getCurrentSyllabusForPeronalHours(dataToSendSyllabus).then((answerData) => {
     for (let syllabusRowId in answerData) {
       let objData = answerData[syllabusRowId];
       let newOption = document.createElement("option");
@@ -548,7 +544,7 @@ function createAddRowFields() {
       dictAddSyllabus[textValue] = objData["syllabus_id"];
       syllabusInfos[textValue] = objData;
       newOption.value = textValue;
-      newOption.innerHTML = `${objData['syllabus_id']}`;
+      newOption.innerHTML = `${objData["syllabus_id"]}`;
       inputSyllabusDatalist.appendChild(newOption);
     }
   });
@@ -597,10 +593,10 @@ function createAddRowFields() {
   divSelect.appendChild(inputHours);
   newCol3.appendChild(divSelect);
 
-  let noButton = document.createElement('button');
-  let noButtonIcon = document.createElement('img');
-  let yesButton = document.createElement('button');
-  let yesButtonIcon = document.createElement('img');
+  let noButton = document.createElement("button");
+  let noButtonIcon = document.createElement("img");
+  let yesButton = document.createElement("button");
+  let yesButtonIcon = document.createElement("img");
 
   noButtonIcon.src = "../img/icon-delete.svg";
   noButtonIcon.classList.add("icon-img");
@@ -675,7 +671,7 @@ function createAddRowFields() {
 function createAddRow(tbody) {
   let addRow = document.createElement("tr");
   let col = document.createElement("td");
-  col.setAttribute('colspan', '6');
+  col.setAttribute("colspan", "6");
   col.innerHTML = "+"
   col.classList.add("button-add-row");
 
@@ -683,7 +679,7 @@ function createAddRow(tbody) {
   
   col.addEventListener("click", () => {
     if (addRowCreated == true) {
-      console.log('Нельзя добавить ещё')
+      console.log("Нельзя добавить ещё")
       return false;
     }
     else {
@@ -700,7 +696,7 @@ function createAddRow(tbody) {
   return addRow
 }
 
-document.getElementById('menu-toggle').addEventListener('click', function() {
-  var sidebar = document.getElementById('sidebar');
-  sidebar.classList.toggle('open');
+document.getElementById("menu-toggle").addEventListener("click", function() {
+  var sidebar = document.getElementById("sidebar");
+  sidebar.classList.toggle("open");
 })

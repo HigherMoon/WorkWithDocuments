@@ -143,7 +143,7 @@ const buttonDeleteAddCard = document.getElementById('confirm-delete-card').addEv
   data = {
     UP_ID: selectedID
   }
-  window.electronAPI.deleteSyllabus(data).then((answer) => {
+  window.electronAPI.deleteFromSyllabus(data).then((answer) => {
     console.log(answer)
   });
    deleteCard.style.display = 'none';
@@ -221,7 +221,7 @@ function createTableFromDatabase(database) {
       deleteButtonIcon.classList.add("icon-img");
       deleteButton.addEventListener("click", () => {
         deleteData = { id: curPartData['id'] };
-        window.electronAPI.deleteSyllabus(deleteData).then((answer) => {
+        window.electronAPI.deleteFromSyllabus(deleteData).then((answer) => {
           console.log(answer);
         });
         updateCurTable()
@@ -249,7 +249,7 @@ function createTableFromDatabase(database) {
           hours: edditableRow3.innerHTML,
         };
         console.log(updateData);
-        window.electronAPI.updateSyllabusTable(updateData).then((answer) => {
+        window.electronAPI.updateSyllabus(updateData).then((answer) => {
           console.log(answer)
         });
       });

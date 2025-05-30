@@ -1,6 +1,6 @@
 const sqlite = require("../node_modules/sqlite3").verbose();
-const { app, BrowserWindow, ipcMain } = require('electron/main');
-const path = require('node:path');
+const { app, BrowserWindow, ipcMain } = require("electron/main");
+const path = require("node:path");
 
 // Конфигурация базы данных
 const dbPath = path.resolve(__dirname, "../saves/main.db");
@@ -28,12 +28,12 @@ function createWindow() {
     width: 1200,
     height: 700,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(__dirname, "preload.js"),
       nodeIntegration: true,
     }
   });
   
-  win.loadFile('html/index.html');
+  win.loadFile("html/index.html");
   win.maximize();
   win.webContents.openDevTools();
 }
@@ -45,7 +45,7 @@ app.whenReady().then(() => {
 });
 
 // Обработка закрытия приложения
-app.on('window-all-closed', () => {
+app.on("window-all-closed", () => {
   database.close();
   app.quit();
 });
@@ -65,7 +65,7 @@ function prepareDataForQuery(data) {
   return { columns, values };
 }
 
-function prepareUpdateData(data, idField = 'id') {
+function prepareUpdateData(data, idField = "id") {
   const updates = [];
   const id = data[idField];
   
@@ -82,7 +82,7 @@ function prepareUpdateData(data, idField = 'id') {
 }
 
 // Обработчики IPC для получения данных
-ipcMain.handle('get-database-status', () => {
+ipcMain.handle("get-database-status", () => {
   return {
     err: errorDatabase || "Подключено",
     db_path: dbPath
@@ -100,51 +100,44 @@ const createDataHandler = (queryFunction) => {
 // Регистрация обработчиков IPC
 const handlers = {
   // Получение данных
-  'get-table-database': sqlSelectAllFromTable,
-  'get-cur-UP': getCurUpDB,
-  'get-cur-PP': getCurPersonalPlan,
-  'get-cur-hours-person': getCurHoursTeachers,
-  'get-cur-stats-person': getCurStatsTeachers,
-  'get-cur-teachers': getCurTeachers,
-  'get-cur-list-teachers': getCurListTeachers,
-  'get-cur-pp-database': getCurPPDB,
-  'get-actual-pp-up': getActualDataPPUP,
-  'get-cur-flows': getCurFlows,
-  'get-cur-groups': getCurGroups,
-  'get-cur-disciplines': getCurDisciplines,
-  'get-cur-types': getCurTypes,
-  'get-cur-syllabus': getCurSyllabus,
-  'get-actual-flows-for-personal-hours': getActualFlowsForPersonalHours,
-  'get-actual-syllabus-for-personal-hours': getActualSyllabusForPeronalHours,
+  "get-all-from-table": sqlSelectAllFromTable,
+  "get-personal-plan": getPersonalPlan,
+  "get-teachers": getTeachers,
+  "get-current-list-teachers": getCurrentListOfTeachers,
+  "get-all-personal-plans": getAllPersonalPlans,
+  "get-flows": getFlows,
+  "get-groups": getGroups,
+  "get-disciplines": getDisciplines,
+  "get-types": getTypes,
+  "get-syllabus": getSyllabus,
+  "get-actual-syllabus-for-personal-hours": getCurrentSyllabusForPeronalHours,
   
   // Обновление данных
-  'update-table-kaf': updatePersonal,
-  'update-table-flows': updateFlows,
-  'update-table-groups': updateGroups,
-  'update-table-up': updateUP,
-  'update-table-pp': updatePersonalPlan,
-  'update-table-types': updateTypes,
-  'update-table-disciplines': updateDisciplines,
-  'update-table-syllabus': updateSyllabus,
-  'update-table-personal-plan': updatePersonalPlanHours,
+  "update-teacher": updateTeacher,
+  "update-flows": updateFlows,
+  "update-groups": updateGroups,
+  "update-type": updateType,
+  "update-discipline": updateDisciplines,
+  "update-syllabus": updateSyllabus,
+  "update-personal-plan": updatePersonalPlanHours,
   
   // Вставка данных
-  'insert-table-kafedra': sqlInsertIntoKAF,
-  'insert-table-flows': sqlInsertIntoFlows,
-  'insert-table-groups': sqlInsertIntoGroups,
-  'insert-table-up': sqlInsertIntoUP,
-  'insert-table-pp': sqlInsertIntoPP,
-  'insert-table-disciplines': sqlInsertIntoDiscipline,
-  'insert-table-types': sqlInsertIntoTypes,
+  "insert-teacher": sqlInsertIntoKAF,
+  "insert-flow": sqlInsertIntoFlows,
+  "insert-group": sqlInsertIntoGroups,
+  "insert-syllabus": sqlInsertIntoUP,
+  "insert-personal-plan": sqlInsertIntoPP,
+  "insert-discipline": sqlInsertIntoDiscipline,
+  "insert-type": sqlInsertIntoTypes,
   
   // Удаление данных
-  'delete-table-kaf': deleteFromKaf,
-  'delete-table-flows': deleteFromFlows,
-  'delete-table-groups': deleteFromGroups,
-  'delete-table-up': deleteFromUP,
-  'delete-table-pp': deleteFromPP,
-  'delete-table-types': deleteFromTypes,
-  'delete-table-disciplines': deleteFromDisciplines
+  "delete-teacher": deleteTeacher,
+  "delete-flow": deleteFlow,
+  "delete-group": deleteGroup,
+  "delete-from-syllabus": deleteFromSyllabus,
+  "delete-from-personal-plan": deleteFromPersonalPlan,
+  "delete-type": deleteType,
+  "delete-discipline": deleteDiscipline
 };
 
 // Регистрация всех обработчиков
@@ -259,38 +252,24 @@ function sqlInsertIntoPP(data) {
 }
 
 // Функции обновления данных
-function updatePersonal(data) {
+function updateTeacher(data) {
   const { updates, id } = prepareUpdateData(data);
-  return executeUpdate('kafedra', updates, id, `Данные для '${data['Фамилия']}' обновлены`);
+  return executeUpdate("kafedra", updates, id, `Данные для '${data['Фамилия']}' обновлены`);
 }
 
 function updateFlows(data) {
-  const { updates, id } = prepareUpdateData(data, 'Flow_ID');
-  return executeUpdate('flows', updates, id, `Данные для '${data.Наименование}' обновлены`);
+  const { updates, id } = prepareUpdateData(data, "Flow_ID");
+  return executeUpdate("flows", updates, id, `Данные для '${data.Наименование}' обновлены`);
 }
 
 function updateGroups(data) {
-  const { updates, id } = prepareUpdateData(data, 'Group_ID');
-  return executeUpdate('groups', updates, id, `Данные для '${data.Наименование}' обновлены`);
+  const { updates, id } = prepareUpdateData(data, "Group_ID");
+  return executeUpdate("groups", updates, id, `Данные для '${data.Наименование}' обновлены`);
 }
 
-function updateUP(data) {
-  const { updates, id } = prepareUpdateData(data, 'UP_ID');
-  return executeUpdate('syllabus', updates, id, `Данные для '${data.id}' обновлены`);
-}
-
-function updatePersonalPlan(data) {
+function updateType(data) {
   return executeUpdate(
-    'personal_plan',
-    [`hours = ${data.Часы_преподавателя}`],
-    `s_id = ${data.s_id} and p_id=${data.p_id}`,
-    `Данные для '${data.s_id}' обновлены`
-  );
-}
-
-function updateTypes(data) {
-  return executeUpdate(
-    'types',
+    "types",
     [`name = '${data.name}'`],
     `id = ${data.id}`,
     `Данные для '${data.name}' обновлены`
@@ -299,7 +278,7 @@ function updateTypes(data) {
 
 function updateDisciplines(data) {
   return executeUpdate(
-    'disciplines',
+    "disciplines",
     [`name = '${data.name}'`],
     `id = ${data.id}`,
     `Данные для '${data.name}' обновлены`
@@ -308,7 +287,7 @@ function updateDisciplines(data) {
 
 function updateSyllabus(data) {
   return executeUpdate(
-    'syllabus',
+    "syllabus",
     [
       `subgroups = '${data.subgroups}'`,
       `sub_hours = '${data.sub_hours}'`,
@@ -321,7 +300,7 @@ function updateSyllabus(data) {
 
 function updatePersonalPlanHours(data) {
   return executeUpdate(
-    'personal_plan',
+    "personal_plan",
     [
       `subgroups = '${data.subgroups}'`,
       `hours = '${data.hours}'`
@@ -341,29 +320,29 @@ function executeUpdate(table, updates, condition, successMessage) {
         return;
       }
       console.log(successMessage);
-      resolve('Успешно');
+      resolve("Успешно");
     });
   });
 }
 
 // Функции удаления данных
-function deleteFromKaf(data) {
-  return executeDelete('kafedra', data.id, `Данные человека с ID: '${data.id}' удалены`);
+function deleteTeacher(data) {
+  return executeDelete("kafedra", data.id, `Данные человека с ID: '${data.id}' удалены`);
 }
 
-function deleteFromFlows(data) {
-  return executeDelete('flows', data.id, `Данные потока с ID: '${data.id}' удалены`);
+function deleteFlow(data) {
+  return executeDelete("flows", data.id, `Данные потока с ID: '${data.id}' удалены`);
 }
 
-function deleteFromGroups(data) {
-  return executeDelete('groups', data.id, `Данные группы с ID: '${data.id}' удалены`);
+function deleteGroup(data) {
+  return executeDelete("groups", data.id, `Данные группы с ID: '${data.id}' удалены`);
 }
 
-function deleteFromUP(data) {
-  return executeDelete('syllabus', data.id, `Данные предмета из учебного плана с ID: '${data.id}' удалены`);
+function deleteFromSyllabus(data) {
+  return executeDelete("syllabus", data.id, `Данные предмета из учебного плана с ID: '${data.id}' удалены`);
 }
 
-function deleteFromPP(data) {
+function deleteFromPersonalPlan(data) {
   return new Promise((resolve) => {
     const sql = `DELETE FROM personal_plan WHERE s_id = ${data.s_id} and p_id=${data.p_id}`;
     
@@ -373,17 +352,17 @@ function deleteFromPP(data) {
         return;
       }
       console.log(`Данные предмета из учебного плана с ID: '${data.s_id}' удалены`);
-      resolve('Успешно');
+      resolve("Успешно");
     });
   });
 }
 
-function deleteFromTypes(data) {
-  return executeDelete('types', data.id, `Данные типа с ID: '${data.id}' удалены`);
+function deleteType(data) {
+  return executeDelete("types", data.id, `Данные типа с ID: '${data.id}' удалены`);
 }
 
-function deleteFromDisciplines(data) {
-  return executeDelete('disciplines', data.id, `Данные дисциплины с ID: '${data.id}' удалены`);
+function deleteDiscipline(data) {
+  return executeDelete("disciplines", data.id, `Данные дисциплины с ID: '${data.id}' удалены`);
 }
 
 function executeDelete(table, id, successMessage) {
@@ -396,7 +375,7 @@ function executeDelete(table, id, successMessage) {
         return;
       }
       console.log(successMessage);
-      resolve('Успешно');
+      resolve("Успешно");
     });
   });
 }
@@ -415,7 +394,7 @@ function sqlSelectAllFromTable(tableName) {
   });
 }
 
-function getCurFlows() {
+function getFlows() {
   return executeQuery(`
     SELECT 
       id,
@@ -426,7 +405,7 @@ function getCurFlows() {
   `);
 }
 
-function getCurGroups() {
+function getGroups() {
   return executeQuery(`
     SELECT 
       groups.id,
@@ -440,7 +419,7 @@ function getCurGroups() {
   `);
 }
 
-function getCurDisciplines() {
+function getDisciplines() {
   return executeQuery(`
     SELECT 
       id,
@@ -449,7 +428,7 @@ function getCurDisciplines() {
   `);
 }
 
-function getCurTypes() {
+function getTypes() {
   return executeQuery(`
     SELECT 
       id,
@@ -458,7 +437,7 @@ function getCurTypes() {
   `);
 }
 
-function getCurSyllabus() {
+function getSyllabus() {
   return executeQuery(`
     SELECT 
       syllabus.id,
@@ -476,17 +455,7 @@ function getCurSyllabus() {
   `);
 }
 
-function getActualFlowsForPersonalHours(data) {
-  return executeQuery(`
-    SELECT
-      id, name
-    FROM flows
-    WHERE education_form = '${data.education_form}'
-      AND year = '${data.year}'
-  `);
-}
-
-function getActualSyllabusForPeronalHours(data) {
+function getCurrentSyllabusForPeronalHours(data) {
   return executeQuery(`
     SELECT
       syllabus.id AS syllabus_id,
@@ -518,7 +487,7 @@ function getActualSyllabusForPeronalHours(data) {
   `);
 }
 
-function getCurPPDB() {
+function getAllPersonalPlans() {
   return executeQuery(`
     SELECT 
       kafedra.id as 'id',
@@ -533,61 +502,8 @@ function getCurPPDB() {
   `);
 }
 
-function getActualDataPPUP(data) {
-  return executeQuery(`
-    SELECT 
-      syllabus.id,
-      flows.name AS flow,
-      disciplines.name,
-      flows.education_form,
-      syllabus.sub_hours,
-      syllabus.hours,
-      types.name AS typeName,
-      0 + (SELECT sum(pp.hours)
-        FROM personal_plan pp
-        JOIN syllabus s ON pp.s_id = s.id
-        WHERE syllabus.id = pp.s_id
-      ) AS usedHours
-    FROM syllabus
-    JOIN flows ON syllabus.flow_id=flows.id
-    JOIN disciplines ON disciplines.id = syllabus.discipline_id
-    JOIN types ON types.id = syllabus.type
-    WHERE year='${data.Год}'
-      AND semester=${data.Семестр}
-      AND education_form='${data.Форма_обучения}'
-      AND syllabus.id NOT IN (
-        SELECT s_id
-        FROM personal_plan
-        WHERE p_id = ${data.id}
-      )
-  `);
-}
 
-function getCurUpDB(data) {
-  return executeQuery(`
-    SELECT 
-      syllabus.id,
-      syllabus.flow_id,
-      flows.faculty,
-      disciplines.name as 'Дисциплина',
-      flows.name as 'Академическая_группа',
-      flows.year,
-      syllabus.semester,
-      flows.education_form,
-      syllabus.semester,
-      syllabus.subgroups,
-      syllabus.sub_hours,
-      syllabus.hours
-    FROM syllabus 
-    JOIN flows ON flows.id=syllabus.flow_id
-    JOIN disciplines ON disciplines.id = syllabus.discipline_id
-    WHERE flows.year='${data.Год}'
-      AND syllabus.semester='${data.Семестр}'
-      AND flows.education_form='${data.Форма_обучения}'
-  `);
-}
-
-function getCurPersonalPlan(data) {
+function getPersonalPlan(data) {
   return executeQuery(`
     SELECT 
       personal_plan.p_id AS pId,
@@ -619,33 +535,7 @@ function getCurPersonalPlan(data) {
   `);
 }
 
-function getCurHoursTeachers(data) {
-  return executeQuery(`
-    SELECT 0 + sum(hours) as 'Часы'
-    FROM personal_plan
-    WHERE p_id=${data.Personal_ID}
-    GROUP BY p_id
-  `);
-}
-
-function getCurStatsTeachers(data) {
-  return executeQuery(`
-    SELECT 
-      syllabus.p_id,
-      kafedra.secondname,
-      sum(personal_plan.hours)
-    FROM ((personal_plan 
-    JOIN syllabus ON personal_plan.s_id=syllabus.id)
-    JOIN flows ON syllabus.flow_id=flows.id)
-    JOIN kafedra ON personal_plan.p_id=kafedra.id
-    WHERE syllabus.semester = ${data.Семестр}
-      AND flows.year = '${data.Год}'
-      AND flows.education_form = '${data.Форма_обучения}'
-    GROUP BY syllabus.p_id, kafedra.firstname
-  `);
-}
-
-function getCurTeachers() {
+function getTeachers() {
   return executeQuery(`
     SELECT 
       id,
@@ -657,7 +547,7 @@ function getCurTeachers() {
   `);
 }
 
-function getCurListTeachers(data) {
+function getCurrentListOfTeachers(data) {
   return executeQuery(`
     SELECT
       flows.name AS flowName,

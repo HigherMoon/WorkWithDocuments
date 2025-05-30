@@ -111,7 +111,7 @@
 > IPC-взаимодействие:
 > 1)getDisciplines() - получение списка дисциплин
 > 2)insertDiscipline(data) - добавление новой дисциплины
-> 3)updateDisciplinesTable(data) - обновление дисциплины
+> 3)updateDiscipline(data) - обновление дисциплины
 > 4)deleteDiscipline(data) - удаление дисциплины
 
 **renderFlows.js**
@@ -126,7 +126,7 @@
 > 2)Редактируемые ячейки таблицы
 > 
 > IPC-взаимодействие:
-> 1)getDatabaseTable('flows') - получение списка потоков
+> 1)getAllFromTable('flows') - получение списка потоков
 > 2)getGroups('') - получение списка групп
 > 3)insertFlow(data) - добавление потока
 > 4)insertGroup(data) - добавление группы
@@ -147,10 +147,10 @@
 > 3)Кнопки добавления/удаления/сохранения
 > 
 > IPC-взаимодействие:
-> 1)getDatabaseTable('kafedra') - получение списка преподавателей
-> 2)insertPerson(data) - добавление преподавателя
-> 3)updateKafTable(data) - обновление данных преподавателя
-> 4)deletePerson(data) - удаление преподавателя
+> 1)getAllFromTable('kafedra') - получение списка преподавателей
+> 2)insertTeacher(data) - добавление преподавателя
+> 3)updateTeacher(data) - обновление данных преподавателя
+> 4)deleteTeacher(data) - удаление преподавателя
 
 **renderPersonalHours.js**
 > Просмотр персональной нагрузки преподавателей.
@@ -165,8 +165,8 @@
 > 2)Кнопка получения данных
 > 
 > IPC-взаимодействие:
-> 1)getCurTeachers([]) - получение списка преподавателей
-> 2)getCurListTeachers(data) - получение нагрузки преподавателя
+> 1)getTeachers([]) - получение списка преподавателей
+> 2)getCurrentListOfTeachers(data) - получение нагрузки преподавателя
 
 **renderSyllabus.js**
 > Управление учебными планами (syllabus).
@@ -185,8 +185,8 @@
 > 3)getDisciplines(dataTo) - получение дисциплин
 > 4)getTypes(dataTo) - получение типов занятий
 > 5)insertSyllabus(data) - добавление учебного плана
-> 6)updateSyllabusTable(data) - обновление учебного плана
-> 7)deleteSyllabus(data) - удаление учебного плана
+> 6)updateSyllabus(data) - обновление учебного плана
+> 7)deleteFromSyllabus(data) - удаление учебного плана
 
 **renderTypes.js**
 > Управление типами занятий.
@@ -202,7 +202,7 @@
 > IPC-взаимодействие:
 > 1)getTypes() - получение типов
 > 2)insertType(data) - добавление типа
-> 3)updateTypesTable(data) - обновление типа
+> 3)updateType(data) - обновление типа
 > 4)deleteType(data) - удаление типа
 
 ---

@@ -34,7 +34,7 @@ buttonGetData.addEventListener("click", () => {
 // Обновление селектора с выводом доступных преподавателей
 function updateSelectorTeachers() {
   while(selectCurrentTeacher.firstChild) { selectCurrentTeacher.removeChild(selectCurrentTeacher.firstChild) };
-  window.electronAPI.getCurTeachers([]).then((answerData) => {
+  window.electronAPI.getTeachers([]).then((answerData) => {
     console.log(answerData);
     let emptyOption = document.createElement("option");
     emptyOption.innerHTML = "";
@@ -84,7 +84,7 @@ function createHeadRow() {
 
 // Обновить лист с информацией о часах преподавателя
 function updateTeacherList(data) {
-  window.electronAPI.getCurListTeachers(data).then((answerData) => {
+  window.electronAPI.getCurrentListOfTeachers(data).then((answerData) => {
   if (Object.keys(answerData).length == 0) {
     alert('Данных нет')
     return false;

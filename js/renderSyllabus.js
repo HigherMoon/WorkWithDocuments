@@ -4,10 +4,10 @@ const addCard = document.getElementById("add-card");
 const formAddCard = document.getElementById("new-up-form");
 const deleteCard = document.getElementById("delete-card");
 const deleteCardText = document.getElementById("text-delete-card");
-const datalistFlows = document.getElementById("flows-input-helper");
+const datalistFlows = document.getElementById("flow-input-helper");
 const datalistDisciplines = document.getElementById("disciplines-input-helper");
-const selectTypes = document.getElementById("Тип-f")
-const inputGroup = document.getElementById("flows-input");
+const selectTypes = document.getElementById("type-input")
+const inputGroup = document.getElementById("flow-input");
 let selectedID = null;
 let flowsDict = {};
 let disciplineDict = {};
@@ -73,34 +73,34 @@ const buttonOpenAddCard = document.getElementById("open-add-card").addEventListe
 
 const buttonCloseAddCard = document.getElementById("add-card-close-up").addEventListener("click", () => {
   addCard.style.display = "none";
-  document.getElementById("flows-input").value = "";
-  document.getElementById("Наименование-f").value = null;
-  document.getElementById("Семестр-f").value = null;
-  document.getElementById("Тип-f").value = null;
-  document.getElementById("Часы_УП-f").value = null;
-  document.getElementById("Часы-f").value = null;
+  document.getElementById("flow-input").value = "";
+  document.getElementById("name-input").value = null;
+  document.getElementById("semester-input").value = null;
+  document.getElementById("type-input").value = null;
+  document.getElementById("hours-subgroup-input").value = null;
+  document.getElementById("hours-input").value = null;
 });
 
 
 const buttonSaveAddCard = document.getElementById("save-add-card").addEventListener("click", () => {
-  var sub_hours = document.getElementById("Часы_УП-f").value;
-  var hours = document.getElementById("Часы-f").value;
+  var sub_hours = document.getElementById("hours-subgroup-input").value;
+  var hours = document.getElementById("hours-input").value;
   console.log(sub_hours, hours ) 
   data = {
-    flow_ID: flowsDict[document.getElementById("flows-input").value],
-    discipline_id: disciplineDict[document.getElementById("Наименование-f").value],
-    semester: document.getElementById("Семестр-f").value,
-    type: document.getElementById("Тип-f").value,
-    subgroups: document.getElementById("Часы-f").value / document.getElementById("Часы_УП-f").value,
-    sub_hours: document.getElementById("Часы_УП-f").value,
-    hours: document.getElementById("Часы-f").value
+    flow_ID: flowsDict[document.getElementById("flow-input").value],
+    discipline_id: disciplineDict[document.getElementById("name-input").value],
+    semester: document.getElementById("semester-input").value,
+    type: document.getElementById("type-input").value,
+    subgroups: document.getElementById("hours-input").value / document.getElementById("hours-subgroup-input").value,
+    sub_hours: document.getElementById("hours-subgroup-input").value,
+    hours: document.getElementById("hours-input").value
   }
   if (data.flow_ID=="" || data.discipline_id=="" ||
       data.type=="" || data.subgroups=="" ||
       data.sub_hours=="" || data.hours=="")
   {
-    console.log(document.getElementById("flows-input").innerHTML)
-    console.log(document.getElementById("Наименование-f").innerHTML)
+    console.log(document.getElementById("flow-input").innerHTML)
+    console.log(document.getElementById("name-input").innerHTML)
     alert("Заполнить надо всё!")
   }
   else if (data.sub_hours<=0 || data.hours<=0) {
@@ -115,12 +115,12 @@ const buttonSaveAddCard = document.getElementById("save-add-card").addEventListe
       createTableFromDatabase(data);
     });
     addCard.style.display = "none";
-    document.getElementById("flows-input").value = null;
-    document.getElementById("Наименование-f").value = null;
-    document.getElementById("Семестр-f").value = null;
-    document.getElementById("Тип-f").value = null;
-    document.getElementById("Часы_УП-f").value = null;
-    document.getElementById("Часы-f").value = null;
+    document.getElementById("flow-input").value = null;
+    document.getElementById("name-input").value = null;
+    document.getElementById("semester-input").value = null;
+    document.getElementById("type-input").value = null;
+    document.getElementById("hours-subgroup-input").value = null;
+    document.getElementById("hours-input").value = null;
   }
 });
 

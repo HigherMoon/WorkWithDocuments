@@ -20,7 +20,7 @@ const buttonSaveAddCard = document.getElementById("save-add-card").addEventListe
   let errorNumber = 0;
   let errorText = "";
   let listOfReqCels = {
-    "Наименование-f": "Наименование"
+    "name-input": "Наименование"
   };
   for (cell in listOfReqCels) {
     if (document.getElementById(cell).value=="") {
@@ -30,7 +30,7 @@ const buttonSaveAddCard = document.getElementById("save-add-card").addEventListe
   };
   if (errorNumber > 0) { alert(errorText) }
   else {
-    nameField = document.getElementById("Наименование-f");
+    nameField = document.getElementById("name-input");
     data = {
       "name": nameField.value
     }

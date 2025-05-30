@@ -26,10 +26,10 @@ const buttonCloseAddCardFlows = document.getElementById("add-card-close-flows").
   addCardFlows.style.display = "none";
 });
 const buttonSaveAddCardFlows = document.getElementById("save-add-card-flows").addEventListener("click", () => {
-  let nameField = document.getElementById("Наименование-f");
-  let flowIdField = document.getElementById("Факультет-f");
-  let yearField = document.getElementById("Год-f");
-  let educationFormField = document.getElementById("Форма_обучения-f");
+  let nameField = document.getElementById("name-input-flow");
+  let flowIdField = document.getElementById("faculty-input-flow");
+  let yearField = document.getElementById("year-input-flow");
+  let educationFormField = document.getElementById("education-form-input-flow");
   data = {
     "name": nameField.value,
     "faculty": flowIdField.value,
@@ -81,10 +81,10 @@ const buttonCloseAddCardGroups = document.getElementById("add-card-close-groups"
   addCardGroups.style.display = "none";
 });
 const buttonSaveAddCardGroups = document.getElementById("save-add-card-groups").addEventListener("click", () => {
-  let nameField = document.getElementById("Наименование-g");
-  let flowIdField = document.getElementById("Flow_ID-g");
-  let studentsBField = document.getElementById("Студенты_Б-g");
-  let studentsNBField = document.getElementById("Студенты_ВБ-g");
+  let nameField = document.getElementById("name-input-group");
+  let flowIdField = document.getElementById("flow-id-input-group");
+  let studentsBField = document.getElementById("students-b-group");
+  let studentsNBField = document.getElementById("students-nb-group");
   data = {
     name: nameField.value,
     flow_id: flowIdField.value,
@@ -140,7 +140,7 @@ function createTableFromDatabase(database, containerID) {
       "name": "Название",
       "faculty": "Факультет",
       "year": "Год",
-      "education_form": "Форма образованеия"
+      "education_form": "Форма образования"
     }
   }
   if (Object.keys(database).length == 0) {
@@ -170,7 +170,6 @@ function createTableFromDatabase(database, containerID) {
   headTable.appendChild(finalCell);
   table.appendChild(headTable);
 
-  // ---------------------------------
   // ----- Создание тела таблицы -----
   for (let indexOfData in Object.keys(database)) {
     let row = document.createElement("tr");

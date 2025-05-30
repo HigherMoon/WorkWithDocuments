@@ -460,7 +460,7 @@ function createTablePersonalHours(database) {
         currentPersonFIO = curPartData["Фамилия"];
         data = updateSendingData();
         if (data.Personal_ID==null) {
-          console.log("Нужно выбрать препода");
+          alert("Необходимо выбрать преподавателя!");
         }
         else showPersonalPlan(data);
       }

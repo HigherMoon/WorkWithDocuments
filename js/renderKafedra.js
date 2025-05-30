@@ -14,10 +14,10 @@ const buttonSaveAddCard = document.getElementById("save-add-card").addEventListe
   let errorNumber = 0;
   let errorText = "";
   let listOfReqCels = {
-    "Фамилия-f": "Фамилию",
-    "Имя-f": "Имя",
-    "Отчество-f": "Отчество",
-    "Нагрузка-f": "Нагрузку"
+    "secondname-input": "Фамилию",
+    "firstname-input": "Имя",
+    "surname-input": "Отчество",
+    "hours-input": "Нагрузку"
   };
   for (cell in listOfReqCels) {
     if (document.getElementById(cell).value=="") {
@@ -28,17 +28,17 @@ const buttonSaveAddCard = document.getElementById("save-add-card").addEventListe
   if (errorNumber > 0) { alert(errorText) }
   else {
     data = {
-      secondname: document.getElementById("Фамилия-f").value,
-      firstname: document.getElementById("Имя-f").value,
-      surname: document.getElementById("Отчество-f").value,
-      hours: document.getElementById("Нагрузка-f").value,
-      position: document.getElementById("Должность-f").value,
-      rank: document.getElementById("Звание-f").value,
-      academic: document.getElementById("Учёная_степень-f").value,
-      phone: document.getElementById("Телефон-f").value,
-      mail: document.getElementById("Почта-f").value,
-      gpd: document.getElementById("ГПД-f").value,
-      salary: document.getElementById("Ставка-f").value
+      secondname: document.getElementById("secondname-input").value,
+      firstname: document.getElementById("firstname-input").value,
+      surname: document.getElementById("surname-input").value,
+      hours: document.getElementById("hours-input").value,
+      position: document.getElementById("position-input").value,
+      rank: document.getElementById("rank-input").value,
+      academic: document.getElementById("academic-input").value,
+      phone: document.getElementById("phone-input").value,
+      mail: document.getElementById("mail-input").value,
+      gpd: document.getElementById("gpd-input").value,
+      salary: document.getElementById("salary-input").value
     }
     console.log(data)
     window.electronAPI.insertTeacher(data).then((answer) => {
@@ -95,7 +95,7 @@ function updateTablePersonalInfo(data) {
     "firstname": "Имя",
     "secondname": "Фамилия",
     "surname": "Отчество",
-    "academic": "Учёная стипендия",
+    "academic": "Учёная степень",
     "position": "Должность",
     "rank": "Звание",
     "hours": "Нагрузка",
@@ -162,7 +162,7 @@ function updatePersonalInfo(id) {
     "firstname": "Имя",
     "secondname": "Фамилия",
     "surname": "Отчество",
-    "academic": "Учёная стипендия",
+    "academic": "Учёная степень",
     "position": "Должность",
     "rank": "Звание",
     "hours": "Нагрузка",

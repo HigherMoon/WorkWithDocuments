@@ -1,62 +1,35 @@
 const containerTable = document.getElementById("container-table-flows");
-/*
-const saveButtonTableFlows = document.getElementById("save-current-table-flows").addEventListener("click", () => {
-  let table = document.getElementById(`table-container-table-flows`);
-  let headTable = table.firstChild;
-  
-  let data = {};
-  for (let i in headTable.children) {
-    if (headTable.children[i].innerHTML != undefined)
-      data[headTable.children[i].innerHTML] = "";
-  }
-  
-  let countOftr = table.getElementsByTagName("tr").length;
-
-  for (let i=0; i < countOftr; i++) {
-    let current_tr = table.getElementsByTagName("tr")[i];
-    let dataToSend = {};
-    for (let j=0; j<current_tr.getElementsByTagName("td").length; j++) {
-      let current_td = current_tr.getElementsByTagName("td")[j];
-      dataToSend[current_td.id] = current_td.innerHTML;
-    }
-    window.electronAPI.updateFlows(dataToSend).then((answer) => {
-      console.log(answer)
-    });
-  } 
-});
-*/
 const addCardFlows = document.getElementById("add-card-flows");
 const addCardGroups = document.getElementById("add-card-groups");
 
-const deleteCardFlows = document.getElementById('delete-card-flows');
-const deleteCardTextFlows = document.getElementById('text-delete-card-flows');
-const deleteCardGroups = document.getElementById('delete-card-groups');
-const deleteCardTextGroups = document.getElementById('text-delete-card-groups');
+const deleteCardFlows = document.getElementById("delete-card-flows");
+const deleteCardTextFlows = document.getElementById("text-delete-card-flows");
+const deleteCardGroups = document.getElementById("delete-card-groups");
+const deleteCardTextGroups = document.getElementById("text-delete-card-groups");
 let selectedID = null;
 
 updateTables();
 function updateTables() {
-  window.electronAPI.getAllFromTable('flows').then((data) => {
+  window.electronAPI.getAllFromTable("flows").then((data) => {
     createTableFromDatabase(data, "container-table-flows");
   });
-  window.electronAPI.getGroups('').then((data) => {
+  window.electronAPI.getGroups("").then((data) => {
     createTableFromDatabase(data, "container-table-groups");
   });
 };
 
 /// Кнопки для потоков
 const buttonOpenAddCardFlows = document.getElementById("open-add-card-flows").addEventListener("click", () => {
-  addCardFlows.style.display = 'block';
+  addCardFlows.style.display = "block";
 });
 const buttonCloseAddCardFlows = document.getElementById("add-card-close-flows").addEventListener("click", () => {
-  console.log('закрыто')
-  addCardFlows.style.display = 'none';
+  addCardFlows.style.display = "none";
 });
-const buttonSaveAddCardFlows = document.getElementById('save-add-card-flows').addEventListener("click", () => {
-  let nameField = document.getElementById('Наименование-f');
-  let flowIdField = document.getElementById('Факультет-f');
-  let yearField = document.getElementById('Год-f');
-  let educationFormField = document.getElementById('Форма_обучения-f');
+const buttonSaveAddCardFlows = document.getElementById("save-add-card-flows").addEventListener("click", () => {
+  let nameField = document.getElementById("Наименование-f");
+  let flowIdField = document.getElementById("Факультет-f");
+  let yearField = document.getElementById("Год-f");
+  let educationFormField = document.getElementById("Форма_обучения-f");
   data = {
     "name": nameField.value,
     "faculty": flowIdField.value,
@@ -70,53 +43,48 @@ const buttonSaveAddCardFlows = document.getElementById('save-add-card-flows').ad
   window.electronAPI.insertFlow(data).then((answer) => {
     console.log(answer)
   });
-  window.electronAPI.getAllFromTable('flows').then((data) => {
+  window.electronAPI.getAllFromTable("flows").then((data) => {
     createTableFromDatabase(data, "container-table-flows");
   });
-  addCardFlows.style.display = 'none';
+  addCardFlows.style.display = "none";
 });
 
 const buttonCloseDeleteCardFlows = document.getElementById("delete-card-close-flows").addEventListener("click", () => {
-  console.log('закрыто')
-  deleteCardFlows.style.display = 'none';
+  deleteCardFlows.style.display = "none";
 });
 
 const secondButtonCloseDeleteCardFlows = document.getElementById("delete-card-close-2-flows").addEventListener("click", ()=>{
-  console.log('закрыто')
-  deleteCardFlows.style.display = 'none';
+  deleteCardFlows.style.display = "none";
 });
 
-const buttonDeleteAddCardFlows = document.getElementById('confirm-delete-card-flows').addEventListener("click", () => {
+const buttonDeleteAddCardFlows = document.getElementById("confirm-delete-card-flows").addEventListener("click", () => {
   data = {
     Flow_ID: selectedID
   }
   window.electronAPI.deleteFlow(data).then((answer) => {
     console.log(answer)
   });
-  deleteCardFlows.style.display = 'none';
-  window.electronAPI.getAllFromTable('flows').then((data) => {
+  deleteCardFlows.style.display = "none";
+  window.electronAPI.getAllFromTable("flows").then((data) => {
     createTableFromDatabase(data, "container-table-flows");
   });
-  window.electronAPI.getGroups('').then((data) => {
+  window.electronAPI.getGroups("").then((data) => {
     createTableFromDatabase(data, "container-table-groups");
   });
 });
 
-
-
 /// Кнопки для групп
 const buttonOpenAddCardGroups = document.getElementById("open-add-card-groups").addEventListener("click", () => {
-  addCardGroups.style.display = 'block';
+  addCardGroups.style.display = "block";
 });
 const buttonCloseAddCardGroups = document.getElementById("add-card-close-groups").addEventListener("click", () => {
-  console.log('закрыто')
-  addCardGroups.style.display = 'none';
+  addCardGroups.style.display = "none";
 });
-const buttonSaveAddCardGroups = document.getElementById('save-add-card-groups').addEventListener("click", () => {
-  let nameField = document.getElementById('Наименование-g');
-  let flowIdField = document.getElementById('Flow_ID-g');
-  let studentsBField = document.getElementById('Студенты_Б-g');
-  let studentsNBField = document.getElementById('Студенты_ВБ-g');
+const buttonSaveAddCardGroups = document.getElementById("save-add-card-groups").addEventListener("click", () => {
+  let nameField = document.getElementById("Наименование-g");
+  let flowIdField = document.getElementById("Flow_ID-g");
+  let studentsBField = document.getElementById("Студенты_Б-g");
+  let studentsNBField = document.getElementById("Студенты_ВБ-g");
   data = {
     name: nameField.value,
     flow_id: flowIdField.value,
@@ -130,31 +98,29 @@ const buttonSaveAddCardGroups = document.getElementById('save-add-card-groups').
   window.electronAPI.insertGroup(data).then((answer) => {
     console.log(answer)
   });
-  window.electronAPI.getGroups('').then((data) => {
+  window.electronAPI.getGroups("").then((data) => {
     createTableFromDatabase(data, "container-table-groups");
   });
-  addCardGroups.style.display = 'none';
+  addCardGroups.style.display = "none";
 });
 
 const buttonCloseDeleteCardGroups = document.getElementById("delete-card-close-groups").addEventListener("click", () => {
-  console.log('закрыто')
-  deleteCardGroups.style.display = 'none';
+  deleteCardGroups.style.display = "none";
 });
 
 const secondButtonCloseDeleteCardGroups = document.getElementById("delete-card-close-2-groups").addEventListener("click", ()=>{
-  console.log('закрыто')
-  deleteCardGroups.style.display = 'none';
+  deleteCardGroups.style.display = "none";
 });
 
-const buttonDeleteAddCardGroups = document.getElementById('confirm-delete-card-groups').addEventListener("click", () => {
+const buttonDeleteAddCardGroups = document.getElementById("confirm-delete-card-groups").addEventListener("click", () => {
   data = {
     Group_ID: selectedID
   }
   window.electronAPI.deleteGroup(data).then((answer) => {
     console.log(answer)
   });
-  deleteCardGroups.style.display = 'none';
-  window.electronAPI.getGroups('').then((data) => {
+  deleteCardGroups.style.display = "none";
+  window.electronAPI.getGroups("").then((data) => {
     createTableFromDatabase(data, "container-table-groups");
   });
 });
@@ -218,17 +184,17 @@ function createTableFromDatabase(database, containerID) {
     };
 
     let col = document.createElement("td");
-    let deleteButton = document.createElement('button');
-    let deleteButtonIcon = document.createElement('img');
+    let deleteButton = document.createElement("button");
+    let deleteButtonIcon = document.createElement("img");
     deleteButtonIcon.src = "../img/icon-delete.svg";
     deleteButtonIcon.classList.add("icon-img");
     deleteButtonIcon.addEventListener("click", () => {
-      deleteData = { id: curPartData['id'] };
-      if (containerID=='container-table-groups') {
+      deleteData = { id: curPartData["id"] };
+      if (containerID == "container-table-groups") {
         window.electronAPI.deleteGroup(deleteData).then((answer) => {
           console.log(answer)
       })}
-      if (containerID=='container-table-flows') {
+      if (containerID == "container-table-flows") {
         window.electronAPI.deleteFlow(deleteData).then((answer) => {
           console.log(answer)
       })}
@@ -238,8 +204,8 @@ function createTableFromDatabase(database, containerID) {
     col.appendChild(deleteButton);
     row.appendChild(col);
 
-    let editButton = document.createElement('button');
-      let editButtonIcon = document.createElement('img');
+    let editButton = document.createElement("button");
+      let editButtonIcon = document.createElement("img");
       editButtonIcon.src = "../img/icon-pencil.png";
       editButtonIcon.classList.add("icon-img");
       editButton.appendChild(editButtonIcon);
@@ -253,7 +219,7 @@ function createTableFromDatabase(database, containerID) {
   console.log("Новая таблица создана.")
 };
 
-document.getElementById('menu-toggle').addEventListener('click', function() {
-  var sidebar = document.getElementById('sidebar');
-  sidebar.classList.toggle('open');
+document.getElementById("menu-toggle").addEventListener("click", function() {
+  var sidebar = document.getElementById("sidebar");
+  sidebar.classList.toggle("open");
 });

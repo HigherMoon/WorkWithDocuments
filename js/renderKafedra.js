@@ -1,17 +1,16 @@
-const addCard = document.getElementById('add-card');
-const formAddCard = document.getElementById('new-teacher-form');
-const deleteCard = document.getElementById('delete-card');
-const deleteCardText = document.getElementById('text-delete-card');
+const addCard = document.getElementById("add-card");
+const formAddCard = document.getElementById("new-teacher-form");
+const deleteCard = document.getElementById("delete-card");
+const deleteCardText = document.getElementById("text-delete-card");
 let selectedID = null;
 
 updateCurTables();
 
 const buttonCloseAddCard = document.getElementById("add-card-close-kaf").addEventListener("click", () => {
-  console.log('закрыто')
-  addCard.style.display = 'none';
+  addCard.style.display = "none";
 });
 
-const buttonSaveAddCard = document.getElementById('save-add-card').addEventListener("click", () => {
+const buttonSaveAddCard = document.getElementById("save-add-card").addEventListener("click", () => {
   let errorNumber = 0;
   let errorText = "";
   let listOfReqCels = {
@@ -29,45 +28,37 @@ const buttonSaveAddCard = document.getElementById('save-add-card').addEventListe
   if (errorNumber > 0) { alert(errorText) }
   else {
     data = {
-      secondname: document.getElementById('Фамилия-f').value,
-      firstname: document.getElementById('Имя-f').value,
-      surname: document.getElementById('Отчество-f').value,
-      hours: document.getElementById('Нагрузка-f').value,
-      position: document.getElementById('Должность-f').value,
-      rank: document.getElementById('Звание-f').value,
-      academic: document.getElementById('Учёная_степень-f').value,
-      phone: document.getElementById('Телефон-f').value,
-      mail: document.getElementById('Почта-f').value,
-      gpd: document.getElementById('ГПД-f').value,
-      salary: document.getElementById('Ставка-f').value
+      secondname: document.getElementById("Фамилия-f").value,
+      firstname: document.getElementById("Имя-f").value,
+      surname: document.getElementById("Отчество-f").value,
+      hours: document.getElementById("Нагрузка-f").value,
+      position: document.getElementById("Должность-f").value,
+      rank: document.getElementById("Звание-f").value,
+      academic: document.getElementById("Учёная_степень-f").value,
+      phone: document.getElementById("Телефон-f").value,
+      mail: document.getElementById("Почта-f").value,
+      gpd: document.getElementById("ГПД-f").value,
+      salary: document.getElementById("Ставка-f").value
     }
     console.log(data)
     window.electronAPI.insertTeacher(data).then((answer) => {
       console.log(answer)
     });
     updateCurTables();
-    addCard.style.display = 'none';
+    addCard.style.display = "none";
   }
 });
 
-/*
-const buttonOpenDeleteCard = document.getElementById("open-delete-card").addEventListener("click", () => {
-  deleteCardText.innerHTML = `Вы точно хотите УДАЛИТЬ Преподавателя с ID = ${selectedID}?`;
-  deleteCard.style.display = 'block';
-});
-*/
 const buttonCloseDeleteCard = document.getElementById("delete-card-close").addEventListener("click", () => {
-  console.log('закрыто')
-  deleteCard.style.display = 'none';
+  deleteCard.style.display = "none";
 });
 const secondButtonCloseDeleteCard = document.getElementById("delete-card-close-2").addEventListener("click", ()=>{
-  console.log('закрыто')
-  deleteCard.style.display = 'none';
+  deleteCard.style.display = "none";
 });
 
 
 function updateCurTables() {
-  window.electronAPI.getAllFromTable('kafedra').then((data) => {
+  window.electronAPI.getAllFromTable("kafedra").then((data) => {
     let rightColumn = document.getElementById("right");
     while(rightColumn.firstChild) {
       rightColumn.removeChild(rightColumn.firstChild); 
@@ -89,9 +80,9 @@ function updateCurTables() {
       leftColumn.appendChild(innerCell);
     }
     let innerNewCell = document.createElement("div")
-    innerNewCell.innerHTML = '+';
+    innerNewCell.innerHTML = "+";
     innerNewCell.addEventListener("click", () => {
-      addCard.style.display = 'block';
+      addCard.style.display = "block";
     });
     innerNewCell.classList.add("inner-block");
     leftColumn.appendChild(innerNewCell)
@@ -120,12 +111,12 @@ function updateTablePersonalInfo(data) {
   };
 
   for (key in dicts) {
-    let infoBlock = document.createElement('div');
-    let label = document.createElement('label');
+    let infoBlock = document.createElement("div");
+    let label = document.createElement("label");
     label.classList.add("infoLabel");
     label.textContent = dicts[key];
 
-    let input = document.createElement('input');
+    let input = document.createElement("input");
     input.classList.add("inputInfo")
     input.id = key;
     input.type = "text";
@@ -137,13 +128,13 @@ function updateTablePersonalInfo(data) {
     rightColumn.appendChild(infoBlock);
   }
 
-  let deleteButton = document.createElement('button');
-  let deleteButtonIcon = document.createElement('img');
+  let deleteButton = document.createElement("button");
+  let deleteButtonIcon = document.createElement("img");
   deleteButtonIcon.src = "../img/icon-delete.svg";
   deleteButtonIcon.classList.add("icon-img");
   deleteButtonIcon.classList.add("float-right");
   deleteButtonIcon.addEventListener("click", () => {
-    deleteData = { id: data['id'] };
+    deleteData = { id: data["id"] };
     window.electronAPI.deleteTeacher(deleteData).then((answer) => {
       console.log(answer)
     });
@@ -152,12 +143,12 @@ function updateTablePersonalInfo(data) {
   deleteButton.appendChild(deleteButtonIcon);
   rightColumn.appendChild(deleteButton);
 
-  let saveButton = document.createElement('button');
-  let saveButtonIcon = document.createElement('img');
+  let saveButton = document.createElement("button");
+  let saveButtonIcon = document.createElement("img");
   saveButtonIcon.src = "../img/icon-accept.svg";
   saveButtonIcon.classList.add("icon-img")
   saveButtonIcon.classList.add("float-right");
-  saveButtonIcon.addEventListener('click', function() {
+  saveButtonIcon.addEventListener("click", function() {
     idToUpdate = data["id"];
     updatePersonalInfo(idToUpdate);  
     updateCurTables();
@@ -193,7 +184,7 @@ function updatePersonalInfo(id) {
 }
 
 // Открытие и закрытие бокового меню
-document.getElementById('menu-toggle').addEventListener('click', function() {
-  var sidebar = document.getElementById('sidebar');
-  sidebar.classList.toggle('open');
+document.getElementById("menu-toggle").addEventListener("click", function() {
+  var sidebar = document.getElementById("sidebar");
+  sidebar.classList.toggle("open");
 });

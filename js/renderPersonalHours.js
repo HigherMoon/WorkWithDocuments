@@ -43,9 +43,9 @@ function updateSelectorTeachers() {
       let objData = answerData[index];
       let newOption = document.createElement("option");
       newOption.value = objData["id"];
-      newOption.innerHTML = `${objData['firstname']} ${objData['secondname']} ${objData['surname']}`;
+      newOption.innerHTML = `${objData["firstname"]} ${objData["secondname"]} ${objData["surname"]}`;
       currentInfo[objData["id"]] = {
-        "fio": `${objData['firstname']} ${objData['secondname']} ${objData['surname']}`,
+        "fio": `${objData["firstname"]} ${objData["secondname"]} ${objData["surname"]}`,
         "salary": objData["salary"],
       }
       selectCurrentTeacher.appendChild(newOption);
@@ -86,7 +86,7 @@ function createHeadRow() {
 function updateTeacherList(data) {
   window.electronAPI.getCurrentListOfTeachers(data).then((answerData) => {
   if (Object.keys(answerData).length == 0) {
-    alert('Данных нет')
+    alert("Данных нет");
     return false;
   };
   result = {}
@@ -129,7 +129,7 @@ function updateTeacherList(data) {
       row = document.createElement("tr");
       th = document.createElement("th");
       th.innerHTML = `${type} по:`;
-      th.setAttribute('colspan', '5');
+      th.setAttribute("colspan", "5");
       row.appendChild(th);
       thead.appendChild(row);
       table.appendChild(thead);
@@ -164,9 +164,9 @@ function updateTeacherList(data) {
 
 
 // Открытие и закрытие бокового меню
-document.getElementById('menu-toggle').addEventListener('click', function() {
-  var sidebar = document.getElementById('sidebar');
-  sidebar.classList.toggle('open');
+document.getElementById("menu-toggle").addEventListener("click", function() {
+  var sidebar = document.getElementById("sidebar");
+  sidebar.classList.toggle("open");
 });
 
 // Запуск при старте

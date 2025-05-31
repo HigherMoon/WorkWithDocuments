@@ -158,7 +158,6 @@ function createTableFromDatabase(database, containerID) {
   let headTable = document.createElement("thead");
   headTable.id = "head-table";
 
-  let curPartData = database[0]
   for (let paramOfCurPartData in dicts) {
     let headRow = document.createElement("th");
     headRow.innerHTML = dicts[paramOfCurPartData];
@@ -173,14 +172,40 @@ function createTableFromDatabase(database, containerID) {
   // ----- Создание тела таблицы -----
   for (let indexOfData in Object.keys(database)) {
     let row = document.createElement("tr");
+    let editableColumnGroups1 = null;
+    let editableColumnGroups2 = null;
+    let editableColumnGroups3 = null;
+    let editableColumnFlows1 = null;
+    let editableColumnFlows2 = null;
     let curPartData = database[indexOfData];
-
     for (let paramOfCurPartData in dicts) {
       let col = document.createElement("td");
       col.innerHTML = curPartData[paramOfCurPartData];
       col.id = paramOfCurPartData;
+      if (containerID == "container-table-groups") {
+        if (paramOfCurPartData == "name") {
+          editableColumnGroups1 = col;
+        }
+        if (paramOfCurPartData == "students_b") {
+          editableColumnGroups2 = col;
+        }
+        if (paramOfCurPartData == "students_nb") {
+          editableColumnGroups3 = col;
+        }
+      }
+      else {
+        if (paramOfCurPartData == "name") {
+          editableColumnFlows1 = col;
+        }
+        if (paramOfCurPartData == "faculty") {
+          editableColumnFlows2 = col;
+        }
+      }
       row.appendChild(col);
     };
+
+    let acceptButton = document.createElement("button");
+    let acceptButtonIcon = document.createElement("img");
 
     let col = document.createElement("td");
     let deleteButton = document.createElement("button");
@@ -203,13 +228,76 @@ function createTableFromDatabase(database, containerID) {
     col.appendChild(deleteButton);
     row.appendChild(col);
 
+    acceptButtonIcon.src = "../img/icon-accept.svg";
+    acceptButtonIcon.classList.add("icon-img");
+    acceptButton.appendChild(acceptButtonIcon);
+    acceptButton.addEventListener("click", () => {
+      if (containerID == "container-table-groups") {
+        editableColumnGroups1.setAttribute("contenteditable", false);
+        editableColumnGroups1.classList.remove("edit-cell");
+        editableColumnGroups2.setAttribute("contenteditable", false);
+        editableColumnGroups2.classList.remove("edit-cell");
+        editableColumnGroups3.setAttribute("contenteditable", false);
+        editableColumnGroups3.classList.remove("edit-cell");
+        editButton.style.removeProperty("display");
+        acceptButton.style.display = "none";
+        updateData = {
+          id: curPartData["id"],
+          name: editableColumnGroups1.innerHTML,
+          students_b: editableColumnGroups2.innerHTML,
+          students_nb: editableColumnGroups3.innerHTML,
+        };
+        window.electronAPI.updateGroup(updateData).then((answer) => {
+          console.log(answer)
+        });
+      }
+      else {
+        editableColumnFlows1.setAttribute("contenteditable", false);
+        editableColumnFlows1.classList.remove("edit-cell");
+        editableColumnFlows2.setAttribute("contenteditable", false);
+        editableColumnFlows2.classList.remove("edit-cell");
+        editButton.style.removeProperty("display");
+        acceptButton.style.display = "none";
+        updateData = {
+          id: curPartData["id"],
+          name: editableColumnFlows1.innerHTML,
+          faculty: editableColumnFlows2.innerHTML,
+        };
+        console.log(updateData)
+        window.electronAPI.updateFlow(updateData).then((answer) => {
+          console.log(answer)
+        });
+      }
+      updateTables();
+    });
+    acceptButton.style.display = "none";
+    col.appendChild(acceptButton);
+
     let editButton = document.createElement("button");
-      let editButtonIcon = document.createElement("img");
-      editButtonIcon.src = "../img/icon-pencil.png";
-      editButtonIcon.classList.add("icon-img");
-      editButton.appendChild(editButtonIcon);
-      col.appendChild(editButton);
-      row.appendChild(col);
+    let editButtonIcon = document.createElement("img");
+    editButtonIcon.src = "../img/icon-pencil.png";
+    editButtonIcon.classList.add("icon-img");
+    editButton.addEventListener("click", () => {
+      if (containerID == "container-table-groups") {
+        editableColumnGroups1.setAttribute("contenteditable", true);
+        editableColumnGroups1.classList.add("edit-cell");
+        editableColumnGroups2.setAttribute("contenteditable", true);
+        editableColumnGroups2.classList.add("edit-cell");
+        editableColumnGroups3.setAttribute("contenteditable", true);
+        editableColumnGroups3.classList.add("edit-cell");
+      }
+      else {
+        editableColumnFlows1.setAttribute("contenteditable", true);
+        editableColumnFlows1.classList.add("edit-cell");
+        editableColumnFlows2.setAttribute("contenteditable", true);
+        editableColumnFlows2.classList.add("edit-cell");
+      }
+      acceptButton.style.removeProperty("display");
+      editButton.style.display = "none";
+    });
+    editButton.appendChild(editButtonIcon);
+    col.appendChild(editButton);
+    row.appendChild(col);
 
     table.appendChild(row);
   };

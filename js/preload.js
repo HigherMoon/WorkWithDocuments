@@ -18,8 +18,8 @@ contextBridge.exposeInMainWorld("electronAPI", {
   updateSyllabus: (data) => ipcRenderer.invoke("update-syllabus", data),
   updateDiscipline: (data) => ipcRenderer.invoke("update-discipline", data),
   updateType: (data) => ipcRenderer.invoke("update-type", data),
-  updateFlows: (data) => ipcRenderer.invoke("update-flows", data),
-  updateGroups: (data) => ipcRenderer.invoke("update-groups", data),
+  updateFlow: (data) => ipcRenderer.invoke("update-flows", data),
+  updateGroup: (data) => ipcRenderer.invoke("update-groups", data),
   updateTeacher: (data) => ipcRenderer.invoke("update-teacher", data),
 
   insertPersonalPlan: (data) => ipcRenderer.invoke("insert-personal-plan", data),

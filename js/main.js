@@ -254,17 +254,17 @@ function sqlInsertIntoPP(data) {
 // Функции обновления данных
 function updateTeacher(data) {
   const { updates, id } = prepareUpdateData(data);
-  return executeUpdate("kafedra", updates, id, `Данные для '${data['Фамилия']}' обновлены`);
+  return executeUpdate("kafedra", updates, `id = ${data.id}`, `Данные для '${data['Фамилия']}' обновлены`);
 }
 
 function updateFlows(data) {
-  const { updates, id } = prepareUpdateData(data, "Flow_ID");
-  return executeUpdate("flows", updates, id, `Данные для '${data.Наименование}' обновлены`);
+  const { updates, id } = prepareUpdateData(data);
+  return executeUpdate("flows", updates, `id = ${data.id}`, `Данные для '${data.Наименование}' обновлены`);
 }
 
 function updateGroups(data) {
-  const { updates, id } = prepareUpdateData(data, "Group_ID");
-  return executeUpdate("groups", updates, id, `Данные для '${data.Наименование}' обновлены`);
+  const { updates, id } = prepareUpdateData(data);
+  return executeUpdate("groups", updates, `id = ${data.id}`, `Данные для '${data.Наименование}' обновлены`);
 }
 
 function updateType(data) {
@@ -313,7 +313,6 @@ function updatePersonalPlanHours(data) {
 function executeUpdate(table, updates, condition, successMessage) {
   return new Promise((resolve) => {
     const sql = `UPDATE ${table} SET ${updates.join(',')} WHERE ${condition}`;
-    
     database.run(sql, (err) => {
       if (err) {
         console.error(err.message);

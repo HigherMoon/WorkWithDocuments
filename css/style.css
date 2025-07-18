@@ -1,11 +1,6 @@
-@import url("style-fonts.css");
 @import url("style-tables.css");
-@import url("style-tooltip.css");
-@import url("style-addcards.css");
-@import url("style-deletecards.css");
+@import url("style-cards.css");
 @import url("style-sidebar.css");
-
-
 
 body {
     background-color: #fcfcfc;
@@ -176,15 +171,6 @@ select option {
     width: 100%;
 }
 
-
-
-
-
-
-
-
-
-
 .toggle-button {
   transition: transform 0.2s ease;
 }
@@ -206,3 +192,30 @@ select option {
 .highlight-match {
   background-color: yellow;
 }
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black;
+  }
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+    position: absolute;
+    z-index: 1;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+}
+
+.red { background-color: rgb(255, 124, 124); }
+.yellow { background-color: rgb(255, 255, 117); }
+.green { background-color: #91ffa3; }
+.purple { background-color: #ffca7b; }

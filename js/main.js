@@ -1,22 +1,22 @@
-const sqlite = require("../node_modules/sqlite3").verbose();
 const { app, BrowserWindow, ipcMain } = require("electron/main");
-const path = require("node:path");
 
-// Конфигурация базы данных
-const dbPath = path.resolve(__dirname, "../saves/main.db");
+const sqlite = require("../node_modules/sqlite3").verbose(); // Импортирование библиотеки
+const path = require("node:path");                           // Путь до программы
+const dbPath = path.resolve(__dirname, "../saves/main.db");  // Путь до базы данных
+
 let database;
 let errorDatabase;
 
 // Инициализация базы данных
 function initializeDatabase() {
   database = new sqlite.Database(dbPath, sqlite.OPEN_READWRITE | sqlite.OPEN_CREATE, (error) => {
-    checkAndCreateDatabase();
+    checkAndCreateDatabase();                 // Запуск SQL скриптов, создающих таблицы если их нет
     if (error) {
-      errorDatabase = error;
-      console.error(error.message);
+      errorDatabase = error;                  // Получение ошибки
+      console.error(error.message);           // Вывод сообщения ошибки в консоль
     } else {
-      console.log("<Database> База данных подключена");
-      console.log(dbPath);
+      console.log("База данных подключена"); 
+      console.log(dbPath);                    // Вывод пути до базы данных в консоль
     }
   });
 }
@@ -24,18 +24,15 @@ function initializeDatabase() {
 // Создание главного окна приложения
 function createWindow() {
   const win = new BrowserWindow({
-    autoHideMenuBar: true,
-    width: 1200,
-    height: 700,
+    autoHideMenuBar: true,         // Скрытие браузерного меню
+    width: 1200,                   // Ширина приложения по умолчанию
+    height: 700,                   // Высота приложения по умолчанию
     webPreferences: {
-      preload: path.join(__dirname, "preload.js"),
-      nodeIntegration: true,
+      preload: path.join(__dirname, "preload.js"),  // Подключение IPC
     }
   });
-  
-  win.loadFile("html/index.html");
-  win.maximize();
-  win.webContents.openDevTools();
+  win.loadFile("html/index.html"); // Запуск главной страницы
+  win.maximize();                  // Открытие окна на весь экран
 }
 
 // Инициализация приложения
@@ -114,20 +111,20 @@ const handlers = {
   
   // Обновление данных
   "update-teacher": updateTeacher,
-  "update-flows": updateFlows,
-  "update-groups": updateGroups,
+  "update-flows": updateFlow,
+  "update-groups": updateGroup,
   "update-type": updateType,
-  "update-discipline": updateDisciplines,
+  "update-discipline": updateDiscipline,
   "update-syllabus": updateSyllabus,
   "update-personal-plan": updatePersonalPlanHours,
   
   // Вставка данных
-  "insert-teacher": sqlInsertIntoKAF,
+  "insert-teacher": sqlInsertIntoKafedra,
   "insert-flow": sqlInsertIntoFlows,
   "insert-group": sqlInsertIntoGroups,
-  "insert-syllabus": sqlInsertIntoUP,
-  "insert-personal-plan": sqlInsertIntoPP,
-  "insert-discipline": sqlInsertIntoDiscipline,
+  "insert-syllabus": sqlInsertIntoSyllabus,
+  "insert-personal-plan": sqlInsertIntoPersonalPlans,
+  "insert-discipline": sqlInsertIntoDisciplines,
   "insert-type": sqlInsertIntoTypes,
   
   // Удаление данных
@@ -146,7 +143,7 @@ for (const [eventName, handler] of Object.entries(handlers)) {
 }
 
 // Функции для работы с базой данных
-function sqlInsertIntoKAF(data) {
+function sqlInsertIntoKafedra(data) {
   return new Promise((resolve) => {
     const { columns, values } = prepareDataForQuery(data);
     const sql = `INSERT INTO kafedra (${columns.join()}) VALUES (${values.join()})`;
@@ -191,7 +188,7 @@ function sqlInsertIntoGroups(data) {
   });
 }
 
-function sqlInsertIntoUP(data) {
+function sqlInsertIntoSyllabus(data) {
   return new Promise((resolve) => {
     const { columns, values } = prepareDataForQuery(data);
     const sql = `INSERT INTO syllabus (${columns.join()}) VALUES (${values.join()})`;
@@ -206,7 +203,7 @@ function sqlInsertIntoUP(data) {
   });
 }
 
-function sqlInsertIntoDiscipline(data) {
+function sqlInsertIntoDisciplines(data) {
   return new Promise((resolve) => {
     const { columns, values } = prepareDataForQuery(data);
     const sql = `INSERT INTO disciplines (${columns.join()}) VALUES (${values.join()})`;
@@ -236,7 +233,7 @@ function sqlInsertIntoTypes(data) {
   });
 }
 
-function sqlInsertIntoPP(data) {
+function sqlInsertIntoPersonalPlans(data) {
   return new Promise((resolve) => {
     const { columns, values } = prepareDataForQuery(data);
     const sql = `INSERT INTO personal_plan (${columns.join()}) VALUES (${values.join()})`;
@@ -257,12 +254,12 @@ function updateTeacher(data) {
   return executeUpdate("kafedra", updates, `id = ${data.id}`, `Данные для '${data['Фамилия']}' обновлены`);
 }
 
-function updateFlows(data) {
+function updateFlow(data) {
   const { updates, id } = prepareUpdateData(data);
   return executeUpdate("flows", updates, `id = ${data.id}`, `Данные для '${data.Наименование}' обновлены`);
 }
 
-function updateGroups(data) {
+function updateGroup(data) {
   const { updates, id } = prepareUpdateData(data);
   return executeUpdate("groups", updates, `id = ${data.id}`, `Данные для '${data.Наименование}' обновлены`);
 }
@@ -276,7 +273,7 @@ function updateType(data) {
   );
 }
 
-function updateDisciplines(data) {
+function updateDiscipline(data) {
   return executeUpdate(
     "disciplines",
     [`name = '${data.name}'`],
@@ -585,19 +582,19 @@ function executeQuery(sql) {
 function checkAndCreateDatabase() {
   database.serialize(() => {
     database.run(`
-      CREATE TABLE IF NOT EXISTS kafedra (
+      CREATE TABLE IF NOT EXISTS teachers (
         id INTEGER,
         firstname TEXT NOT NULL,
-        secondname REAL NOT NULL,
-        surname TEXT,
+        secondname TEXT NOT NULL,
+        surname TEXT NOT NULL,
         position TEXT,
         rank TEXT,
         academic TEXT,
         mail TEXT,
-        phone REAL,
+        phone TEXT,
         gpd REAL,
         salary REAL,
-        hours REAL,
+        hours INTEGER NOT NULL,
         PRIMARY KEY (id),
         UNIQUE (firstname, secondname, surname)
       )
@@ -610,7 +607,8 @@ function checkAndCreateDatabase() {
         faculty TEXT NOT NULL,
         year TEXT NOT NULL,
         education_form TEXT NOT NULL,
-        PRIMARY KEY (id)
+        PRIMARY KEY (id),
+        UNIQUE (name, faculty)
       )
     `);
 
@@ -650,11 +648,11 @@ function checkAndCreateDatabase() {
         id INTEGER,
         flow_id INTEGER NOT NULL,
         discipline_id INTEGER NOT NULL,
-        semester INTEGER,
-        type INTEGER,
-        subgroups INTEGER,
-        sub_hours INTEGER,
-        hours INTEGER,
+        type INTEGER NOT NULL,
+        semester INTEGER NOT NULL,
+        subgroups INTEGER NOT NULL,
+        sub_hours INTEGER NOT NULL,
+        hours INTEGER NOT NULL,
         PRIMARY KEY (id),
         UNIQUE (flow_id, discipline_id, semester, type),
         FOREIGN KEY (type) REFERENCES types (id) ON DELETE CASCADE,

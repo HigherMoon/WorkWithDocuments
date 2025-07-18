@@ -88,9 +88,7 @@ buttonCloseAddCard.addEventListener("click", () => {
   document.getElementById("syllabus-input").value = "";
 })
 
-///////////////////////////////////
-//// Создание таблиц из SQL БД ////
-///////////////////////////////////
+// Создание таблиц sql
 function createPersonalPlanTableContainer(answerData) {
   document.getElementById("text-personal-text").innerHTML = "Персональный план";
   let table = document.createElement("table");
@@ -101,7 +99,7 @@ function createPersonalPlanTableContainer(answerData) {
     return false;
   };
 
-  // -- Создание заголовков таблицы --
+  // Создание заголовков таблицы
   let headTable = document.createElement("thead");
   headTable.id = "head-table";
   
